@@ -13,10 +13,18 @@ namespace WindowsFormsApplication1
   using SpikeData = Tuple<double, double>;
   public partial class Form1 : Form
   {
-    //private string FilePath = "";
+    #region Константы
+    private double threshold = 0.02;
+
+    private int KxTop = 10;
+    private int KxBottom = 300;
+    #endregion
+
+    #region Данные класса
     private List<Tuple<double, double>> DataToPlot;
     private List<SpikeDataPacket> SpikeList;
-    private double threshold = 0;
+    #endregion
+
     public Form1()
     {
       InitializeComponent();
@@ -48,9 +56,6 @@ namespace WindowsFormsApplication1
 
     private void loadData(string FilePath)
     {
-      int spike_count = 0;
-      double dif = 0;
-      threshold = 0.02;
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -104,27 +109,7 @@ namespace WindowsFormsApplication1
 
         }
       }
-      textBox1.Text = Convert.ToString(spike_count);
-    }
-
-    private void SpikeGraph_Paint(object sender, PaintEventArgs e)
-    {
-      Brush brush = new SolidBrush(Color.Black);
-      Pen mainpen = new Pen(brush);
-      foreach (Tuple<double, double> iterator in DataToPlot)
-      {
-
-      }
-
-      for (int i = 1; i < DataToPlot.Count; i++)
-      {
-
-        e.Graphics.DrawLine(mainpen,
-          (float)DataToPlot[i - 1].Item1 * 10,
-          (float)(e.ClipRectangle.Height - DataToPlot[i - 1].Item2 * 1000),
-          (float)DataToPlot[i].Item1 * 10,
-          (float)(e.ClipRectangle.Height - DataToPlot[i].Item2 * 1000));
-      }
+      textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
     }
 
     private void Form1_SizeChanged(object sender, EventArgs e)
@@ -146,17 +131,55 @@ namespace WindowsFormsApplication1
       {
 
       }
-      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx < ViewSpikeScroll.Value; SpikeIdx++)
       {
         for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
           e.Graphics.DrawLine(mainpen,
-            (float)SpikeList[SpikeIdx][i - 1].Item1 * 300,
+            (float)SpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
-            (float)SpikeList[SpikeIdx][i].Item1 * 300,
+            (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
       }
+    }
+   
+    private void SpikeGraph_Paint(object sender, PaintEventArgs e)
+    {
+      Brush brush = new SolidBrush(Color.Black);
+      Pen mainpen = new Pen(brush);
+      foreach (Tuple<double, double> iterator in DataToPlot)
+      {
+
+      }
+
+      for (int i = 1; i < DataToPlot.Count; i++)
+      {
+
+        e.Graphics.DrawLine(mainpen,
+          (float)DataToPlot[i - 1].Item1 * KxTop,
+          (float)(e.ClipRectangle.Height - DataToPlot[i - 1].Item2 * 1000),
+          (float)DataToPlot[i].Item1 * KxTop,
+          (float)(e.ClipRectangle.Height - DataToPlot[i].Item2 * 1000));
+      }
+    }
+
+    private void TopScroll_Scroll(object sender, EventArgs e)
+    {
+      KxTop = 1 + TopScroll.Value / 2;
+      SpikeGraph.Refresh();
+    }
+
+    private void BottomScroll_Scroll(object sender, EventArgs e)
+    {
+      KxBottom = 50 + BottomScroll.Value * 10;
+      pictureBox1.Refresh();
+    }
+
+    private void ViewSpikeScroll_Scroll(object sender, EventArgs e)
+    {
+      pictureBox1.Refresh();
+      textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
     }
   }
 }
