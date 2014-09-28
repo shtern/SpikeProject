@@ -131,7 +131,7 @@ namespace WindowsFormsApplication1
       {
 
       }
-      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx < ViewSpikeScroll.Value; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx <= ViewSpikeScroll.Value; SpikeIdx++)
       {
         for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
