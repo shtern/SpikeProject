@@ -9,18 +9,20 @@ using System.IO;
 
 namespace WindowsFormsApplication1
 {
+  using SpikeDataPacket = List<Tuple<double, double>>;
+  using SpikeData = Tuple<double, double>;
   public partial class Form1 : Form
   {
     //private string FilePath = "";
-      private List<Tuple<double, double>> DataToPlot;
-      private List<Tuple<double, double>> SpikeList;
-    private double threshold=0;
+    private List<Tuple<double, double>> DataToPlot;
+    private List<SpikeDataPacket> SpikeList;
+    private double threshold = 0;
     public Form1()
     {
       InitializeComponent();
 
       DataToPlot = new List<Tuple<double, double>>();
-      SpikeList = new List<Tuple<double, double>>();
+      SpikeList = new List<SpikeDataPacket>();
     }
 
     private void Load_Button_Click(object sender, EventArgs e)
@@ -43,12 +45,12 @@ namespace WindowsFormsApplication1
         }
       }
     }
+
     private void loadData(string FilePath)
     {
-        int spike_count = 0;
-        int flag = 0;
-        double dif = 0;
-        threshold = 0.02;
+      int spike_count = 0;
+      double dif = 0;
+      threshold = 0.02;
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -56,27 +58,49 @@ namespace WindowsFormsApplication1
           string result = sr.ReadLine();
           double x, y;
           string[] resultxy = result.Split('\t');
+
           if (resultxy.Length != 2)
           {
             MessageBox.Show("Bad file exception!!!!!");
             break;
           }
+
           double.TryParse(resultxy[0], out x);
           double.TryParse(resultxy[1], out y);
+
+          Tuple<double, double> XYData = new Tuple<double, double>(x, y);
+          DataToPlot.Add(XYData);
           if (y > threshold)
           {
-              if (flag == 0)
+            SpikeDataPacket currentSpike = new SpikeDataPacket();
+            double ZeroPosition = x;
+
+            currentSpike.Add(new SpikeData(x - ZeroPosition, y));
+            
+            while (sr.Peek() >= 0)
+            {
+              result = sr.ReadLine();
+              resultxy = result.Split('\t');
+
+              if (resultxy.Length != 2)
               {
-                  spike_count++;
-                  dif = x;
-                  flag = 1;
+                MessageBox.Show("Bad file exception!!!!!");
+                break;
               }
-              Tuple<double, double> Spikedata = new Tuple<double, double>(x - dif, y);
-              SpikeList.Add(Spikedata);
-              Tuple<double, double> XYData = new Tuple<double, double>(x, y);
+              double.TryParse(resultxy[0], out x);
+              double.TryParse(resultxy[1], out y);
+
+              if (y < threshold) break;
+              
+              SpikeData Spikedata = new SpikeData(x - ZeroPosition, y);
+
+              currentSpike.Add(Spikedata);
+              XYData = new SpikeData(x, y);
               DataToPlot.Add(XYData);
+            }
+            SpikeList.Add(currentSpike);
           }
-          else flag = 0;
+
 
         }
       }
@@ -89,12 +113,12 @@ namespace WindowsFormsApplication1
       Pen mainpen = new Pen(brush);
       foreach (Tuple<double, double> iterator in DataToPlot)
       {
-        
+
       }
- 
+
       for (int i = 1; i < DataToPlot.Count; i++)
       {
-        
+
         e.Graphics.DrawLine(mainpen,
           (float)DataToPlot[i - 1].Item1 * 10,
           (float)(e.ClipRectangle.Height - DataToPlot[i - 1].Item2 * 1000),
@@ -109,8 +133,6 @@ namespace WindowsFormsApplication1
       pictureBox1.Refresh();
     }
 
-
-
     private void textBox1_TextChanged(object sender, EventArgs e)
     {
 
@@ -118,22 +140,23 @@ namespace WindowsFormsApplication1
 
     private void pictureBox1_Paint(object sender, PaintEventArgs e)
     {
-        Brush brush = new SolidBrush(Color.Black);
-        Pen mainpen = new Pen(brush);
-        foreach (Tuple<double, double> iterator in DataToPlot)
+      Brush brush = new SolidBrush(Color.Black);
+      Pen mainpen = new Pen(brush);
+      foreach (Tuple<double, double> iterator in DataToPlot)
+      {
+
+      }
+      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count; SpikeIdx++)
+      {
+        for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
-
+          e.Graphics.DrawLine(mainpen,
+            (float)SpikeList[SpikeIdx][i - 1].Item1 * 300,
+            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)SpikeList[SpikeIdx][i].Item1 * 300,
+            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
-
-        for (int i = 1; i < SpikeList.Count; i++)
-        {
-
-            e.Graphics.DrawLine(mainpen,
-              (float)SpikeList[i - 1].Item1 * 300,
-              (float)(e.ClipRectangle.Height - SpikeList[i - 1].Item2 * 2000),
-              (float)SpikeList[i].Item1 * 300,
-              (float)(e.ClipRectangle.Height - SpikeList[i].Item2 * 2000));
-        }
+      }
     }
   }
 }
