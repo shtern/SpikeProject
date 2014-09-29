@@ -28,7 +28,7 @@ namespace WindowsFormsApplication1
     public Form1()
     {
       InitializeComponent();
-
+      threshold = (double)Threshold_Scroll.Value / 1000;
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
     }
@@ -152,6 +152,7 @@ namespace WindowsFormsApplication1
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
+      float average1=0, average2=0;
       foreach (Tuple<double, double> iterator in DataToPlot)
       {
 
@@ -214,7 +215,7 @@ namespace WindowsFormsApplication1
 
     private void Threshold_Scroll_Scroll(object sender, EventArgs e)
     {
-      threshold =(double) Threshold_Scroll.Value / 100;
+      threshold =(double) Threshold_Scroll.Value / 1000;
       if (FilePath!="")
       loadData(FilePath);
 
@@ -223,6 +224,8 @@ namespace WindowsFormsApplication1
       pictureBox2.Refresh();
 
     }
+
+
 
 
   }
