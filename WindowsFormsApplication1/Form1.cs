@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
 using System.IO;
 
 namespace WindowsFormsApplication1
@@ -23,7 +24,7 @@ namespace WindowsFormsApplication1
     #region Данные класса
     private List<Tuple<double, double>> DataToPlot;
     private List<SpikeDataPacket> SpikeList;
-    private List<Tuple<double,double>> AverageList;
+    private List<Tuple<double, double>> AverageList;
     #endregion
 
     public Form1()
@@ -44,7 +45,7 @@ namespace WindowsFormsApplication1
           case System.Windows.Forms.DialogResult.OK:
             FilePath = dialog.FileName;
             loadData(FilePath);
-            
+
             SpikeGraph.Refresh();
             pictureBox1.Refresh();
             pictureBox2.Refresh();
@@ -61,7 +62,7 @@ namespace WindowsFormsApplication1
     {
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
-      
+
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -87,7 +88,7 @@ namespace WindowsFormsApplication1
             double ZeroPosition = x;
 
             currentSpike.Add(new SpikeData(x - ZeroPosition, y));
-            
+
             while (sr.Peek() >= 0)
             {
               result = sr.ReadLine();
@@ -102,7 +103,7 @@ namespace WindowsFormsApplication1
               double.TryParse(resultxy[1], out y);
 
               if (y < threshold) break;
-              
+
               SpikeData Spikedata = new SpikeData(x - ZeroPosition, y);
 
               currentSpike.Add(Spikedata);
@@ -121,34 +122,34 @@ namespace WindowsFormsApplication1
 
     private void buildAverage()
     {
-        AverageList = new List<Tuple<double, double>>();
-        double eps = 1e-20;
-        double average=0;
-        int count = 0;
-        int mincount = SpikeList[0].Count;
-        for (int i = 0; i < SpikeList.Count; i++)
-            if (SpikeList[i].Count < mincount)
-                mincount = SpikeList[i].Count;
-        for (int i=0; i<SpikeList[0].Count;i++)
-            for (int j = 1; j < SpikeList.Count; j++)
+      AverageList = new List<Tuple<double, double>>();
+      double eps = 1e-20;
+      double average = 0;
+      int count = 0;
+      int mincount = SpikeList[0].Count;
+      for (int i = 0; i < SpikeList.Count && i <= ViewSpikeScroll.Value; i++)
+        if (SpikeList[i].Count < mincount)
+          mincount = SpikeList[i].Count;
+      for (int i = 0; i < SpikeList[0].Count; i++)
+        for (int j = 1; j < SpikeList.Count; j++)
+        {
+          average = 0;
+          count = 0;
+          for (int m = 0; m < SpikeList[j].Count; m++)
+            if ((SpikeList[j][m].Item1 - SpikeList[0][i].Item1 < eps) && (SpikeList[j][m].Item1 - SpikeList[0][i].Item1 > -eps))
             {
-                average = 0;
-                count = 0;
-                for (int m = 0; m < SpikeList[j].Count; m++)
-                    if ((SpikeList[j][m].Item1 - SpikeList[0][i].Item1 < eps) && (SpikeList[j][m].Item1 - SpikeList[0][i].Item1 > -eps))
-                    {
-                        count++;
-                        average += SpikeList[j][m].Item2;
-                        
-                    }
-                if (count>0)
-                AverageList.Add(new Tuple<double, double>(SpikeList[0][i].Item1, (average+SpikeList[0][i].Item2) / (count+1)));
+              count++;
+              average += SpikeList[j][m].Item2;
+
             }
+          if (count > 0)
+            AverageList.Add(new Tuple<double, double>(SpikeList[0][i].Item1, (average + SpikeList[0][i].Item2) / (count + 1)));
+        }
     }
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
       SpikeGraph.Refresh();
-      pictureBox1.Refresh(); 
+      pictureBox1.Refresh();
       pictureBox2.Refresh();
     }
 
@@ -187,7 +188,7 @@ namespace WindowsFormsApplication1
       {
 
       }
-      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx <= ViewSpikeScroll.Value && SpikeIdx<11; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx <= ViewSpikeScroll.Value && SpikeIdx < 11; SpikeIdx++)
       {
         for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
@@ -197,19 +198,51 @@ namespace WindowsFormsApplication1
             (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
+
       }
-      brush = new SolidBrush(Color.Blue);
-      mainpen = new Pen(brush);
-      for (int i = 1; i < AverageList.Count; i++)
+      double maxLenght = 0;
+
+      for(int i = 0; i < SpikeList.Count; i++)
       {
-          e.Graphics.DrawLine(mainpen,
-            (float)AverageList[i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
-            (float)AverageList[i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+        if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
       }
+
+      double StepWidth = 0.001;
+      List<double> average = new List<double>();
+
+      for (double x = 0; x < maxLenght; x += StepWidth)
+      {
+        double Average = 0;
+        int count = 0;
+        //foreach (SpikeDataPacket data in SpikeList)
+        //{
+        //  double[] _x = new double[2];
+        //  double[] _y = new double[2];
+        //  _x[0] = (from min in data where min.Item1 <= x select min).Last().Item1;
+        //  _x[1] = (from max in data where max.Item1 >= x select max).First().Item1;
+
+        //  _y[0] = data.Where(elem => elem.Item1 == _x[0]).FirstOrDefault().Item2;
+        //  _y[1] = data.Where(elem => elem.Item1 == _x[1]).FirstOrDefault().Item2;
+
+
+        //  if(Math.Abs())
+        //}
+
+      }
+       
+      //brush = new SolidBrush(Color.Aqua);
+      //mainpen = new Pen(brush, 3);
+      //for (int i = 1; i < AverageList.Count; i++)
+      //{
+      //  e.Graphics.DrawLine(mainpen,
+      //    (float)AverageList[i - 1].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
+      //    (float)AverageList[i].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+      //}
+       
     }
-   
+
     private void SpikeGraph_Paint(object sender, PaintEventArgs e)
     {
       Brush brush = new SolidBrush(Color.Black);
@@ -248,6 +281,7 @@ namespace WindowsFormsApplication1
 
     private void ViewSpikeScroll_Scroll(object sender, EventArgs e)
     {
+      buildAverage();
       pictureBox1.Refresh();
       pictureBox2.Refresh();
       textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
@@ -255,50 +289,50 @@ namespace WindowsFormsApplication1
 
     private void Threshold_Scroll_Scroll(object sender, EventArgs e)
     {
-      threshold =(double) Threshold_Scroll.Value / 1000;
-      if (FilePath!="")
-      loadData(FilePath);
+      threshold = (double)Threshold_Scroll.Value / 1000;
+      if (FilePath != "")
+        loadData(FilePath);
 
       SpikeGraph.Refresh();
       pictureBox1.Refresh();
       pictureBox2.Refresh();
 
     }
-      public static double [] Interpolation (double [] dataIn, int n)
+    public static double[] Interpolation(double[] dataIn, int n)
     {
-        double [] dataOut = new double [n];
-        int lenIn = dataIn.Length;
-        double [] a = new double [lenIn];
-        double [] divIn = new double [lenIn];
-        double [] divOut = new double [n];
- 
-        divIn[0] = 0;
- 
-        for (int i = 1; i <lenIn; i++)
+      double[] dataOut = new double[n];
+      int lenIn = dataIn.Length;
+      double[] a = new double[lenIn];
+      double[] divIn = new double[lenIn];
+      double[] divOut = new double[n];
+
+      divIn[0] = 0;
+
+      for (int i = 1; i < lenIn; i++)
+      {
+        divIn[i] = divIn[i - 1] + 1;
+      }
+
+      divOut[0] = 0;
+
+      for (int i = 1; i < n; i++)
+      {
+        divOut[i] = divOut[i - 1] + lenIn / Convert.ToDouble(n);
+      }
+      int k = 0;
+      for (int i = k; i < n; i++)
+      {
+        for (int j = 0; j < lenIn - 1; j++)
         {
-            divIn [i] = divIn [i - 1] + 1;
+          if (divOut[i] >= divIn[j] && divOut[i] < divIn[j + 1])
+          {
+            dataOut[i] = (dataIn[j + 1] - dataIn[j]) * (divOut[i] - divIn[j]) / (divIn[j + 1] - divIn[j]) + dataIn[j];
+            k = i;
+          }
         }
- 
-        divOut [0] = 0;
- 
-        for (int i = 1; i <n; i++)
-        {
-            divOut [i] = divOut [i - 1] + lenIn / Convert. ToDouble (n);
-        }
-        int k = 0;
-        for (int i = k; i <n; i++)
-        {
-            for (int j = 0; j <lenIn - 1; j++)
-            {
-                if (divOut[i]>=divIn[j]&& divOut[i]<divIn[j + 1])
-                {
-                    dataOut[i] = (dataIn[j + 1] - dataIn[j]) * (divOut[i] - divIn[j]) / (divIn[j + 1] - divIn[j]) + dataIn[j];
-                    k = i;
-                }
-            }
-        }
- 
-        return dataOut;
+      }
+
+      return dataOut;
     }
 
 
