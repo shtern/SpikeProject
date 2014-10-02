@@ -25,14 +25,13 @@ namespace WindowsFormsApplication1
     #region Данные класса
     private List<Tuple<double, double>> DataToPlot;
     private List<SpikeDataPacket> SpikeList;
-    private List<Tuple<double, double>> AverageList;
+  
     #endregion
 
     public Form1()
     {
       InitializeComponent();
       threshold = (double)Threshold_Scroll.Value / 1000;
-      AverageList = new List<Tuple<double, double>>();
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
     }
@@ -116,36 +115,76 @@ namespace WindowsFormsApplication1
 
 
         }
-       // buildAverage();
+ 
       }
       textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
     }
 
-    private void buildAverage()
+    private List<Tuple<double, double>> buildAverage(bool first)
     {
+      List<Tuple<double, double>> AverageList = new List<Tuple<double, double>>();
+      double maxLenght = 0;
+      int down_border = 0;
+      int up_border = SpikeList.Count;
+      if (first == true)
+      {
+        down_border = 0;
+        up_border = 11;
+      }
+      else
+      {
+        down_border = 11;
+        up_border = SpikeList.Count;
+      }
+
+      for (int i = down_border; i < up_border && i < ViewSpikeScroll.Value && i < SpikeList.Count; i++)
+      {
+        if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
+      }
+
+      double StepWidth = 0.001;
+      List<double> average = new List<double>();
       AverageList = new List<Tuple<double, double>>();
-     
-      double average = 0;
-      int count = 0;
-      int mincount = SpikeList[0].Count;
-      for (int i = 0; i < SpikeList.Count && i <= ViewSpikeScroll.Value; i++)
-        if (SpikeList[i].Count < mincount)
-          mincount = SpikeList[i].Count;
-      for (int i = 0; i < SpikeList[0].Count; i++)
-        for (int j = 1; j < SpikeList.Count; j++)
+      for (double x = StepWidth; x < maxLenght; x += StepWidth)
+      {
+        double Average = 0;
+        int count = 0;
+        for (int j = down_border; j < up_border && j < ViewSpikeScroll.Value && j < SpikeList.Count; j++)
+        //foreach (SpikeDataPacket data in SpikeList)
         {
-          average = 0;
-          count = 0;
-          for (int m = 0; m < SpikeList[j].Count; m++)
-            if ((SpikeList[j][m].Item1 - SpikeList[0][i].Item1 < eps) && (SpikeList[j][m].Item1 - SpikeList[0][i].Item1 > -eps))
+          SpikeDataPacket data = SpikeList[j];
+          double[] _x = new double[2];
+          double[] _y = new double[2];
+          for (int i = 0; i < data.Count; i++)
+          {
+            if (data[i].Item1 <= x)
             {
-              count++;
-              average += SpikeList[j][m].Item2;
+              _x[0] = data[i].Item1;
+              _y[0] = data[i].Item2;
+            }
+            if (data[i].Item1 >= x)
+            {
+              _x[1] = data[i].Item1;
+              _y[1] = data[i].Item2;
+              break;
 
             }
-          if (count > 0)
-            AverageList.Add(new Tuple<double, double>(SpikeList[0][i].Item1, (average + SpikeList[0][i].Item2) / (count + 1)));
+
+          }
+          if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+          {
+            double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
+            double b = _y[0] - k * _x[0];
+            double y = k * x + b;
+            Average += y;
+            count++;
+          }
         }
+        if (count > 0)
+          Average /= count;
+        AverageList.Add(new Tuple<double, double>(x, Average));
+      }
+      return AverageList;
     }
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
@@ -176,73 +215,10 @@ namespace WindowsFormsApplication1
         }
       }
 
-      double maxLenght = 0;
-
-      for (int i = 11; i < SpikeList.Count; i++)
-      {
-        if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
-      }
-
-      double StepWidth = 0.001;
-      List<double> average = new List<double>();
-      AverageList = new List<Tuple<double, double>>();
-      for (double x = StepWidth; x < maxLenght; x += StepWidth)
-      {
-        double Average = 0;
-        int count = 0;
-        for (int j = 11; j < SpikeList.Count; j++)
-        //foreach (SpikeDataPacket data in SpikeList)
-        {
-          SpikeDataPacket data = SpikeList[j];
-          double[] _x = new double[2];
-          double[] _y = new double[2];
-          for (int i = 0; i < data.Count; i++)
-          {
-            if (data[i].Item1 <= x)
-            {
-              _x[0] = data[i].Item1;
-              _y[0] = data[i].Item2;
-            }
-            if (data[i].Item1 >= x)
-            {
-              _x[1] = data[i].Item1;
-              _y[1] = data[i].Item2;
-              break;
-
-            }
-
-          }
-          if (_x[0] > eps && _y[0] > eps && _x[1] > eps && _y[1] > eps)
-          {
-            double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
-            double b = _y[0] - k * _x[0];
-            double y = k * x + b;
-            Average += y;
-            count++;
-          }
-
-          /*
-        _x[0] = (from min in data where min.Item1 <= x select min).Last().Item1;
-        _x[1] = (from max in data where max.Item1 >= x select max).First().Item1;
-          
-        _y[0] = data.Where(elem => elem.Item1 == _x[0]).FirstOrDefault().Item2;
-        _y[1] = data.Where(elem => elem.Item1 == _x[1]).FirstOrDefault().Item2;
-
-        
-        if (Math.Abs(_x[0]) > eps && Math.Abs(_x[1]) > eps)
-        {
-
-
-        }
-         */
-        }
-        if (count > 0)
-          Average /= count;
-        AverageList.Add(new Tuple<double, double>(x, Average));
-      }
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
+      List<Tuple<double, double>> AverageList = buildAverage(false);
       for (int i = 1; i < AverageList.Count; i++)
       {
         e.Graphics.DrawLine(mainpen,
@@ -269,72 +245,8 @@ namespace WindowsFormsApplication1
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
 
-      }
-      double maxLenght = 0;
-
-      for(int i = 0; i < SpikeList.Count && i<11; i++)
-      {
-        if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
-      }
-
-      double StepWidth = 0.001;
-      List<double> average = new List<double>();
-      AverageList = new List<Tuple<double, double>>();
-      for (double x = StepWidth; x < maxLenght; x += StepWidth)
-      {
-        double Average = 0;
-        int count = 0;
-        for (int j=0;j<11 && j<SpikeList.Count;j++)
-        //foreach (SpikeDataPacket data in SpikeList)
-        {
-          SpikeDataPacket data = SpikeList[j];
-          double[] _x = new double[2];
-          double[] _y = new double[2];
-          for (int i = 0; i < data.Count; i++)
-          {
-            if (data[i].Item1 <= x)
-            {
-              _x[0] = data[i].Item1;
-              _y[0] = data[i].Item2;
-            }
-            if (data[i].Item1 >= x)
-            {
-              _x[1] = data[i].Item1;
-              _y[1] = data[i].Item2;
-              break;
-
-            }
-
-          }
-          if (_x[0] > eps && _y[0] > eps && _x[1] > eps && _y[1] > eps)
-          {
-            double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
-            double b = _y[0] - k * _x[0];
-            double y = k * x + b;
-            Average += y;
-            count++;
-          }
-
-          /*
-        _x[0] = (from min in data where min.Item1 <= x select min).Last().Item1;
-        _x[1] = (from max in data where max.Item1 >= x select max).First().Item1;
-          
-        _y[0] = data.Where(elem => elem.Item1 == _x[0]).FirstOrDefault().Item2;
-        _y[1] = data.Where(elem => elem.Item1 == _x[1]).FirstOrDefault().Item2;
-
-        
-        if (Math.Abs(_x[0]) > eps && Math.Abs(_x[1]) > eps)
-        {
-
-
-        }
-         */
-        }
-        if (count > 0)
-          Average /= count;
-        AverageList.Add(new Tuple<double, double>(x, Average));
-      }
-       
+      } 
+      List<Tuple<double, double>> AverageList = buildAverage(true);
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
       for (int i = 1; i < AverageList.Count; i++)
@@ -386,7 +298,7 @@ namespace WindowsFormsApplication1
 
     private void ViewSpikeScroll_Scroll(object sender, EventArgs e)
     {
-      //buildAverage();
+
       pictureBox1.Refresh();
       pictureBox2.Refresh();
       textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
