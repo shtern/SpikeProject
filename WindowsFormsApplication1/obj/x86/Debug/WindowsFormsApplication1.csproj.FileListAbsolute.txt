@@ -25,3 +25,12 @@ C:\Users\Михаил\Documents\GitHub\SpikeProject\WindowsFormsApplication1\obj
 C:\Users\Михаил\Documents\GitHub\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\Users\Михаил\Documents\GitHub\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
 D:\Ilya\Projects\WindowsFormsApplication1\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe.config
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.exe
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.pdb
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.exe
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\bin\Debug\WindowsFormsApplication1.pdb
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Form1.resources
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.Properties.Resources.resources
+D:\Shtern\Github\SpikeProject\WindowsFormsApplication1\obj\x86\Debug\WindowsFormsApplication1.csproj.GenerateResource.Cache
