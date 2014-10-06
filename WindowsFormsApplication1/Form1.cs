@@ -65,6 +65,8 @@ namespace WindowsFormsApplication1
     {
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
+      AveragePointsStim = new List<PointList>();
+      AveragePointsNoStim = new List<PointList>();
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -117,14 +119,13 @@ namespace WindowsFormsApplication1
           }
         }
       }
+      numericAfterStim.Maximum=(SpikeList.Count-11);
       buildAverage(true, AveragePointsNoStim);
       buildAverage(false, AveragePointsStim);
     }
 
     private void buildAverage(bool first, List<PointList> TargetAverageList)
-    {
-      //List<Tuple<double, double>> AverageList = new List<Tuple<double, double>>();
-     
+    {   
       double maxLenght = 0;
       int down_border = 0;
       int up_border = SpikeList.Count;
@@ -146,8 +147,6 @@ namespace WindowsFormsApplication1
         }
 
         double StepWidth = 0.001;
-        //List<double> average = new List<double>();
-        //AverageList = new List<Tuple<double, double>>();
         PointsList = new PointList(); 
         for (double x = StepWidth; x < maxLenght; x += StepWidth)
         {
@@ -155,7 +154,6 @@ namespace WindowsFormsApplication1
           double Average = 0;
           int count = 0;
           for (int j = down_border; j < up_border && j <z && j < SpikeList.Count; j++)
-          //foreach (SpikeDataPacket data in SpikeList)
           {
             SpikeDataPacket data = SpikeList[j];
             double[] _x = new double[2];
@@ -187,7 +185,6 @@ namespace WindowsFormsApplication1
           }
           if (count > 0)
             Average /= count;
-          //AverageList.Add(new Tuple<double, double>(x, Average));
           PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
         }
         TargetAverageList.Add(PointsList);
@@ -226,23 +223,12 @@ namespace WindowsFormsApplication1
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
-      if (AveragePointsStim.Count > 0 && numericAfterStim.Value - 1 > 0 && numericAfterStim.Value<AveragePointsNoStim.Count)
+      if (AveragePointsStim.Count > 0 && numericAfterStim.Value - 1 > 0 && numericAfterStim.Value < AveragePointsStim.Count)
       {
-        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value]).ToArray();
+        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value-1]).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
-
-
-
-      //for (int i = 1; i < AverageList.Count; i++)
-      //{
-      //  e.Graphics.DrawLine(mainpen,
-      //    (float)AverageList[i - 1].Item1 * KxBottom,
-      //    (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
-      //    (float)AverageList[i].Item1 * KxBottom,
-      //    (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
-      //}
-       
+ 
     }
 
     private void NoStimCharacter_Paint(object sender, PaintEventArgs e)
@@ -268,28 +254,13 @@ namespace WindowsFormsApplication1
         PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value-1]).ToArray();
         if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
       }
-      //List<Tuple<double, double>> AverageList = buildAverage(true);
-      //brush = new SolidBrush(Color.Aqua);
-      //mainpen = new Pen(brush, 3);
-      //for (int i = 1; i < AverageList.Count; i++)
-      //{
-      //  e.Graphics.DrawLine(mainpen,
-      //    (float)AverageList[i - 1].Item1 * KxBottom,
-      //    (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
-      //    (float)AverageList[i].Item1 * KxBottom,
-      //    (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
-      //}
-       
+    
     }
 
     private void SpikeGraph_Paint(object sender, PaintEventArgs e)
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      foreach (Tuple<double, double> iterator in DataToPlot)
-      {
-
-      }
 
       for (int i = 1; i < DataToPlot.Count; i++)
       {
@@ -341,9 +312,6 @@ namespace WindowsFormsApplication1
     {
       StimCharacter.Refresh();
     }
-
-
-
 
 
   }

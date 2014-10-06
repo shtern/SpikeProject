@@ -95,9 +95,9 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(12, 241);
+      this.NoStimCharacter.Location = new System.Drawing.Point(12, 212);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(1174, 229);
+      this.NoStimCharacter.Size = new System.Drawing.Size(1174, 292);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
@@ -143,9 +143,9 @@
       this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(12, 484);
+      this.StimCharacter.Location = new System.Drawing.Point(12, 514);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(1174, 238);
+      this.StimCharacter.Size = new System.Drawing.Size(1174, 285);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
@@ -246,13 +246,18 @@
       this.numericAfterStim.Name = "numericAfterStim";
       this.numericAfterStim.Size = new System.Drawing.Size(50, 20);
       this.numericAfterStim.TabIndex = 16;
+      this.numericAfterStim.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
       this.numericAfterStim.ValueChanged += new System.EventHandler(this.numericAfterStim_ValueChanged);
       // 
       // numericNoStim
       // 
       this.numericNoStim.Location = new System.Drawing.Point(33, 130);
       this.numericNoStim.Maximum = new decimal(new int[] {
-            11,
+            10,
             0,
             0,
             0});
@@ -260,7 +265,7 @@
       this.numericNoStim.Size = new System.Drawing.Size(50, 20);
       this.numericNoStim.TabIndex = 15;
       this.numericNoStim.Value = new decimal(new int[] {
-            11,
+            10,
             0,
             0,
             0});
@@ -270,7 +275,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1198, 734);
+      this.ClientSize = new System.Drawing.Size(1198, 811);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.StimCharacter);
