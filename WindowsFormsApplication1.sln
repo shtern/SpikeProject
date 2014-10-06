@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApplication1", "WindowsFormsApplication1\WindowsFormsApplication1.csproj", "{6D1031F2-A0CA-4FB1-A13E-5597D3A7F16F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpikeCharactAnalizer", "WindowsFormsApplication1\SpikeCharactAnalizer.csproj", "{6D1031F2-A0CA-4FB1-A13E-5597D3A7F16F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

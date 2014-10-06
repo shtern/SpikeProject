@@ -12,6 +12,7 @@ namespace WindowsFormsApplication1
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
+  using PointList = List<PointF>;
   public partial class Form1 : Form
   {
     #region Константы
@@ -25,7 +26,9 @@ namespace WindowsFormsApplication1
     #region Данные класса
     private List<Tuple<double, double>> DataToPlot;
     private List<SpikeDataPacket> SpikeList;
-  
+    private List<PointF> PointsList;
+    private List<PointList> AveragePointsStim = new List<PointList>();
+    private List<PointList> AveragePointsNoStim = new List<PointList>();
     #endregion
 
     public Form1()
@@ -47,8 +50,8 @@ namespace WindowsFormsApplication1
             loadData(FilePath);
 
             SpikeGraph.Refresh();
-            pictureBox1.Refresh();
-            pictureBox2.Refresh();
+            NoStimCharacter.Refresh();
+            StimCharacter.Refresh();
             break;
           case System.Windows.Forms.DialogResult.Cancel:
 
@@ -62,7 +65,6 @@ namespace WindowsFormsApplication1
     {
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
-
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -85,6 +87,7 @@ namespace WindowsFormsApplication1
           if (y > threshold)
           {
             SpikeDataPacket currentSpike = new SpikeDataPacket();
+            List<PointF> pointList = new List<PointF>();
             double ZeroPosition = x;
 
             currentSpike.Add(new SpikeData(x - ZeroPosition, y));
@@ -112,17 +115,16 @@ namespace WindowsFormsApplication1
             }
             SpikeList.Add(currentSpike);
           }
-
-
         }
- 
       }
-      textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
+      buildAverage(true, AveragePointsNoStim);
+      buildAverage(false, AveragePointsStim);
     }
 
-    private List<Tuple<double, double>> buildAverage(bool first)
+    private void buildAverage(bool first, List<PointList> TargetAverageList)
     {
-      List<Tuple<double, double>> AverageList = new List<Tuple<double, double>>();
+      //List<Tuple<double, double>> AverageList = new List<Tuple<double, double>>();
+     
       double maxLenght = 0;
       int down_border = 0;
       int up_border = SpikeList.Count;
@@ -136,61 +138,68 @@ namespace WindowsFormsApplication1
         down_border = 11;
         up_border = SpikeList.Count;
       }
-
-      for (int i = down_border; i < up_border && i < ViewSpikeScroll.Value && i < SpikeList.Count; i++)
+      for (int z = down_border+1; z < up_border && z < SpikeList.Count; z++)
       {
-        if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
-      }
-
-      double StepWidth = 0.001;
-      List<double> average = new List<double>();
-      AverageList = new List<Tuple<double, double>>();
-      for (double x = StepWidth; x < maxLenght; x += StepWidth)
-      {
-        double Average = 0;
-        int count = 0;
-        for (int j = down_border; j < up_border && j < ViewSpikeScroll.Value && j < SpikeList.Count; j++)
-        //foreach (SpikeDataPacket data in SpikeList)
+        for (int i = down_border; i < up_border && i < z && i < SpikeList.Count; i++)
         {
-          SpikeDataPacket data = SpikeList[j];
-          double[] _x = new double[2];
-          double[] _y = new double[2];
-          for (int i = 0; i < data.Count; i++)
-          {
-            if (data[i].Item1 <= x)
-            {
-              _x[0] = data[i].Item1;
-              _y[0] = data[i].Item2;
-            }
-            if (data[i].Item1 >= x)
-            {
-              _x[1] = data[i].Item1;
-              _y[1] = data[i].Item2;
-              break;
-
-            }
-
-          }
-          if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
-          {
-            double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
-            double b = _y[0] - k * _x[0];
-            double y = k * x + b;
-            Average += y;
-            count++;
-          }
+          if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
         }
-        if (count > 0)
-          Average /= count;
-        AverageList.Add(new Tuple<double, double>(x, Average));
+
+        double StepWidth = 0.001;
+        //List<double> average = new List<double>();
+        //AverageList = new List<Tuple<double, double>>();
+        PointsList = new PointList(); 
+        for (double x = StepWidth; x < maxLenght; x += StepWidth)
+        {
+          
+          double Average = 0;
+          int count = 0;
+          for (int j = down_border; j < up_border && j <z && j < SpikeList.Count; j++)
+          //foreach (SpikeDataPacket data in SpikeList)
+          {
+            SpikeDataPacket data = SpikeList[j];
+            double[] _x = new double[2];
+            double[] _y = new double[2];
+            for (int i = 0; i < data.Count; i++)
+            {
+              if (data[i].Item1 <= x)
+              {
+                _x[0] = data[i].Item1;
+                _y[0] = data[i].Item2;
+              }
+              if (data[i].Item1 >= x)
+              {
+                _x[1] = data[i].Item1;
+                _y[1] = data[i].Item2;
+                break;
+
+              }
+
+            }
+            if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+            {
+              double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
+              double b = _y[0] - k * _x[0];
+              double y = k * x + b;
+              Average += y;
+              count++;
+            }
+          }
+          if (count > 0)
+            Average /= count;
+          //AverageList.Add(new Tuple<double, double>(x, Average));
+          PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
+        }
+        TargetAverageList.Add(PointsList);
       }
-      return AverageList;
+
     }
+
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
       SpikeGraph.Refresh();
-      pictureBox1.Refresh();
-      pictureBox2.Refresh();
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
@@ -198,12 +207,11 @@ namespace WindowsFormsApplication1
 
     }
 
-
-    private void pictureBox2_Paint(object sender, PaintEventArgs e)
+    private void StimCharacter_Paint(object sender, PaintEventArgs e)
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      for (int SpikeIdx = 11; SpikeIdx < SpikeList.Count && SpikeIdx <= ViewSpikeScroll.Value; SpikeIdx++)
+      for (int SpikeIdx = 11; SpikeIdx < SpikeList.Count && SpikeIdx <= numericAfterStim.Value+10; SpikeIdx++)
       {
         for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
@@ -218,23 +226,30 @@ namespace WindowsFormsApplication1
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
-      List<Tuple<double, double>> AverageList = buildAverage(false);
-      for (int i = 1; i < AverageList.Count; i++)
+      if (AveragePointsStim.Count > 0 && numericAfterStim.Value - 1 > 0 && numericAfterStim.Value<AveragePointsNoStim.Count)
       {
-        e.Graphics.DrawLine(mainpen,
-          (float)AverageList[i - 1].Item1 * KxBottom,
-          (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
-          (float)AverageList[i].Item1 * KxBottom,
-          (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value]).ToArray();
+        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
+
+
+
+      //for (int i = 1; i < AverageList.Count; i++)
+      //{
+      //  e.Graphics.DrawLine(mainpen,
+      //    (float)AverageList[i - 1].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
+      //    (float)AverageList[i].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+      //}
        
     }
 
-    private void pictureBox1_Paint(object sender, PaintEventArgs e)
+    private void NoStimCharacter_Paint(object sender, PaintEventArgs e)
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx <= ViewSpikeScroll.Value && SpikeIdx < 11; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx <= numericNoStim.Value && SpikeIdx < 11; SpikeIdx++)
       {
         for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
         {
@@ -245,18 +260,25 @@ namespace WindowsFormsApplication1
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
 
-      } 
-      List<Tuple<double, double>> AverageList = buildAverage(true);
+      }
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
-      for (int i = 1; i < AverageList.Count; i++)
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value -1 >0)
       {
-        e.Graphics.DrawLine(mainpen,
-          (float)AverageList[i - 1].Item1 * KxBottom,
-          (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
-          (float)AverageList[i].Item1 * KxBottom,
-          (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+        PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value-1]).ToArray();
+        if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
       }
+      //List<Tuple<double, double>> AverageList = buildAverage(true);
+      //brush = new SolidBrush(Color.Aqua);
+      //mainpen = new Pen(brush, 3);
+      //for (int i = 1; i < AverageList.Count; i++)
+      //{
+      //  e.Graphics.DrawLine(mainpen,
+      //    (float)AverageList[i - 1].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i - 1].Item2 * 2000),
+      //    (float)AverageList[i].Item1 * KxBottom,
+      //    (float)(e.ClipRectangle.Height - AverageList[i].Item2 * 2000));
+      //}
        
     }
 
@@ -292,17 +314,11 @@ namespace WindowsFormsApplication1
     private void BottomScroll_Scroll(object sender, EventArgs e)
     {
       KxBottom = 50 + BottomScroll.Value * 10;
-      pictureBox1.Refresh();
-      pictureBox2.Refresh();
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
     }
 
-    private void ViewSpikeScroll_Scroll(object sender, EventArgs e)
-    {
 
-      pictureBox1.Refresh();
-      pictureBox2.Refresh();
-      textBox1.Text = ViewSpikeScroll.Value.ToString() + " / " + SpikeList.Count.ToString();
-    }
 
     private void Threshold_Scroll_Scroll(object sender, EventArgs e)
     {
@@ -311,10 +327,21 @@ namespace WindowsFormsApplication1
         loadData(FilePath);
 
       SpikeGraph.Refresh();
-      pictureBox1.Refresh();
-      pictureBox2.Refresh();
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
 
     }
+
+    private void numericNo_ValueChanged(object sender, EventArgs e)
+    {
+      NoStimCharacter.Refresh();
+    }
+
+    private void numericAfterStim_ValueChanged(object sender, EventArgs e)
+    {
+      StimCharacter.Refresh();
+    }
+
 
 
 
