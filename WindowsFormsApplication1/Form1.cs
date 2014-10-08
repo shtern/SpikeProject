@@ -331,7 +331,7 @@ namespace WindowsFormsApplication1
 
     private void compareButton_Click(object sender, EventArgs e)
     {
-      FCompareForm compareForm = new FCompareForm(AveragePointsNoStim, AveragePointsStim);
+      FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value-1], AveragePointsStim[(int)numericAfterStim.Value-1]);
       compareForm.Show();
     }
 

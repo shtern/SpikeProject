@@ -17,13 +17,15 @@ namespace WindowsFormsApplication1
   #endregion
   public partial class FCompareForm : Form
   {
-    List<PointList> Average_pre;
-    List<PointList> Average_post;
-    public FCompareForm(List<PointList> average_pre, List<PointList> average_post)
+    PointList Average_pre;
+    PointList Average_post;
+
+    public FCompareForm(PointList average_pre, PointList average_post)
     {
       InitializeComponent();
       Average_post = average_post;
       Average_pre = average_pre;
+
     }
 
     private void CompareGraph_Paint(object sender, PaintEventArgs e)
@@ -34,10 +36,16 @@ namespace WindowsFormsApplication1
       mainpen = new Pen(brush, 3);
       if (Average_pre.Count > 0)
       {
-        //PointF[] AverageList = (Average_pre[(int)numericAfterStim.Value - 1]).ToArray();
-        //if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
+        PointF[] AverageList = Average_pre.ToArray();
+        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
-
+      brush = new SolidBrush(Color.Blue);
+      mainpen = new Pen(brush, 3);
+      if (Average_pre.Count > 0)
+      {
+        PointF[] AverageList = Average_post.ToArray();
+        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
+      }
     }
 
   }
