@@ -61,8 +61,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(12, 12);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -96,9 +96,9 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(12, 212);
+      this.NoStimCharacter.Location = new System.Drawing.Point(10, 212);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(1174, 292);
+      this.NoStimCharacter.Size = new System.Drawing.Size(1174, 232);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
@@ -143,12 +143,12 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(12, 514);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 470);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(1174, 285);
+      this.StimCharacter.Size = new System.Drawing.Size(1174, 213);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
@@ -289,7 +289,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1198, 811);
+      this.ClientSize = new System.Drawing.Size(1198, 733);
       this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);

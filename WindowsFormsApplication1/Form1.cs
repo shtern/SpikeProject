@@ -43,6 +43,8 @@ namespace WindowsFormsApplication1
     {
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
+        dialog.FileName = "Cell_1.txt";
+        dialog.InitialDirectory = Application.StartupPath + @"";
         switch (dialog.ShowDialog())
         {
           case System.Windows.Forms.DialogResult.OK:
@@ -90,9 +92,8 @@ namespace WindowsFormsApplication1
           {
 
             SpikeDataPacket currentSpike = new SpikeDataPacket();
-            double ZeroPosition = ApproxX(DataToPlot[DataToPlot.Count - 2].Item1, DataToPlot[DataToPlot.Count - 2].Item2, x, y);
-            currentSpike.Add(new SpikeData(0, threshold));
-            currentSpike.Add(new SpikeData(x - ZeroPosition, y));
+            double ZeroPositionX = ApproxX(DataToPlot[DataToPlot.Count - 2].Item1, DataToPlot[DataToPlot.Count - 2].Item2, x, y);
+            currentSpike.Add(new SpikeData(x - ZeroPositionX, y - threshold));
 
             while (sr.Peek() >= 0)
             {
@@ -109,7 +110,7 @@ namespace WindowsFormsApplication1
 
               if (y < threshold) break;
 
-              SpikeData Spikedata = new SpikeData(x - ZeroPosition, y);
+              SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
 
               currentSpike.Add(Spikedata);
               XYData = new SpikeData(x, y);
@@ -215,10 +216,14 @@ namespace WindowsFormsApplication1
 
     private double ApproxX(double x0, double y0, double x1, double y1)
     {
+      // zero fix
+      if (x1 == x0) x0 += 1.1e-12;
+
       double k = (y1 - y0) / (x1 - x0);
       double b = y0 - k * x0;
       double targetx = 0;
       targetx = (threshold - b) / k;
+
       return targetx;
     }
 
