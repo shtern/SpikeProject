@@ -46,6 +46,7 @@
       this.label2 = new System.Windows.Forms.Label();
       this.numericAfterStim = new System.Windows.Forms.NumericUpDown();
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
+      this.compareButton = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -68,7 +69,6 @@
       this.SpikeGraph.Size = new System.Drawing.Size(593, 194);
       this.SpikeGraph.TabIndex = 0;
       this.SpikeGraph.TabStop = false;
-      this.SpikeGraph.Click += new System.EventHandler(this.SpikeGraph_Click);
       this.SpikeGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.SpikeGraph_Paint);
       // 
       // label1
@@ -130,14 +130,16 @@
       // Threshold_Scroll
       // 
       this.Threshold_Scroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.Threshold_Scroll.AutoSize = false;
       this.Threshold_Scroll.Location = new System.Drawing.Point(13, 70);
       this.Threshold_Scroll.Maximum = 150;
       this.Threshold_Scroll.Name = "Threshold_Scroll";
-      this.Threshold_Scroll.Size = new System.Drawing.Size(160, 45);
+      this.Threshold_Scroll.Size = new System.Drawing.Size(160, 24);
       this.Threshold_Scroll.TabIndex = 9;
       this.Threshold_Scroll.TickStyle = System.Windows.Forms.TickStyle.None;
       this.Threshold_Scroll.Value = 20;
       this.Threshold_Scroll.Scroll += new System.EventHandler(this.Threshold_Scroll_Scroll);
+      this.Threshold_Scroll.ValueChanged += new System.EventHandler(this.Threshold_Scroll_ValueChanged);
       // 
       // StimCharacter
       // 
@@ -272,11 +274,23 @@
             0});
       this.numericNoStim.ValueChanged += new System.EventHandler(this.numericNo_ValueChanged);
       // 
+      // compareButton
+      // 
+      this.compareButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.compareButton.Location = new System.Drawing.Point(801, 142);
+      this.compareButton.Name = "compareButton";
+      this.compareButton.Size = new System.Drawing.Size(75, 23);
+      this.compareButton.TabIndex = 15;
+      this.compareButton.Text = "Сравнить";
+      this.compareButton.UseVisualStyleBackColor = true;
+      this.compareButton.Click += new System.EventHandler(this.compareButton_Click);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1198, 811);
+      this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.StimCharacter);
@@ -324,6 +338,7 @@
     private System.Windows.Forms.NumericUpDown numericAfterStim;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Button compareButton;
   }
 }
 
