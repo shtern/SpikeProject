@@ -88,10 +88,10 @@ namespace WindowsFormsApplication1
           DataToPlot.Add(XYData);
           if (y > threshold)
           {
-            SpikeDataPacket currentSpike = new SpikeDataPacket();
-            List<PointF> pointList = new List<PointF>();
-            double ZeroPosition = x;
 
+            SpikeDataPacket currentSpike = new SpikeDataPacket();
+            double ZeroPosition = Approx(DataToPlot[DataToPlot.Count-2].Item1, DataToPlot[DataToPlot.Count-2].Item2, x, y);
+            currentSpike.Add(new SpikeData(0, threshold));
             currentSpike.Add(new SpikeData(x - ZeroPosition, y));
 
             while (sr.Peek() >= 0)
@@ -183,15 +183,25 @@ namespace WindowsFormsApplication1
               count++;
             }
           }
-          if (count > 0)
+          if (count > 0 && Average > eps)
+          {
             Average /= count;
-          PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
+            if (Average>threshold)
+            PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
+          }
         }
         TargetAverageList.Add(PointsList);
       }
 
     }
-
+    private double Approx(double x0, double y0, double x1, double y1)
+    {
+      double k = (y1 - y0) / (x1 - x0);
+      double b = y0 - k * x0;
+      double targetx = 0;
+      targetx = (threshold-b)/k;
+      return targetx;
+    }
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
       SpikeGraph.Refresh();
@@ -311,6 +321,11 @@ namespace WindowsFormsApplication1
     private void numericAfterStim_ValueChanged(object sender, EventArgs e)
     {
       StimCharacter.Refresh();
+    }
+
+    private void SpikeGraph_Click(object sender, EventArgs e)
+    {
+
     }
 
 

@@ -68,6 +68,7 @@
       this.SpikeGraph.Size = new System.Drawing.Size(593, 194);
       this.SpikeGraph.TabIndex = 0;
       this.SpikeGraph.TabStop = false;
+      this.SpikeGraph.Click += new System.EventHandler(this.SpikeGraph_Click);
       this.SpikeGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.SpikeGraph_Paint);
       // 
       // label1
