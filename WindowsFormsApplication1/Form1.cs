@@ -44,7 +44,7 @@ namespace WindowsFormsApplication1
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
         dialog.FileName = "Cell_1.txt";
-        dialog.InitialDirectory = Application.StartupPath + @"";
+        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
         switch (dialog.ShowDialog())
         {
           case System.Windows.Forms.DialogResult.OK:
@@ -277,7 +277,7 @@ namespace WindowsFormsApplication1
         }
 
       }
-      brush = new SolidBrush(Color.BlueViolet);
+      brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 3);
       if (AveragePointsNoStim.Count > 0 && numericNoStim.Value - 1 > 0)
       {
@@ -336,8 +336,16 @@ namespace WindowsFormsApplication1
 
     private void compareButton_Click(object sender, EventArgs e)
     {
-      FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value-1], AveragePointsStim[(int)numericAfterStim.Value-1]);
-      compareForm.Show();
+      if (AveragePointsNoStim.Count > 0 && AveragePointsStim.Count > 0)
+      {
+        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
+        compareForm.Show();
+      }
+      else
+      {
+        MessageBox.Show("Нечего отображать", "Сравнение характеристик",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+      }
     }
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)

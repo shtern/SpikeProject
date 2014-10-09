@@ -28,22 +28,63 @@ namespace WindowsFormsApplication1
 
     }
 
+
+    public PointList Normalize(PointList list)
+    {
+      float ymax = list[0].Y;
+      for (int i = 0; i < list.Count; i++)
+      {
+        if (list[i].Y < ymax)
+          ymax = list[i].Y;
+      }
+      PointList Normalized_list = new PointList();
+      for (int i = 0; i < list.Count; i++)
+      {
+        PointF point = new PointF(list[i].X, ((list[i].Y+list[0].Y) / ymax) * 10);
+        Normalized_list.Add(point);
+        //list[i].Y /= ymax;
+      }
+
+
+      return Normalized_list;
+    }
+
     private void CompareGraph_Paint(object sender, PaintEventArgs e)
     {
       Brush brush;
       Pen mainpen;
-      brush = new SolidBrush(Color.Aqua);
+      brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 3);
       if (Average_pre.Count > 0)
       {
         PointF[] AverageList = Average_pre.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
+      brush = new SolidBrush(Color.Aqua);
+      mainpen = new Pen(brush, 3);
+      if (Average_post.Count > 0)
+      {
+        PointF[] AverageList = Average_post.ToArray();
+        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
+      }
+    }
+
+    private void NormalizedGraph_Paint(object sender, PaintEventArgs e)
+    {
+      Brush brush;
+      Pen mainpen;
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 3);
       if (Average_pre.Count > 0)
       {
-        PointF[] AverageList = Average_post.ToArray();
+        PointF[] AverageList = (Normalize(Average_pre)).ToArray();
+        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
+      }
+      brush = new SolidBrush(Color.Aqua);
+      mainpen = new Pen(brush, 3);
+      if (Average_post.Count > 0)
+      {
+        PointF[] AverageList = (Normalize(Average_post)).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
     }
