@@ -25,7 +25,6 @@ namespace WindowsFormsApplication1
       InitializeComponent();
       Average_post = average_post;
       Average_pre = average_pre;
-
     }
 
 
@@ -37,10 +36,11 @@ namespace WindowsFormsApplication1
         if (list[i].Y < ymax)
           ymax = list[i].Y;
       }
+      ymax = (list[0].Y - ymax) / 2000;
       PointList Normalized_list = new PointList();
       for (int i = 0; i < list.Count; i++)
       {
-        PointF point = new PointF(list[i].X, ((list[i].Y+list[0].Y) / ymax) * 10);
+        PointF point = new PointF(list[i].X, (NormalizedGraph.Height - (((list[0].Y - list[i].Y) / 2000) / ymax) * 250));
         Normalized_list.Add(point);
         //list[i].Y /= ymax;
       }
@@ -57,14 +57,20 @@ namespace WindowsFormsApplication1
       mainpen = new Pen(brush, 3);
       if (Average_pre.Count > 0)
       {
-        PointF[] AverageList = Average_pre.ToArray();
+        PointList TempList = new PointList();
+        for (int i = 0; i < Average_pre.Count; i++)
+          TempList.Add(new PointF(Average_pre[i].X, CompareGraph.Height - Average_pre[0].Y + Average_pre[i].Y));
+        PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
       if (Average_post.Count > 0)
       {
-        PointF[] AverageList = Average_post.ToArray();
+        PointList TempList = new PointList();
+        for (int i = 0; i < Average_post.Count; i++)
+          TempList.Add(new PointF(Average_post[i].X, CompareGraph.Height - Average_post[0].Y + Average_post[i].Y));
+        PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
     }

@@ -205,7 +205,7 @@ namespace WindowsFormsApplication1
           if (count > 0 && Average > eps)
           {
             Average /= count;
-            if (Average > threshold)
+            //if (Average > threshold)
               PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
           }
         }
