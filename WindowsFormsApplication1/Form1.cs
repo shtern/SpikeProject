@@ -116,7 +116,7 @@ namespace WindowsFormsApplication1
               XYData = new SpikeData(x, y);
               DataToPlot.Add(XYData);
             }
-            if(currentSpike.Count > 30) SpikeList.Add(currentSpike);
+            if(currentSpike.Count > 10) SpikeList.Add(currentSpike);
           }
         }
       }
@@ -271,7 +271,7 @@ namespace WindowsFormsApplication1
         {
           e.Graphics.DrawLine(mainpen,
             (float)SpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000 ),
             (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
