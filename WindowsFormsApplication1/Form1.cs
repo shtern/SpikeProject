@@ -144,13 +144,11 @@ namespace WindowsFormsApplication1
         numericAfterStim.Maximum = 0;
         numericNoStim.Maximum = 0;
       }
-
+      numericNoStim.Value = numericNoStim.Maximum;
+      numericAfterStim.Value = numericAfterStim.Maximum;
     }
 
-    private void FindSpikeChar()
-    {
 
-    }
 
     private void buildAverage(bool first, List<PointList> TargetAverageList)
     {
@@ -171,16 +169,17 @@ namespace WindowsFormsApplication1
         up_border = SpikeList.Count;
         targetHeight = StimCharacter.Height;
       }
-      for (int z = down_border + 1; z < up_border && z < SpikeList.Count; z++)
+
+      for (int z = down_border; z < up_border && z < SpikeList.Count; z++)
       {
-        minLength = SpikeList.Last().Last().Item1;
+        minLength = SpikeList.First().Last().Item1;
         for (int i = down_border; i < up_border && i < z && i < SpikeList.Count; i++)
         {
           if (SpikeList[i].Last().Item1 < minLength) minLength = SpikeList[i].Last().Item1;
           if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
         }
 
-        double StepWidth = 0.1;
+        double StepWidth = 1e-3;
         PointsList = new PointList();
         for (double x = StepWidth; x < minLength; x += StepWidth)
         {
@@ -267,9 +266,9 @@ namespace WindowsFormsApplication1
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
-      if (AveragePointsStim.Count > 0 && numericAfterStim.Value - 1 > 0 && numericAfterStim.Value < AveragePointsStim.Count)
+      if (AveragePointsStim.Count > 0 && numericAfterStim.Value > 0 && numericAfterStim.Value < AveragePointsStim.Count && AvgCheckBox.Checked == true)
       {
-        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value - 1]).ToArray();
+        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value ]).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
 
@@ -291,11 +290,12 @@ namespace WindowsFormsApplication1
         }
 
       }
+
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 3);
-      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value - 1 > 0)
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value  > 0 && AvgCheckBox.Checked==true)
       {
-        PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
+        PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value ]).ToArray();
 
         if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
       }
@@ -334,10 +334,7 @@ namespace WindowsFormsApplication1
       StimCharacter.Refresh();
     }
 
-    private void Threshold_Scroll_Scroll(object sender, EventArgs e)
-    {
 
-    }
 
     private void numericNo_ValueChanged(object sender, EventArgs e)
     {
@@ -351,9 +348,9 @@ namespace WindowsFormsApplication1
 
     private void compareButton_Click(object sender, EventArgs e)
     {
-      if (AveragePointsNoStim.Count > 0 && AveragePointsStim.Count > 0)
+      if (AveragePointsNoStim.Count > 0 && AveragePointsStim.Count > 0 && AvgCheckBox.Checked == true)
       {
-        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
+        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value], AveragePointsStim[(int)numericAfterStim.Value]);
         compareForm.Show();
       }
       else
@@ -370,6 +367,30 @@ namespace WindowsFormsApplication1
         loadData(FilePath);
       if (SpikeList.Count > 0)
       {
+        numericAfterStim.Value = numericAfterStim.Maximum;
+        numericNoStim.Value = numericNoStim.Maximum;
+        SpikeGraph.Refresh();
+        NoStimCharacter.Refresh();
+        StimCharacter.Refresh();
+      }
+
+    }
+
+    private void AvgCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
+    }
+
+    private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
+    {
+      threshold = (double)Threshold_Scroll.Value / 1000;
+      if (FilePath != "")
+        loadData(FilePath);
+      if (SpikeList.Count > 0)
+      {
+        numericAfterStim.Value = numericAfterStim.Maximum;
+        numericNoStim.Value = numericNoStim.Maximum;
         SpikeGraph.Refresh();
         NoStimCharacter.Refresh();
         StimCharacter.Refresh();
