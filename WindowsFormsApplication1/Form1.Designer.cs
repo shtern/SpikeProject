@@ -61,12 +61,12 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.SpikeGraph.Location = new System.Drawing.Point(12, 12);
+      this.SpikeGraph.Location = new System.Drawing.Point(10, 9);
       this.SpikeGraph.Name = "SpikeGraph";
-      this.SpikeGraph.Size = new System.Drawing.Size(593, 194);
+      this.SpikeGraph.Size = new System.Drawing.Size(615, 194);
       this.SpikeGraph.TabIndex = 0;
       this.SpikeGraph.TabStop = false;
       this.SpikeGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.SpikeGraph_Paint);
@@ -75,7 +75,7 @@
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(891, 12);
+      this.label1.Location = new System.Drawing.Point(913, 12);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(86, 13);
       this.label1.TabIndex = 1;
@@ -84,7 +84,7 @@
       // Load_Button
       // 
       this.Load_Button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.Load_Button.Location = new System.Drawing.Point(1111, 7);
+      this.Load_Button.Location = new System.Drawing.Point(1133, 7);
       this.Load_Button.Name = "Load_Button";
       this.Load_Button.Size = new System.Drawing.Size(75, 23);
       this.Load_Button.TabIndex = 2;
@@ -96,9 +96,9 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(10, 212);
+      this.NoStimCharacter.Location = new System.Drawing.Point(10, 250);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(1174, 243);
+      this.NoStimCharacter.Size = new System.Drawing.Size(1196, 273);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
@@ -143,12 +143,12 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(4, 461);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 541);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(1174, 273);
+      this.StimCharacter.Size = new System.Drawing.Size(1196, 273);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
@@ -196,7 +196,7 @@
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.TopScroll);
       this.groupBox1.Controls.Add(this.Threshold_Scroll);
-      this.groupBox1.Location = new System.Drawing.Point(622, 9);
+      this.groupBox1.Location = new System.Drawing.Point(644, 9);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(254, 120);
       this.groupBox1.TabIndex = 13;
@@ -213,7 +213,7 @@
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.BottomScroll);
       this.groupBox2.Controls.Add(this.label6);
-      this.groupBox2.Location = new System.Drawing.Point(892, 37);
+      this.groupBox2.Location = new System.Drawing.Point(914, 38);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(292, 169);
       this.groupBox2.TabIndex = 14;
@@ -277,7 +277,7 @@
       // compareButton
       // 
       this.compareButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.compareButton.Location = new System.Drawing.Point(801, 142);
+      this.compareButton.Location = new System.Drawing.Point(823, 142);
       this.compareButton.Name = "compareButton";
       this.compareButton.Size = new System.Drawing.Size(75, 23);
       this.compareButton.TabIndex = 15;
@@ -289,7 +289,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1198, 733);
+      this.ClientSize = new System.Drawing.Size(1220, 824);
       this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);

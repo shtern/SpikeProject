@@ -59,7 +59,7 @@ namespace WindowsFormsApplication1
       {
         PointList TempList = new PointList();
         for (int i = 0; i < Average_pre.Count; i++)
-          TempList.Add(new PointF(Average_pre[i].X, CompareGraph.Height - Average_pre[0].Y + Average_pre[i].Y));
+          TempList.Add(new PointF(Average_pre[i].X,   Average_pre[i].Y));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
@@ -69,7 +69,7 @@ namespace WindowsFormsApplication1
       {
         PointList TempList = new PointList();
         for (int i = 0; i < Average_post.Count; i++)
-          TempList.Add(new PointF(Average_post[i].X, CompareGraph.Height - Average_post[0].Y + Average_post[i].Y));
+          TempList.Add(new PointF(Average_post[i].X,   Average_post[i].Y));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }

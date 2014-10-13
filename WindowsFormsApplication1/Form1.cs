@@ -34,6 +34,7 @@ namespace WindowsFormsApplication1
     public Form1()
     {
       InitializeComponent();
+
       threshold = (double)Threshold_Scroll.Value / 1000;
       DataToPlot = new List<Tuple<double, double>>();
       SpikeList = new List<SpikeDataPacket>();
@@ -82,9 +83,12 @@ namespace WindowsFormsApplication1
             MessageBox.Show("Bad file exception!!!!!");
             break;
           }
+          string[] resultxy2 = result.Split('\t');
+          resultxy2[0] = resultxy[0].Replace(",", ".");
+          resultxy2[1] = resultxy[1].Replace(",", ".");
 
-          double.TryParse(resultxy[0], out x);
-          double.TryParse(resultxy[1], out y);
+          double.TryParse(resultxy2[0], out x);
+          double.TryParse(resultxy2[1], out y);
 
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
           DataToPlot.Add(XYData);
@@ -105,8 +109,12 @@ namespace WindowsFormsApplication1
                 MessageBox.Show("Bad file exception!!!!!");
                 break;
               }
-              double.TryParse(resultxy[0], out x);
-              double.TryParse(resultxy[1], out y);
+              resultxy2 = result.Split('\t');
+              resultxy2[0] = resultxy[0].Replace(",", ".");
+              resultxy2[1] = resultxy[1].Replace(",", ".");
+
+              double.TryParse(resultxy2[0], out x);
+              double.TryParse(resultxy2[1], out y);
 
               if (y < threshold) break;
 
@@ -116,7 +124,11 @@ namespace WindowsFormsApplication1
               XYData = new SpikeData(x, y);
               DataToPlot.Add(XYData);
             }
-            if(currentSpike.Count > 10) SpikeList.Add(currentSpike);
+            if (currentSpike.Count > 10  
+              && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10
+              //&& currentSpike.Count(s => s.Item2 < 1.05 * threshold) < 14
+              ) 
+              SpikeList.Add(currentSpike);
           }
         }
       }
@@ -146,15 +158,18 @@ namespace WindowsFormsApplication1
       double minLength = 0;
       int down_border = 0;
       int up_border = SpikeList.Count;
+      int targetHeight = 0;
       if (first == true)
       {
         down_border = 0;
         up_border = 11;
+        targetHeight = NoStimCharacter.Height;
       }
       else
       {
         down_border = 11;
         up_border = SpikeList.Count;
+        targetHeight = StimCharacter.Height;
       }
       for (int z = down_border + 1; z < up_border && z < SpikeList.Count; z++)
       {
@@ -165,7 +180,7 @@ namespace WindowsFormsApplication1
           if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
         }
 
-        double StepWidth = 0.001;
+        double StepWidth = 0.1;
         PointsList = new PointList();
         for (double x = StepWidth; x < minLength; x += StepWidth)
         {
@@ -205,8 +220,7 @@ namespace WindowsFormsApplication1
           if (count > 0 && Average > eps)
           {
             Average /= count;
-            //if (Average > threshold)
-              PointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
+            PointsList.Add(new PointF((float)x * KxBottom, (float)(targetHeight - Average * 2000)));
           }
         }
         TargetAverageList.Add(PointsList);
@@ -271,7 +285,7 @@ namespace WindowsFormsApplication1
         {
           e.Graphics.DrawLine(mainpen,
             (float)SpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000 ),
+            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
             (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
         }
@@ -282,6 +296,7 @@ namespace WindowsFormsApplication1
       if (AveragePointsNoStim.Count > 0 && numericNoStim.Value - 1 > 0)
       {
         PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
+
         if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
       }
 
@@ -321,7 +336,7 @@ namespace WindowsFormsApplication1
 
     private void Threshold_Scroll_Scroll(object sender, EventArgs e)
     {
-      
+
     }
 
     private void numericNo_ValueChanged(object sender, EventArgs e)
