@@ -180,7 +180,6 @@ namespace WindowsFormsApplication1
 
           double.TryParse(resultxy2[0], out x);
           double.TryParse(resultxy2[1], out y);
-
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
           GlobalData.Add(XYData);
         }
@@ -206,6 +205,7 @@ namespace WindowsFormsApplication1
             x = GlobalData[i].Item1;
             y = GlobalData[i].Item2;
             SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
+            if (y - threshold > eps)
             currentSpike.Add(Spikedata);
             i++;
           }
