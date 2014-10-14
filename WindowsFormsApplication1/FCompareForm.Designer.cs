@@ -36,8 +36,8 @@
       // 
       // CompareGraph
       // 
-      this.CompareGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.CompareGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.CompareGraph.BackColor = System.Drawing.Color.White;
       this.CompareGraph.Location = new System.Drawing.Point(12, 12);
       this.CompareGraph.Name = "CompareGraph";
@@ -48,8 +48,8 @@
       // 
       // NormalizedGraph
       // 
-      this.NormalizedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.NormalizedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.NormalizedGraph.BackColor = System.Drawing.Color.White;
       this.NormalizedGraph.Location = new System.Drawing.Point(768, 12);
       this.NormalizedGraph.Name = "NormalizedGraph";
@@ -66,7 +66,7 @@
       this.Controls.Add(this.NormalizedGraph);
       this.Controls.Add(this.CompareGraph);
       this.Name = "FCompareForm";
-      this.Text = "FCompareForm";
+      this.Text = "Сравнение спайковых характеристик";
       ((System.ComponentModel.ISupportInitialize)(this.CompareGraph)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.NormalizedGraph)).EndInit();
       this.ResumeLayout(false);

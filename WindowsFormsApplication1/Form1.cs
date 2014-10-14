@@ -69,90 +69,6 @@ namespace WindowsFormsApplication1
       }
     }
 
-    //private void loadData_old(string FilePath)
-    //{
-    //  GlobalData = new List<Tuple<double, double>>();
-    //  StimSpikeList = new List<SpikeDataPacket>();
-    //  NoStimSpikeList = new List<SpikeDataPacket>();
-    //  AverageDrawPointsStim = new List<PointList>();
-    //  AverageDrawPointsNoStim = new List<PointList>();
-    //  using (StreamReader sr = new StreamReader(FilePath))
-    //  {
-    //    while (sr.Peek() >= 0)
-    //    {
-    //      string result = sr.ReadLine();
-    //      double x, y;
-    //      string[] resultxy = result.Split('\t');
-
-    //      if (resultxy.Length != 2)
-    //      {
-    //        MessageBox.Show("Bad file exception!!!!!");
-    //        break;
-    //      }
-    //      string[] resultxy2 = result.Split('\t');
-    //      resultxy2[0] = resultxy[0].Replace(",", ".");
-    //      resultxy2[1] = resultxy[1].Replace(",", ".");
-
-    //      double.TryParse(resultxy2[0], out x);
-    //      double.TryParse(resultxy2[1], out y);
-
-    //      Tuple<double, double> XYData = new Tuple<double, double>(x, y);
-    //      GlobalData.Add(XYData);
-    //      if (y > threshold)
-    //      {
-
-    //        SpikeDataPacket currentSpike = new SpikeDataPacket();
-    //        double ZeroPositionX = ApproxX(GlobalData[GlobalData.Count - 2].Item1, GlobalData[GlobalData.Count - 2].Item2, x, y);
-    //        currentSpike.Add(new SpikeData(0, 0));
-
-    //        while (sr.Peek() >= 0)
-    //        {
-    //          result = sr.ReadLine();
-    //          resultxy = result.Split('\t');
-
-    //          if (resultxy.Length != 2)
-    //          {
-    //            MessageBox.Show("Bad file exception!!!!!");
-    //            break;
-    //          }
-    //          resultxy2 = result.Split('\t');
-    //          resultxy2[0] = resultxy[0].Replace(",", ".");
-    //          resultxy2[1] = resultxy[1].Replace(",", ".");
-
-    //          double.TryParse(resultxy2[0], out x);
-    //          double.TryParse(resultxy2[1], out y);
-
-    //          if (y < threshold) break;
-
-    //          SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
-
-    //          currentSpike.Add(Spikedata);
-    //          XYData = new SpikeData(x, y);
-    //          GlobalData.Add(XYData);
-    //        }
-    //        if (currentSpike.Count > 10
-    //          && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10
-    //          //&& currentSpike.Count(s => s.Item2 < 1.05 * threshold) < 14
-    //          )
-    //          SpikeList.Add(currentSpike);
-    //      }
-    //    }
-    //  }
-    //  if (SpikeList.Count > 11)
-    //  {
-    //    numericNoStim.Maximum = 10;
-    //    numericAfterStim.Maximum = (SpikeList.Count - 11);
-    //    buildAverage(true, AverageDrawPointsNoStim);
-    //    buildAverage(false, AverageDrawPointsStim);
-    //  }
-    //  else
-    //  {
-    //    numericAfterStim.Maximum = 0;
-    //    numericNoStim.Maximum = 0;
-    //  }
-    //  numericNoStim.Value = numericNoStim.Maximum;
-    //  numericAfterStim.Value = numericAfterStim.Maximum;
-    //}
 
     private void loadData(string FilePath)
     {
@@ -272,7 +188,6 @@ namespace WindowsFormsApplication1
               }
 
             }
-            //if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
 
             double k = (_y[1] - _y[0]) / ((_x[1] - _x[0]) > eps ? (_x[1] - _x[0]) : eps);
             double b = _y[0] - k * _x[0];
@@ -357,82 +272,6 @@ namespace WindowsFormsApplication1
 
     }
 
-
-    //private void buildAverage(bool first, List<PointList> TargetAverageList)
-    //{
-    //  double maxLenght = 0;
-    //  double minLength = 0;
-    //  int down_border = 0;
-    //  int up_border = SpikeList.Count;
-    //  int targetHeight = 0;
-    //  if (first == true)
-    //  {
-    //    down_border = 0;
-    //    up_border = 11;
-    //    targetHeight = NoStimCharacter.Height;
-    //  }
-    //  else
-    //  {
-    //    down_border = 11;
-    //    up_border = SpikeList.Count;
-    //    targetHeight = StimCharacter.Height;
-    //  }
-
-    //  for (int z = down_border; z < up_border && z < SpikeList.Count; z++)
-    //  {
-    //    minLength = SpikeList.First().Last().Item1;
-    //    for (int i = down_border; i < up_border && i < z && i < SpikeList.Count; i++)
-    //    {
-    //      if (SpikeList[i].Last().Item1 < minLength) minLength = SpikeList[i].Last().Item1;
-    //      if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
-    //    }
-
-    //    double StepWidth = 1e-3;
-    //    DrawPointsList = new PointList();
-    //    for (double x = (SpikeList[0] != null && SpikeList[0].Count > 1) ? SpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
-    //    {
-    //      double Average = 0;
-    //      int count = 0;
-    //      for (int j = down_border; j < up_border && j < z && j < SpikeList.Count; j++)
-    //      {
-    //        SpikeDataPacket data = SpikeList[j];
-    //        double[] _x = new double[2];
-    //        double[] _y = new double[2];
-    //        for (int i = 0; i < data.Count; i++)
-    //        {
-    //          if (data[i].Item1 <= x)
-    //          {
-    //            _x[0] = data[i].Item1;
-    //            _y[0] = data[i].Item2;
-    //          }
-    //          if (data[i].Item1 >= x)
-    //          {
-    //            _x[1] = data[i].Item1;
-    //            _y[1] = data[i].Item2;
-    //            break;
-
-    //          }
-
-    //        }
-    //        if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
-    //        {
-    //          double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
-    //          double b = _y[0] - k * _x[0];
-    //          double y = k * x + b;
-    //          Average += y;
-    //          count++;
-    //        }
-    //      }
-    //      if (count > 0 && Average > eps)
-    //      {
-    //        Average /= count;
-    //        DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(targetHeight - Average * 2000)));
-    //      }
-    //    }
-    //    TargetAverageList.Add(DrawPointsList);
-    //  }
-
-    //}
 
     private double ApproxX(double x0, double y0, double x1, double y1)
     {
@@ -557,7 +396,7 @@ namespace WindowsFormsApplication1
     {
       if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgCheckBox.Checked == true)
       {
-        FCompareForm compareForm = new FCompareForm(AverageDrawPointsNoStim[(int)numericNoStim.Value - 1], AverageDrawPointsStim[(int)numericAfterStim.Value - 1]);
+        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
         compareForm.Show();
       }
       else

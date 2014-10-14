@@ -9,14 +9,21 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication1
 {
-  #region definiions
+
+  #region definitions
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
   using PointList = List<PointF>;
 
   #endregion
+
   public partial class FCompareForm : Form
   {
+    #region Константы
+    int Kx = 300;
+    int Ky = 2000;
+    #endregion
+
     PointList Average_pre;
     PointList Average_post;
 
@@ -33,14 +40,14 @@ namespace WindowsFormsApplication1
       float ymax = list[0].Y;
       for (int i = 0; i < list.Count; i++)
       {
-        if (list[i].Y < ymax)
+        if (list[i].Y > ymax)
           ymax = list[i].Y;
       }
-      ymax = (list[0].Y - ymax) / 2000;
+      
       PointList Normalized_list = new PointList();
       for (int i = 0; i < list.Count; i++)
       {
-        PointF point = new PointF(list[i].X, (NormalizedGraph.Height - (((list[0].Y - list[i].Y) / 2000) / ymax) * 250));
+        PointF point = new PointF(list[i].X*Kx, NormalizedGraph.Height - ((list[i].Y)/ymax) * 200 );
         Normalized_list.Add(point);
         //list[i].Y /= ymax;
       }
@@ -59,7 +66,7 @@ namespace WindowsFormsApplication1
       {
         PointList TempList = new PointList();
         for (int i = 0; i < Average_pre.Count; i++)
-          TempList.Add(new PointF(Average_pre[i].X,   Average_pre[i].Y));
+          TempList.Add(new PointF(Average_pre[i].X * Kx, NormalizedGraph.Height - Average_pre[i].Y * Ky));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
@@ -69,7 +76,7 @@ namespace WindowsFormsApplication1
       {
         PointList TempList = new PointList();
         for (int i = 0; i < Average_post.Count; i++)
-          TempList.Add(new PointF(Average_post[i].X,   Average_post[i].Y));
+          TempList.Add(new PointF(Average_post[i].X * Kx, NormalizedGraph.Height - Average_post[i].Y * Ky));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
