@@ -177,9 +177,18 @@ namespace WindowsFormsApplication1
           string[] resultxy2 = result.Split('\t');
           resultxy2[0] = resultxy[0].Replace(",", ".");
           resultxy2[1] = resultxy[1].Replace(",", ".");
-
-          double.TryParse(resultxy2[0], out x);
-          double.TryParse(resultxy2[1], out y);
+          double parsevar = 0;
+          double.TryParse("3,5", out parsevar);
+          if (parsevar == 3.5)
+          {
+            double.TryParse(resultxy[0], out x);
+            double.TryParse(resultxy[1], out y);
+          }
+          else
+          {
+            double.TryParse(resultxy2[0], out x);
+            double.TryParse(resultxy2[1], out y);
+          }
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
           GlobalData.Add(XYData);
         }
@@ -206,7 +215,7 @@ namespace WindowsFormsApplication1
             y = GlobalData[i].Item2;
             SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
             if (y - threshold > eps)
-            currentSpike.Add(Spikedata);
+              currentSpike.Add(Spikedata);
             i++;
           }
           if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
@@ -218,6 +227,8 @@ namespace WindowsFormsApplication1
       }
       numericNoStim.Maximum = NoStimSpikeList.Count;
       numericAfterStim.Maximum = StimSpikeList.Count;
+      numericNoStim.Value = NoStimSpikeList.Count;
+      numericAfterStim.Value = StimSpikeList.Count;
     }
 
     private void buildNoStimAverage()
@@ -546,7 +557,7 @@ namespace WindowsFormsApplication1
     {
       if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgCheckBox.Checked == true)
       {
-        FCompareForm compareForm = new FCompareForm(AverageDrawPointsNoStim[(int)numericNoStim.Value], AverageDrawPointsStim[(int)numericAfterStim.Value]);
+        FCompareForm compareForm = new FCompareForm(AverageDrawPointsNoStim[(int)numericNoStim.Value - 1], AverageDrawPointsStim[(int)numericAfterStim.Value - 1]);
         compareForm.Show();
       }
       else
