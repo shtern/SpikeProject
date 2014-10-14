@@ -21,12 +21,17 @@ namespace WindowsFormsApplication1
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
+    int nostimcount = 11;
     #endregion
 
     #region Данные класса
-    private List<Tuple<double, double>> DataToPlot;
-    private List<SpikeDataPacket> SpikeList;
+    private List<Tuple<double, double>> GlobalData;
+    private List<SpikeDataPacket> StimSpikeList;
+    private List<SpikeDataPacket> NoStimSpikeList;
+    private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
+    private List<PointList> AverageDrawPointsStim = new List<PointList>();
+    private List<PointList> AverageDrawPointsNoStim = new List<PointList>();
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
     #endregion
@@ -36,8 +41,9 @@ namespace WindowsFormsApplication1
       InitializeComponent();
 
       threshold = (double)Threshold_Scroll.Value / 1000;
-      DataToPlot = new List<Tuple<double, double>>();
-      SpikeList = new List<SpikeDataPacket>();
+      GlobalData = new List<Tuple<double, double>>();
+      StimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeList = new List<SpikeDataPacket>();
     }
 
     private void Load_Button_Click(object sender, EventArgs e)
@@ -51,7 +57,6 @@ namespace WindowsFormsApplication1
           case System.Windows.Forms.DialogResult.OK:
             FilePath = dialog.FileName;
             loadData(FilePath);
-
             SpikeGraph.Refresh();
             NoStimCharacter.Refresh();
             StimCharacter.Refresh();
@@ -64,12 +69,98 @@ namespace WindowsFormsApplication1
       }
     }
 
+    //private void loadData_old(string FilePath)
+    //{
+    //  GlobalData = new List<Tuple<double, double>>();
+    //  StimSpikeList = new List<SpikeDataPacket>();
+    //  NoStimSpikeList = new List<SpikeDataPacket>();
+    //  AverageDrawPointsStim = new List<PointList>();
+    //  AverageDrawPointsNoStim = new List<PointList>();
+    //  using (StreamReader sr = new StreamReader(FilePath))
+    //  {
+    //    while (sr.Peek() >= 0)
+    //    {
+    //      string result = sr.ReadLine();
+    //      double x, y;
+    //      string[] resultxy = result.Split('\t');
+
+    //      if (resultxy.Length != 2)
+    //      {
+    //        MessageBox.Show("Bad file exception!!!!!");
+    //        break;
+    //      }
+    //      string[] resultxy2 = result.Split('\t');
+    //      resultxy2[0] = resultxy[0].Replace(",", ".");
+    //      resultxy2[1] = resultxy[1].Replace(",", ".");
+
+    //      double.TryParse(resultxy2[0], out x);
+    //      double.TryParse(resultxy2[1], out y);
+
+    //      Tuple<double, double> XYData = new Tuple<double, double>(x, y);
+    //      GlobalData.Add(XYData);
+    //      if (y > threshold)
+    //      {
+
+    //        SpikeDataPacket currentSpike = new SpikeDataPacket();
+    //        double ZeroPositionX = ApproxX(GlobalData[GlobalData.Count - 2].Item1, GlobalData[GlobalData.Count - 2].Item2, x, y);
+    //        currentSpike.Add(new SpikeData(0, 0));
+
+    //        while (sr.Peek() >= 0)
+    //        {
+    //          result = sr.ReadLine();
+    //          resultxy = result.Split('\t');
+
+    //          if (resultxy.Length != 2)
+    //          {
+    //            MessageBox.Show("Bad file exception!!!!!");
+    //            break;
+    //          }
+    //          resultxy2 = result.Split('\t');
+    //          resultxy2[0] = resultxy[0].Replace(",", ".");
+    //          resultxy2[1] = resultxy[1].Replace(",", ".");
+
+    //          double.TryParse(resultxy2[0], out x);
+    //          double.TryParse(resultxy2[1], out y);
+
+    //          if (y < threshold) break;
+
+    //          SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
+
+    //          currentSpike.Add(Spikedata);
+    //          XYData = new SpikeData(x, y);
+    //          GlobalData.Add(XYData);
+    //        }
+    //        if (currentSpike.Count > 10
+    //          && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10
+    //          //&& currentSpike.Count(s => s.Item2 < 1.05 * threshold) < 14
+    //          )
+    //          SpikeList.Add(currentSpike);
+    //      }
+    //    }
+    //  }
+    //  if (SpikeList.Count > 11)
+    //  {
+    //    numericNoStim.Maximum = 10;
+    //    numericAfterStim.Maximum = (SpikeList.Count - 11);
+    //    buildAverage(true, AverageDrawPointsNoStim);
+    //    buildAverage(false, AverageDrawPointsStim);
+    //  }
+    //  else
+    //  {
+    //    numericAfterStim.Maximum = 0;
+    //    numericNoStim.Maximum = 0;
+    //  }
+    //  numericNoStim.Value = numericNoStim.Maximum;
+    //  numericAfterStim.Value = numericAfterStim.Maximum;
+    //}
+
     private void loadData(string FilePath)
     {
-      DataToPlot = new List<Tuple<double, double>>();
-      SpikeList = new List<SpikeDataPacket>();
-      AveragePointsStim = new List<PointList>();
-      AveragePointsNoStim = new List<PointList>();
+      GlobalData = new List<Tuple<double, double>>();
+      StimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeList = new List<SpikeDataPacket>();
+      AverageDrawPointsStim = new List<PointList>();
+      AverageDrawPointsNoStim = new List<PointList>();
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -91,104 +182,67 @@ namespace WindowsFormsApplication1
           double.TryParse(resultxy2[1], out y);
 
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
-          DataToPlot.Add(XYData);
-          if (y > threshold)
+          GlobalData.Add(XYData);
+        }
+      }
+      buildCharactList();
+      buildNoStimAverage();
+      buildStimAverage();
+    }
+
+    private void buildCharactList()
+    {
+      for (int i = 1; i < GlobalData.Count; i++)
+      {
+        double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
+        if (y > threshold)
+        {
+          SpikeDataPacket currentSpike = new SpikeDataPacket();
+          double ZeroPositionX = ApproxX(GlobalData[i - 1].Item1, GlobalData[i - 1].Item2, x, y);
+          currentSpike.Add(new SpikeData(0, 0));
+          while (y > threshold && i < GlobalData.Count)
           {
-
-            SpikeDataPacket currentSpike = new SpikeDataPacket();
-            double ZeroPositionX = ApproxX(DataToPlot[DataToPlot.Count - 2].Item1, DataToPlot[DataToPlot.Count - 2].Item2, x, y);
-            currentSpike.Add(new SpikeData(x - ZeroPositionX, y - threshold));
-
-            while (sr.Peek() >= 0)
-            {
-              result = sr.ReadLine();
-              resultxy = result.Split('\t');
-
-              if (resultxy.Length != 2)
-              {
-                MessageBox.Show("Bad file exception!!!!!");
-                break;
-              }
-              resultxy2 = result.Split('\t');
-              resultxy2[0] = resultxy[0].Replace(",", ".");
-              resultxy2[1] = resultxy[1].Replace(",", ".");
-
-              double.TryParse(resultxy2[0], out x);
-              double.TryParse(resultxy2[1], out y);
-
-              if (y < threshold) break;
-
-              SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
-
-              currentSpike.Add(Spikedata);
-              XYData = new SpikeData(x, y);
-              DataToPlot.Add(XYData);
-            }
-            if (currentSpike.Count > 10  
-              && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10
-              //&& currentSpike.Count(s => s.Item2 < 1.05 * threshold) < 14
-              ) 
-              SpikeList.Add(currentSpike);
+            if (y < threshold) break;
+            x = GlobalData[i].Item1;
+            y = GlobalData[i].Item2;
+            SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
+            currentSpike.Add(Spikedata);
+            i++;
+          }
+          if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+          {
+            if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
+            else StimSpikeList.Add(currentSpike);
           }
         }
       }
-      if (SpikeList.Count > 11)
-      {
-        numericNoStim.Maximum = 10;
-        numericAfterStim.Maximum = (SpikeList.Count - 11);
-        buildAverage(true, AveragePointsNoStim);
-        buildAverage(false, AveragePointsStim);
-      }
-      else
-      {
-        numericAfterStim.Maximum = 0;
-        numericNoStim.Maximum = 0;
-      }
-      numericNoStim.Value = numericNoStim.Maximum;
-      numericAfterStim.Value = numericAfterStim.Maximum;
+      numericNoStim.Maximum = NoStimSpikeList.Count;
+      numericAfterStim.Maximum = StimSpikeList.Count;
     }
 
-
-
-    private void buildAverage(bool first, List<PointList> TargetAverageList)
+    private void buildNoStimAverage()
     {
       double maxLenght = 0;
       double minLength = 0;
-      int down_border = 0;
-      int up_border = SpikeList.Count;
-      int targetHeight = 0;
-      if (first == true)
+      for (int z = 0; z < NoStimSpikeList.Count; z++)
       {
-        down_border = 0;
-        up_border = 11;
-        targetHeight = NoStimCharacter.Height;
-      }
-      else
-      {
-        down_border = 11;
-        up_border = SpikeList.Count;
-        targetHeight = StimCharacter.Height;
-      }
-
-      for (int z = down_border; z < up_border && z < SpikeList.Count; z++)
-      {
-        minLength = SpikeList.First().Last().Item1;
-        for (int i = down_border; i < up_border && i < z && i < SpikeList.Count; i++)
+        minLength = NoStimSpikeList.First().Last().Item1;
+        for (int i = 0; i <= z && i < NoStimSpikeList.Count; i++)
         {
-          if (SpikeList[i].Last().Item1 < minLength) minLength = SpikeList[i].Last().Item1;
-          if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
+          if (NoStimSpikeList[i].Last().Item1 < minLength) minLength = NoStimSpikeList[i].Last().Item1;
+          if (NoStimSpikeList[i].Last().Item1 > maxLenght) maxLenght = NoStimSpikeList[i].Last().Item1;
         }
 
         double StepWidth = 1e-3;
+        DrawPointsList = new PointList();
         PointsList = new PointList();
-        for (double x = StepWidth; x < minLength; x += StepWidth)
+        for (double x = (NoStimSpikeList[0] != null && NoStimSpikeList[0].Count > 1) ? NoStimSpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
         {
-
           double Average = 0;
           int count = 0;
-          for (int j = down_border; j < up_border && j < z && j < SpikeList.Count; j++)
+          for (int j = 0; j <= z && j < NoStimSpikeList.Count; j++)
           {
-            SpikeDataPacket data = SpikeList[j];
+            SpikeDataPacket data = NoStimSpikeList[j];
             double[] _x = new double[2];
             double[] _y = new double[2];
             for (int i = 0; i < data.Count; i++)
@@ -207,7 +261,70 @@ namespace WindowsFormsApplication1
               }
 
             }
-            if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+            //if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+
+            double k = (_y[1] - _y[0]) / ((_x[1] - _x[0]) > eps ? (_x[1] - _x[0]) : eps);
+            double b = _y[0] - k * _x[0];
+            double y = k * x + b;
+            Average += y;
+            count++;
+          }
+          if (count > eps && Average > eps)
+          {
+            Average /= count;
+            PointsList.Add(new PointF((float)x, (float)Average));
+            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(NoStimCharacter.Height - Average * 2000)));
+          }
+        }
+        AveragePointsNoStim.Add(PointsList);
+        AverageDrawPointsNoStim.Add(DrawPointsList);
+      }
+
+    }
+
+    private void buildStimAverage()
+    {
+      double maxLenght = 0;
+      double minLength = 0;
+
+      for (int z = 0; z < StimSpikeList.Count; z++)
+      {
+        minLength = StimSpikeList.First().Last().Item1;
+        for (int i = 0; i <= z && i < StimSpikeList.Count; i++)
+        {
+          if (StimSpikeList[i].Last().Item1 < minLength) minLength = StimSpikeList[i].Last().Item1;
+          if (StimSpikeList[i].Last().Item1 > maxLenght) maxLenght = StimSpikeList[i].Last().Item1;
+        }
+
+        double StepWidth = 1e-3;
+        DrawPointsList = new PointList();
+        PointsList = new PointList();
+        for (double x = (StimSpikeList[0] != null && StimSpikeList[0].Count > 1) ? StimSpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
+        {
+          double Average = 0;
+          int count = 0;
+          for (int j = 0; j <= z && j < StimSpikeList.Count; j++)
+          {
+            SpikeDataPacket data = StimSpikeList[j];
+            double[] _x = new double[2];
+            double[] _y = new double[2];
+            for (int i = 0; i < data.Count; i++)
+            {
+              if (data[i].Item1 <= x)
+              {
+                _x[0] = data[i].Item1;
+                _y[0] = data[i].Item2;
+              }
+              if (data[i].Item1 >= x)
+              {
+                _x[1] = data[i].Item1;
+                _y[1] = data[i].Item2;
+                break;
+
+              }
+
+            }
+            if (Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
             {
               double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
               double b = _y[0] - k * _x[0];
@@ -219,13 +336,92 @@ namespace WindowsFormsApplication1
           if (count > 0 && Average > eps)
           {
             Average /= count;
-            PointsList.Add(new PointF((float)x * KxBottom, (float)(targetHeight - Average * 2000)));
+            PointsList.Add(new PointF((float)x, (float)Average));
+            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
           }
         }
-        TargetAverageList.Add(PointsList);
+        AveragePointsStim.Add(PointsList);
+        AverageDrawPointsStim.Add(DrawPointsList);
       }
 
     }
+
+
+    //private void buildAverage(bool first, List<PointList> TargetAverageList)
+    //{
+    //  double maxLenght = 0;
+    //  double minLength = 0;
+    //  int down_border = 0;
+    //  int up_border = SpikeList.Count;
+    //  int targetHeight = 0;
+    //  if (first == true)
+    //  {
+    //    down_border = 0;
+    //    up_border = 11;
+    //    targetHeight = NoStimCharacter.Height;
+    //  }
+    //  else
+    //  {
+    //    down_border = 11;
+    //    up_border = SpikeList.Count;
+    //    targetHeight = StimCharacter.Height;
+    //  }
+
+    //  for (int z = down_border; z < up_border && z < SpikeList.Count; z++)
+    //  {
+    //    minLength = SpikeList.First().Last().Item1;
+    //    for (int i = down_border; i < up_border && i < z && i < SpikeList.Count; i++)
+    //    {
+    //      if (SpikeList[i].Last().Item1 < minLength) minLength = SpikeList[i].Last().Item1;
+    //      if (SpikeList[i].Last().Item1 > maxLenght) maxLenght = SpikeList[i].Last().Item1;
+    //    }
+
+    //    double StepWidth = 1e-3;
+    //    DrawPointsList = new PointList();
+    //    for (double x = (SpikeList[0] != null && SpikeList[0].Count > 1) ? SpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
+    //    {
+    //      double Average = 0;
+    //      int count = 0;
+    //      for (int j = down_border; j < up_border && j < z && j < SpikeList.Count; j++)
+    //      {
+    //        SpikeDataPacket data = SpikeList[j];
+    //        double[] _x = new double[2];
+    //        double[] _y = new double[2];
+    //        for (int i = 0; i < data.Count; i++)
+    //        {
+    //          if (data[i].Item1 <= x)
+    //          {
+    //            _x[0] = data[i].Item1;
+    //            _y[0] = data[i].Item2;
+    //          }
+    //          if (data[i].Item1 >= x)
+    //          {
+    //            _x[1] = data[i].Item1;
+    //            _y[1] = data[i].Item2;
+    //            break;
+
+    //          }
+
+    //        }
+    //        if (Math.Abs(_x[0]) > eps && Math.Abs(_y[0]) > eps && Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+    //        {
+    //          double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
+    //          double b = _y[0] - k * _x[0];
+    //          double y = k * x + b;
+    //          Average += y;
+    //          count++;
+    //        }
+    //      }
+    //      if (count > 0 && Average > eps)
+    //      {
+    //        Average /= count;
+    //        DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(targetHeight - Average * 2000)));
+    //      }
+    //    }
+    //    TargetAverageList.Add(DrawPointsList);
+    //  }
+
+    //}
 
     private double ApproxX(double x0, double y0, double x1, double y1)
     {
@@ -251,24 +447,24 @@ namespace WindowsFormsApplication1
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      for (int SpikeIdx = 11; SpikeIdx < SpikeList.Count && SpikeIdx <= numericAfterStim.Value + 10; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < StimSpikeList.Count && SpikeIdx < numericAfterStim.Value; SpikeIdx++)
       {
-        for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
+        for (int i = 1; i < StimSpikeList[SpikeIdx].Count; i++)
         {
           e.Graphics.DrawLine(mainpen,
-            (float)SpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
-            (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
+            (float)StimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
+            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)StimSpikeList[SpikeIdx][i].Item1 * KxBottom,
+            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i].Item2 * 2000));
         }
       }
 
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 3);
-      if (AveragePointsStim.Count > 0 && numericAfterStim.Value > 0 && numericAfterStim.Value < AveragePointsStim.Count && AvgCheckBox.Checked == true)
+      if (AverageDrawPointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AverageDrawPointsStim.Count && AvgCheckBox.Checked == true)
       {
-        PointF[] AverageList = (AveragePointsStim[(int)numericAfterStim.Value ]).ToArray();
+        PointF[] AverageList = (AverageDrawPointsStim[(int)numericAfterStim.Value - 1]).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
 
@@ -278,24 +474,24 @@ namespace WindowsFormsApplication1
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      for (int SpikeIdx = 0; SpikeIdx < SpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < 11; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < 11; SpikeIdx++)
       {
-        for (int i = 1; i < SpikeList[SpikeIdx].Count; i++)
+        for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
         {
           e.Graphics.DrawLine(mainpen,
-            (float)SpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i - 1].Item2 * 2000),
-            (float)SpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - SpikeList[SpikeIdx][i].Item2 * 2000));
+            (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
+            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)NoStimSpikeList[SpikeIdx][i].Item1 * KxBottom,
+            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i].Item2 * 2000));
         }
 
       }
 
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 3);
-      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value  > 0 && AvgCheckBox.Checked==true)
+      if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgCheckBox.Checked == true)
       {
-        PointF[] AverageList = (AveragePointsNoStim[(int)numericNoStim.Value ]).ToArray();
+        PointF[] AverageList = (AverageDrawPointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
 
         if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
       }
@@ -307,14 +503,14 @@ namespace WindowsFormsApplication1
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
 
-      for (int i = 1; i < DataToPlot.Count; i++)
+      for (int i = 1; i < GlobalData.Count; i++)
       {
 
         e.Graphics.DrawLine(mainpen,
-          (float)DataToPlot[i - 1].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - DataToPlot[i - 1].Item2 * 1000),
-          (float)DataToPlot[i].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - DataToPlot[i].Item2 * 1000));
+          (float)GlobalData[i - 1].Item1 * KxTop,
+          (float)(e.ClipRectangle.Height - GlobalData[i - 1].Item2 * 1000),
+          (float)GlobalData[i].Item1 * KxTop,
+          (float)(e.ClipRectangle.Height - GlobalData[i].Item2 * 1000));
       }
       Brush threshholdbrush = new SolidBrush(Color.Red);
       Pen thresholdpen = new Pen(threshholdbrush);
@@ -348,9 +544,9 @@ namespace WindowsFormsApplication1
 
     private void compareButton_Click(object sender, EventArgs e)
     {
-      if (AveragePointsNoStim.Count > 0 && AveragePointsStim.Count > 0 && AvgCheckBox.Checked == true)
+      if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgCheckBox.Checked == true)
       {
-        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value], AveragePointsStim[(int)numericAfterStim.Value]);
+        FCompareForm compareForm = new FCompareForm(AverageDrawPointsNoStim[(int)numericNoStim.Value], AverageDrawPointsStim[(int)numericAfterStim.Value]);
         compareForm.Show();
       }
       else
@@ -365,7 +561,7 @@ namespace WindowsFormsApplication1
       threshold = (double)Threshold_Scroll.Value / 1000;
       if (FilePath != "")
         loadData(FilePath);
-      if (SpikeList.Count > 0)
+      if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;
@@ -387,7 +583,7 @@ namespace WindowsFormsApplication1
       threshold = (double)Threshold_Scroll.Value / 1000;
       if (FilePath != "")
         loadData(FilePath);
-      if (SpikeList.Count > 0)
+      if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;

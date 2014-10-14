@@ -47,6 +47,7 @@
       this.numericAfterStim = new System.Windows.Forms.NumericUpDown();
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
       this.compareButton = new System.Windows.Forms.Button();
+      this.AvgCheckBox = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -84,7 +85,7 @@
       // Load_Button
       // 
       this.Load_Button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.Load_Button.Location = new System.Drawing.Point(1133, 7);
+      this.Load_Button.Location = new System.Drawing.Point(1135, 7);
       this.Load_Button.Name = "Load_Button";
       this.Load_Button.Size = new System.Drawing.Size(75, 23);
       this.Load_Button.TabIndex = 2;
@@ -96,9 +97,9 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(10, 250);
+      this.NoStimCharacter.Location = new System.Drawing.Point(10, 235);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(1196, 273);
+      this.NoStimCharacter.Size = new System.Drawing.Size(1200, 280);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
@@ -138,17 +139,16 @@
       this.Threshold_Scroll.TabIndex = 9;
       this.Threshold_Scroll.TickStyle = System.Windows.Forms.TickStyle.None;
       this.Threshold_Scroll.Value = 20;
-      this.Threshold_Scroll.Scroll += new System.EventHandler(this.Threshold_Scroll_Scroll);
-      this.Threshold_Scroll.ValueChanged += new System.EventHandler(this.Threshold_Scroll_ValueChanged);
+      this.Threshold_Scroll.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Threshold_Scroll_MouseUp);
       // 
       // StimCharacter
       // 
       this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(10, 541);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 527);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(1196, 273);
+      this.StimCharacter.Size = new System.Drawing.Size(1200, 280);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
@@ -213,7 +213,7 @@
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.BottomScroll);
       this.groupBox2.Controls.Add(this.label6);
-      this.groupBox2.Location = new System.Drawing.Point(914, 38);
+      this.groupBox2.Location = new System.Drawing.Point(918, 38);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(292, 169);
       this.groupBox2.TabIndex = 14;
@@ -246,6 +246,11 @@
             0,
             0,
             0});
+      this.numericAfterStim.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       this.numericAfterStim.Name = "numericAfterStim";
       this.numericAfterStim.Size = new System.Drawing.Size(50, 20);
       this.numericAfterStim.TabIndex = 16;
@@ -260,7 +265,12 @@
       // 
       this.numericNoStim.Location = new System.Drawing.Point(33, 130);
       this.numericNoStim.Maximum = new decimal(new int[] {
-            10,
+            50,
+            0,
+            0,
+            0});
+      this.numericNoStim.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -285,11 +295,26 @@
       this.compareButton.UseVisualStyleBackColor = true;
       this.compareButton.Click += new System.EventHandler(this.compareButton_Click);
       // 
+      // AvgCheckBox
+      // 
+      this.AvgCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.AvgCheckBox.AutoSize = true;
+      this.AvgCheckBox.Checked = true;
+      this.AvgCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.AvgCheckBox.Location = new System.Drawing.Point(657, 148);
+      this.AvgCheckBox.Name = "AvgCheckBox";
+      this.AvgCheckBox.Size = new System.Drawing.Size(119, 17);
+      this.AvgCheckBox.TabIndex = 16;
+      this.AvgCheckBox.Text = "Рисовать средние";
+      this.AvgCheckBox.UseVisualStyleBackColor = true;
+      this.AvgCheckBox.CheckedChanged += new System.EventHandler(this.AvgCheckBox_CheckedChanged);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1220, 824);
+      this.Controls.Add(this.AvgCheckBox);
       this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
@@ -339,6 +364,7 @@
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button compareButton;
+    private System.Windows.Forms.CheckBox AvgCheckBox;
   }
 }
 
