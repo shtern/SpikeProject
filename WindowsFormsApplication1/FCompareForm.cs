@@ -49,7 +49,6 @@ namespace WindowsFormsApplication1
       {
         PointF point = new PointF(list[i].X*Kx, NormalizedGraph.Height - ((list[i].Y)/ymax) * 200 );
         Normalized_list.Add(point);
-        //list[i].Y /= ymax;
       }
 
 
@@ -61,7 +60,7 @@ namespace WindowsFormsApplication1
       Brush brush;
       Pen mainpen;
       brush = new SolidBrush(Color.Blue);
-      mainpen = new Pen(brush, 3);
+      mainpen = new Pen(brush, 5);
       if (Average_pre.Count > 0)
       {
         PointList TempList = new PointList();
@@ -71,7 +70,7 @@ namespace WindowsFormsApplication1
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
       brush = new SolidBrush(Color.Aqua);
-      mainpen = new Pen(brush, 3);
+      mainpen = new Pen(brush, 5);
       if (Average_post.Count > 0)
       {
         PointList TempList = new PointList();
@@ -87,14 +86,14 @@ namespace WindowsFormsApplication1
       Brush brush;
       Pen mainpen;
       brush = new SolidBrush(Color.Blue);
-      mainpen = new Pen(brush, 3);
+      mainpen = new Pen(brush, 5);
       if (Average_pre.Count > 0)
       {
         PointF[] AverageList = (Normalize(Average_pre)).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
       brush = new SolidBrush(Color.Aqua);
-      mainpen = new Pen(brush, 3);
+      mainpen = new Pen(brush, 5);
       if (Average_post.Count > 0)
       {
         PointF[] AverageList = (Normalize(Average_post)).ToArray();

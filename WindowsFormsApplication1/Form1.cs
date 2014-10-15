@@ -331,9 +331,9 @@ namespace WindowsFormsApplication1
       {
         for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
         {
-          int Ciferka = 6;
-          brush = new SolidBrush((Color.FromArgb((byte)(240 - Ciferka * SpikeIdx), (byte)(240 - Ciferka * SpikeIdx), (byte)(240 - Ciferka * SpikeIdx))));
-          mainpen = new Pen(brush);
+          int Ciferka = 9;
+          brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
+          mainpen = new Pen(brush, 2);
           e.Graphics.DrawLine(mainpen,
             (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * 2000),
@@ -343,7 +343,7 @@ namespace WindowsFormsApplication1
       }
 
       brush = new SolidBrush(Color.Blue);
-      mainpen = new Pen(brush, 3);
+      mainpen = new Pen(brush, 5);
       if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgCheckBox.Checked == true)
       {
         PointF[] AverageList = (AverageDrawPointsNoStim[(int)numericNoStim.Value - 1]).ToArray();

@@ -48,6 +48,8 @@
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
       this.compareButton = new System.Windows.Forms.Button();
       this.AvgCheckBox = new System.Windows.Forms.CheckBox();
+      this.NoStimLabel = new System.Windows.Forms.Label();
+      this.StimLabel = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -65,7 +67,7 @@
       this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.SpikeGraph.Location = new System.Drawing.Point(10, 9);
+      this.SpikeGraph.Location = new System.Drawing.Point(10, 13);
       this.SpikeGraph.Name = "SpikeGraph";
       this.SpikeGraph.Size = new System.Drawing.Size(615, 194);
       this.SpikeGraph.TabIndex = 0;
@@ -97,9 +99,9 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(10, 235);
+      this.NoStimCharacter.Location = new System.Drawing.Point(10, 243);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(1200, 280);
+      this.NoStimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
@@ -146,9 +148,9 @@
       this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(10, 527);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 599);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(1200, 280);
+      this.StimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
@@ -309,11 +311,34 @@
       this.AvgCheckBox.UseVisualStyleBackColor = true;
       this.AvgCheckBox.CheckedChanged += new System.EventHandler(this.AvgCheckBox_CheckedChanged);
       // 
+      // NoStimLabel
+      // 
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.AutoSize = true;
+      this.NoStimLabel.Location = new System.Drawing.Point(13, 223);
+      this.NoStimLabel.Name = "NoStimLabel";
+      this.NoStimLabel.Size = new System.Drawing.Size(85, 13);
+      this.NoStimLabel.TabIndex = 17;
+      this.NoStimLabel.Text = "До стимуляции";
+      // 
+      // StimLabel
+      // 
+      this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.StimLabel.AutoSize = true;
+      this.StimLabel.Location = new System.Drawing.Point(13, 579);
+      this.StimLabel.Name = "StimLabel";
+      this.StimLabel.Size = new System.Drawing.Size(118, 13);
+      this.StimLabel.TabIndex = 18;
+      this.StimLabel.Text = "Во время стимуляции";
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1220, 824);
+      this.ClientSize = new System.Drawing.Size(1220, 925);
+      this.Controls.Add(this.StimLabel);
+      this.Controls.Add(this.NoStimLabel);
       this.Controls.Add(this.AvgCheckBox);
       this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
@@ -323,6 +348,7 @@
       this.Controls.Add(this.Load_Button);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.SpikeGraph);
+      this.MinimumSize = new System.Drawing.Size(1236, 903);
       this.Name = "Form1";
       this.Text = "Анализ спайковых характеристик";
       this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
@@ -365,6 +391,8 @@
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button compareButton;
     private System.Windows.Forms.CheckBox AvgCheckBox;
+    private System.Windows.Forms.Label NoStimLabel;
+    private System.Windows.Forms.Label StimLabel;
   }
 }
 
