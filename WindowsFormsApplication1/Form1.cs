@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Linq;
 using System.IO;
 
-namespace WindowsFormsApplication1
+namespace SpikeProject
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
@@ -432,6 +432,7 @@ namespace WindowsFormsApplication1
       NoStimCharacter.Refresh();
       StimCharacter.Refresh();
     }
+   
 
     private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
     {
@@ -447,6 +448,18 @@ namespace WindowsFormsApplication1
         StimCharacter.Refresh();
       }
 
+    }
+
+    private void NoStimCharacter_Click(object sender, EventArgs e)
+    {
+      HeatForm hf = new HeatForm(NoStimSpikeList);
+      hf.Show();    
+    }
+
+    private void StimCharacter_Click(object sender, EventArgs e)
+    {
+      HeatForm hf = new HeatForm(StimSpikeList);
+      hf.Show();   
     }
 
 
