@@ -13,16 +13,19 @@ namespace SpikeProject
   using SpikeDataPacket = List<Tuple<double, double>>;
   public partial class HeatForm : Form
   {
-    public List<SpikeDataPacket> SpikeList;
+
     double eps = 1e-20;
     public HeatForm(List<SpikeDataPacket> list)
     {
       InitializeComponent();
       DGV.ClearSelection();
       DGV.CurrentCell = null;
-      SpikeList = buildUniform(list);
-      fillData(DGV);
-
+      fillData(DGV, list);
+      fillData(DGV_Norm, buildNormalized(list));
+      DGV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+      //DGV.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+      DGV_Norm.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+      //DGV_Norm.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
     }
 
 
@@ -63,7 +66,7 @@ namespace SpikeProject
             }
           }
 
-          if (Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+          if (Math.Abs(_x[1]) > 0 && Math.Abs(_y[1]) > eps)
           {
             double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
             double b = _y[0] - k * _x[0];
@@ -85,7 +88,7 @@ namespace SpikeProject
         double max = eps;
         for (int j = 0; j < list[i].Count; j++)
           if (list[i][j].Item2 > max) max = list[i][j].Item2;
-        if (max != eps)
+        if (max > eps)
           for (int j = 0; j < list[i].Count; j++)
             temppacket.Add(new Tuple<double, double>(list[i][j].Item1, list[i][j].Item2 / max));
         else temppacket.Add(new Tuple<double, double>(eps,eps));
@@ -94,20 +97,22 @@ namespace SpikeProject
       return resultList;
     }
 
-    void fillData(DataGridView gridview)
+    void fillData(DataGridView gridview,List<SpikeDataPacket> list)
     {
-      int maxRow = SpikeList.Count;
-      int maxCol = SpikeList[0].Count;
-      for (int i = 0; i < SpikeList.Count; i++)
-        if (SpikeList[i].Count > maxCol) maxCol = SpikeList[i].Count;
+      int maxRow = list.Count;
+      int maxCol = list.Last().Count;
+
+      for (int i = 0; i < list.Count; i++)
+      if (list[i].Count < maxCol && list[i].Count>1) maxCol = list[i].Count;
+
       double factor = 999;
       double minVal = 0;
       double maxVal = 0;
-      for (int i = 0; i < SpikeList.Count; i++)
-        for (int j = 0; j < SpikeList[i].Count; j++)
+      for (int i = 0; i < list.Count; i++)
+        for (int j = 0; j < list[i].Count; j++)
         {
-          if (minVal > SpikeList[i][j].Item2) minVal = SpikeList[i][j].Item2;
-          if (maxVal < SpikeList[i][j].Item2) maxVal = SpikeList[i][j].Item2;
+          if (minVal > list[i][j].Item2) minVal = list[i][j].Item2;
+          if (maxVal < list[i][j].Item2) maxVal = list[i][j].Item2;
         }
       gridview.RowHeadersVisible = false;
       gridview.ColumnHeadersVisible = false;
@@ -134,10 +139,10 @@ namespace SpikeProject
 
       for (int r = 0; r < maxRow; r++)
       {
-        for (int c = 0; c < SpikeList[r].Count; c++)
+        for (int c = 0; c < maxCol && c<list[r].Count; c++)
         {
           gridview[c, r].Style.BackColor =
-                         colors[Convert.ToInt16((SpikeList[r][c].Item2 / maxVal) * factor)];
+                         colors[Convert.ToInt16((list[r][c].Item2 / maxVal) * factor)];
         }
       }
     }
