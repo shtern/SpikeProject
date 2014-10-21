@@ -14,15 +14,69 @@ namespace SpikeProject
   public partial class HeatForm : Form
   {
     public List<SpikeDataPacket> SpikeList;
+    double eps = 1e-20;
     public HeatForm(List<SpikeDataPacket> list)
     {
       InitializeComponent();
       DGV.ClearSelection();
       DGV.CurrentCell = null;
-      SpikeList = list;
+      //SpikeList = list;
+      SpikeList = buildUniform(list);
       fillData();
-      
+
     }
+
+
+    private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
+    {
+      double maxLenght = 0;
+      double minLength = 0;
+      List<SpikeDataPacket> resultList = new List<SpikeDataPacket>();
+      minLength = list.First().Last().Item1;
+      for (int i = 0; i < list.Count; i++)
+      {
+        if (list[i].Last().Item1 < minLength) minLength = list[i].Last().Item1;
+        if (list[i].Last().Item1 > maxLenght) maxLenght = list[i].Last().Item1;
+      }
+
+      double StepWidth = 1e-2;
+      for (int j = 0; j < list.Count; j++)
+      {
+        SpikeDataPacket data = list[j];
+        SpikeDataPacket resultListElement = new SpikeDataPacket();
+        for (double x = (list[0] != null && list[0].Count > 1) ? list[0][0].Item1 : eps; x < list[j].Last().Item1; x += StepWidth)
+        {
+          double[] _x = new double[2];
+          double[] _y = new double[2];
+
+          for (int i = 0; i < data.Count; i++)
+          {
+            if (data[i].Item1 <= x)
+            {
+              _x[0] = data[i].Item1;
+              _y[0] = data[i].Item2;
+            }
+            if (data[i].Item1 >= x)
+            {
+              _x[1] = data[i].Item1;
+              _y[1] = data[i].Item2;
+              break;
+            }
+          }
+
+          if (Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+          {
+            double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
+            double b = _y[0] - k * _x[0];
+            double y = k * x + b;
+            resultListElement.Add(new Tuple<double, double>(x, y));
+          }
+        }
+        resultList.Add(resultListElement);
+      }
+      return resultList;
+    }
+
 
     void fillData()
     {
@@ -31,13 +85,13 @@ namespace SpikeProject
       for (int i = 0; i < SpikeList.Count; i++)
         if (SpikeList[i].Count > maxCol) maxCol = SpikeList[i].Count;
       double factor = 999;
-      double minVal=0;
-      double maxVal=0;
-      for (int i = 0; i< SpikeList.Count;i++)
-        for (int j = 0; j< SpikeList[i].Count;j++)
-        { 
-          if (minVal>SpikeList[i][j].Item2) minVal=SpikeList[i][j].Item2;
-          if (maxVal<SpikeList[i][j].Item2) maxVal=SpikeList[i][j].Item2;
+      double minVal = 0;
+      double maxVal = 0;
+      for (int i = 0; i < SpikeList.Count; i++)
+        for (int j = 0; j < SpikeList[i].Count; j++)
+        {
+          if (minVal > SpikeList[i][j].Item2) minVal = SpikeList[i][j].Item2;
+          if (maxVal < SpikeList[i][j].Item2) maxVal = SpikeList[i][j].Item2;
         }
       DGV.RowHeadersVisible = false;
       DGV.ColumnHeadersVisible = false;
@@ -67,16 +121,15 @@ namespace SpikeProject
         for (int c = 0; c < SpikeList[r].Count; c++)
         {
           DGV[c, r].Style.BackColor =
-                         colors[Convert.ToInt16((SpikeList[r][c].Item2/maxVal)*factor)];
+                         colors[Convert.ToInt16((SpikeList[r][c].Item2 / maxVal) * factor)];
           //DGV[r, c].Style.BackColor = HeatMapColor(SpikeList[r][c].Item2, minVal, maxVal);
 
         }
       }
-     // DGV.ClearSelection();
-     // DGV.CurrentCell = null;
+      // DGV.ClearSelection();
+      // DGV.CurrentCell = null;
 
     }
-   
 
     private Color HeatMapColor(double value, double min, double max)
     {
@@ -103,7 +156,6 @@ namespace SpikeProject
 
       return Color.FromArgb(255, r, g, b);
     }
-
 
     List<Color> interpolateColors(List<Color> stopColors, int count)
     {
@@ -134,7 +186,7 @@ namespace SpikeProject
     private void DGV_VisibleChanged(object sender, EventArgs e)
     {
       DGV.ClearSelection();
-     // DGV.CurrentCell = null;
+      // DGV.CurrentCell = null;
     }
 
     private void HeatForm_Load(object sender, EventArgs e)

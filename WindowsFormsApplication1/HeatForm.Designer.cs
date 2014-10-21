@@ -40,7 +40,7 @@
       this.DGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.DGV.Location = new System.Drawing.Point(12, 12);
       this.DGV.Name = "DGV";
-      this.DGV.Size = new System.Drawing.Size(595, 483);
+      this.DGV.Size = new System.Drawing.Size(1160, 738);
       this.DGV.TabIndex = 0;
       this.DGV.VisibleChanged += new System.EventHandler(this.DGV_VisibleChanged);
       // 
@@ -48,7 +48,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(619, 507);
+      this.ClientSize = new System.Drawing.Size(1184, 762);
       this.Controls.Add(this.DGV);
       this.Name = "HeatForm";
       this.Text = "HeatForm";
