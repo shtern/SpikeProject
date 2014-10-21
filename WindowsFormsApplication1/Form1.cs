@@ -468,6 +468,23 @@ namespace SpikeProject
       }
     }
 
+    private void mapButton_Click(object sender, EventArgs e)
+    {
+      if (NoStimSpikeList.Count > 0 && StimSpikeList.Count > 0)
+      {
+        List<SpikeDataPacket> MapList = new List<SpikeDataPacket>();
+        MapList.AddRange(NoStimSpikeList);
+        SpikeDataPacket separator = new SpikeDataPacket();
+        separator.Add(new Tuple<double, double>(0, 0));
+        MapList.Add(separator);
+        MapList.Add(separator);
+        MapList.AddRange(StimSpikeList);
+
+        HeatForm hf = new HeatForm(MapList);
+        hf.Show();
+      }
+    }
+
 
   }
 }

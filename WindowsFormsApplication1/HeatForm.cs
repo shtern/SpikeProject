@@ -20,9 +20,8 @@ namespace SpikeProject
       InitializeComponent();
       DGV.ClearSelection();
       DGV.CurrentCell = null;
-      //SpikeList = list;
       SpikeList = buildUniform(list);
-      fillData();
+      fillData(DGV);
 
     }
 
@@ -77,8 +76,25 @@ namespace SpikeProject
       return resultList;
     }
 
+    private List<SpikeDataPacket> buildNormalized(List<SpikeDataPacket> list)
+    {
+      List<SpikeDataPacket> resultList = new List<SpikeDataPacket>();
+      for (int i = 0; i < list.Count; i++)
+      {
+        SpikeDataPacket temppacket = new SpikeDataPacket();
+        double max = eps;
+        for (int j = 0; j < list[i].Count; j++)
+          if (list[i][j].Item2 > max) max = list[i][j].Item2;
+        if (max != eps)
+          for (int j = 0; j < list[i].Count; j++)
+            temppacket.Add(new Tuple<double, double>(list[i][j].Item1, list[i][j].Item2 / max));
+        else temppacket.Add(new Tuple<double, double>(eps,eps));
+        resultList.Add(temppacket);
+      }
+      return resultList;
+    }
 
-    void fillData()
+    void fillData(DataGridView gridview)
     {
       int maxRow = SpikeList.Count;
       int maxCol = SpikeList[0].Count;
@@ -93,19 +109,19 @@ namespace SpikeProject
           if (minVal > SpikeList[i][j].Item2) minVal = SpikeList[i][j].Item2;
           if (maxVal < SpikeList[i][j].Item2) maxVal = SpikeList[i][j].Item2;
         }
-      DGV.RowHeadersVisible = false;
-      DGV.ColumnHeadersVisible = false;
-      DGV.AllowUserToAddRows = false;
-      DGV.AllowUserToOrderColumns = false;
-      DGV.CellBorderStyle = DataGridViewCellBorderStyle.None;
+      gridview.RowHeadersVisible = false;
+      gridview.ColumnHeadersVisible = false;
+      gridview.AllowUserToAddRows = false;
+      gridview.AllowUserToOrderColumns = false;
+      gridview.CellBorderStyle = DataGridViewCellBorderStyle.None;
 
-      int rowHeight = DGV.ClientSize.Height / maxRow - 1;
-      int colWidth = DGV.ClientSize.Width / maxCol - 1;
+      int rowHeight = gridview.ClientSize.Height / maxRow - 1;
+      int colWidth = gridview.ClientSize.Width / maxCol - 1;
 
-      for (int c = 0; c < maxCol; c++) DGV.Columns.Add(c.ToString(), "");
-      for (int c = 0; c < maxCol; c++) DGV.Columns[c].Width = colWidth;
-      DGV.Rows.Add(maxRow);
-      for (int r = 0; r < maxRow; r++) DGV.Rows[r].Height = rowHeight;
+      for (int c = 0; c < maxCol; c++) gridview.Columns.Add(c.ToString(), "");
+      for (int c = 0; c < maxCol; c++) gridview.Columns[c].Width = colWidth;
+      gridview.Rows.Add(maxRow);
+      for (int r = 0; r < maxRow; r++) gridview.Rows[r].Height = rowHeight;
 
       List<Color> baseColors = new List<Color>();  // create a color list
       baseColors.Add(Color.RoyalBlue);
@@ -120,19 +136,15 @@ namespace SpikeProject
       {
         for (int c = 0; c < SpikeList[r].Count; c++)
         {
-          DGV[c, r].Style.BackColor =
+          gridview[c, r].Style.BackColor =
                          colors[Convert.ToInt16((SpikeList[r][c].Item2 / maxVal) * factor)];
-          //DGV[r, c].Style.BackColor = HeatMapColor(SpikeList[r][c].Item2, minVal, maxVal);
-
         }
       }
-      // DGV.ClearSelection();
-      // DGV.CurrentCell = null;
-
     }
 
     private Color HeatMapColor(double value, double min, double max)
     {
+      //Это старая и ненужная версия, раскрашивает в синий цвет, но она работает, и мне жалко её отсюда удалять
       Color firstColour = Color.RoyalBlue;
       Color secondColour = Color.LightSkyBlue;
 

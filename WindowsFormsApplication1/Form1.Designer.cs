@@ -50,6 +50,7 @@
       this.AvgCheckBox = new System.Windows.Forms.CheckBox();
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
+      this.mapButton = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -64,8 +65,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 13);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -146,8 +147,8 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.StimCharacter.Location = new System.Drawing.Point(10, 599);
       this.StimCharacter.Name = "StimCharacter";
@@ -315,8 +316,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(13, 223);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -334,11 +335,22 @@
       this.StimLabel.TabIndex = 18;
       this.StimLabel.Text = "Во время стимуляции";
       // 
+      // mapButton
+      // 
+      this.mapButton.Location = new System.Drawing.Point(823, 184);
+      this.mapButton.Name = "mapButton";
+      this.mapButton.Size = new System.Drawing.Size(75, 23);
+      this.mapButton.TabIndex = 19;
+      this.mapButton.Text = "Карта";
+      this.mapButton.UseVisualStyleBackColor = true;
+      this.mapButton.Click += new System.EventHandler(this.mapButton_Click);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1220, 925);
+      this.Controls.Add(this.mapButton);
       this.Controls.Add(this.StimLabel);
       this.Controls.Add(this.NoStimLabel);
       this.Controls.Add(this.AvgCheckBox);
@@ -395,6 +407,7 @@
     private System.Windows.Forms.CheckBox AvgCheckBox;
     private System.Windows.Forms.Label NoStimLabel;
     private System.Windows.Forms.Label StimLabel;
+    private System.Windows.Forms.Button mapButton;
   }
 }
 
