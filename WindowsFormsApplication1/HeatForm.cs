@@ -17,33 +17,39 @@ namespace SpikeProject
     public HeatForm(List<SpikeDataPacket> list)
     {
       InitializeComponent();
+      DGV.ClearSelection();
+      DGV.CurrentCell = null;
       SpikeList = list;
       fillData();
+      
     }
 
     void fillData()
     {
       int maxRow = SpikeList.Count;
       int maxCol = SpikeList[0].Count;
-      double factor = 1.0;
-      double mincol=0;
-      double maxcol=0;
+      for (int i = 0; i < SpikeList.Count; i++)
+        if (SpikeList[i].Count > maxCol) maxCol = SpikeList[i].Count;
+      double factor = 999;
+      double minVal=0;
+      double maxVal=0;
       for (int i = 0; i< SpikeList.Count;i++)
         for (int j = 0; j< SpikeList[i].Count;j++)
-        { if (mincol>SpikeList[i][j].Item2) mincol=SpikeList[i][j].Item2;
-          if (maxcol<SpikeList[i][j].Item2) maxcol=SpikeList[i][j].Item2;}
+        { 
+          if (minVal>SpikeList[i][j].Item2) minVal=SpikeList[i][j].Item2;
+          if (maxVal<SpikeList[i][j].Item2) maxVal=SpikeList[i][j].Item2;
+        }
       DGV.RowHeadersVisible = false;
       DGV.ColumnHeadersVisible = false;
       DGV.AllowUserToAddRows = false;
       DGV.AllowUserToOrderColumns = false;
       DGV.CellBorderStyle = DataGridViewCellBorderStyle.None;
-      //..
 
       int rowHeight = DGV.ClientSize.Height / maxRow - 1;
       int colWidth = DGV.ClientSize.Width / maxCol - 1;
 
-      for (int c = 0; c < maxRow; c++) DGV.Columns.Add(c.ToString(), "");
-      for (int c = 0; c < maxRow; c++) DGV.Columns[c].Width = colWidth;
+      for (int c = 0; c < maxCol; c++) DGV.Columns.Add(c.ToString(), "");
+      for (int c = 0; c < maxCol; c++) DGV.Columns[c].Width = colWidth;
       DGV.Rows.Add(maxRow);
       for (int r = 0; r < maxRow; r++) DGV.Rows[r].Height = rowHeight;
 
@@ -58,16 +64,19 @@ namespace SpikeProject
 
       for (int r = 0; r < maxRow; r++)
       {
-        for (int c = 0; c < maxRow; c++)
+        for (int c = 0; c < SpikeList[r].Count; c++)
         {
-         // DGV[r, c].Style.BackColor =
-           //              colors[Convert.ToInt16(SpikeList[r][c].Item2 * factor)];
-          DGV[r, c].Style.BackColor = HeatMapColor(SpikeList[r][c].Item2, mincol, maxcol);
+          DGV[c, r].Style.BackColor =
+                         colors[Convert.ToInt16((SpikeList[r][c].Item2/maxVal)*factor)];
+          //DGV[r, c].Style.BackColor = HeatMapColor(SpikeList[r][c].Item2, minVal, maxVal);
 
         }
       }
+     // DGV.ClearSelection();
+     // DGV.CurrentCell = null;
 
     }
+   
 
     private Color HeatMapColor(double value, double min, double max)
     {
@@ -120,6 +129,18 @@ namespace SpikeProject
         br.Dispose();
       }
       return ColorList;
+    }
+
+    private void DGV_VisibleChanged(object sender, EventArgs e)
+    {
+      DGV.ClearSelection();
+     // DGV.CurrentCell = null;
+    }
+
+    private void HeatForm_Load(object sender, EventArgs e)
+    {
+      DGV.ClearSelection();
+      //DGV.CurrentCell = null;
     }
   }
 }

@@ -34,14 +34,15 @@
       // 
       // DGV
       // 
-      this.DGV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.DGV.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.DGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.DGV.Location = new System.Drawing.Point(12, 12);
       this.DGV.Name = "DGV";
       this.DGV.Size = new System.Drawing.Size(595, 483);
       this.DGV.TabIndex = 0;
+      this.DGV.VisibleChanged += new System.EventHandler(this.DGV_VisibleChanged);
       // 
       // HeatForm
       // 
@@ -51,6 +52,7 @@
       this.Controls.Add(this.DGV);
       this.Name = "HeatForm";
       this.Text = "HeatForm";
+      this.Load += new System.EventHandler(this.HeatForm_Load);
       ((System.ComponentModel.ISupportInitialize)(this.DGV)).EndInit();
       this.ResumeLayout(false);
 

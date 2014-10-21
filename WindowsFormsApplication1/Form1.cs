@@ -452,14 +452,20 @@ namespace SpikeProject
 
     private void NoStimCharacter_Click(object sender, EventArgs e)
     {
-      HeatForm hf = new HeatForm(NoStimSpikeList);
-      hf.Show();    
+      if (NoStimSpikeList.Count > 0)
+      {
+        HeatForm hf = new HeatForm(NoStimSpikeList);
+        hf.Show();
+      }
     }
 
     private void StimCharacter_Click(object sender, EventArgs e)
     {
-      HeatForm hf = new HeatForm(StimSpikeList);
-      hf.Show();   
+      if (StimSpikeList.Count > 0)
+      {
+        HeatForm hf = new HeatForm(StimSpikeList);
+        hf.Show();
+      }
     }
 
 
