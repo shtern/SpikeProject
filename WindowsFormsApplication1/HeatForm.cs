@@ -20,9 +20,8 @@ namespace SpikeProject
       InitializeComponent();
       DGV.ClearSelection();
       DGV.CurrentCell = null;
-      List<SpikeDataPacket> FillList = buildUniform(list);
-      fillData(DGV, FillList);
-      fillData(DGV_Norm, buildNormalized(FillList));
+      fillData(DGV, list);
+      fillData(DGV_Norm, buildNormalized(list));
       DGV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
       //DGV.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
       DGV_Norm.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -67,12 +66,11 @@ namespace SpikeProject
             }
           }
 
-          if (Math.Abs(_x[1]) > eps && Math.Abs(_y[1]) > eps)
+          if (Math.Abs(_x[1]) > 0 && Math.Abs(_y[1]) > eps)
           {
             double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
             double b = _y[0] - k * _x[0];
             double y = k * x + b;
-            if (y>eps)
             resultListElement.Add(new Tuple<double, double>(x, y));
           }
         }
@@ -121,15 +119,11 @@ namespace SpikeProject
       gridview.AllowUserToAddRows = false;
       gridview.AllowUserToOrderColumns = false;
       gridview.CellBorderStyle = DataGridViewCellBorderStyle.None;
-      gridview.AutoGenerateColumns = false;
+
       int rowHeight = gridview.ClientSize.Height / maxRow - 1;
       int colWidth = gridview.ClientSize.Width / maxCol - 1;
-      for (int c = 0; c < maxCol; c++)
-      {
-        DataGridViewTextBoxColumn column = new DataGridViewTextBoxColumn();
-        column.FillWeight = 1;
-        gridview.Columns.Add(column);
-      }
+
+      for (int c = 0; c < maxCol; c++) gridview.Columns.Add(c.ToString(), "");
       for (int c = 0; c < maxCol; c++) gridview.Columns[c].Width = colWidth;
       gridview.Rows.Add(maxRow);
       for (int r = 0; r < maxRow; r++) gridview.Rows[r].Height = rowHeight;
