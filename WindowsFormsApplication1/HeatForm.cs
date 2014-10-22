@@ -18,15 +18,9 @@ namespace SpikeProject
     public HeatForm(List<SpikeDataPacket> list)
     {
       InitializeComponent();
-      DGV.ClearSelection();
-      DGV.CurrentCell = null;
       List<SpikeDataPacket> FillList = buildUniform(list);
       fillData(DGV, FillList);
       fillData(DGV_Norm, buildNormalized(FillList));
-      DGV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-      //DGV.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-      DGV_Norm.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-      //DGV_Norm.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
     }
 
 
@@ -120,6 +114,7 @@ namespace SpikeProject
       gridview.ColumnHeadersVisible = false;
       gridview.AllowUserToAddRows = false;
       gridview.AllowUserToOrderColumns = false;
+      gridview.AllowUserToResizeColumns = false;
       gridview.CellBorderStyle = DataGridViewCellBorderStyle.None;
       gridview.AutoGenerateColumns = false;
       int rowHeight = gridview.ClientSize.Height / maxRow - 1;
@@ -206,16 +201,14 @@ namespace SpikeProject
       return ColorList;
     }
 
-    private void DGV_VisibleChanged(object sender, EventArgs e)
+    private void DGV_SelectionChanged(object sender, EventArgs e)
     {
       DGV.ClearSelection();
-      // DGV.CurrentCell = null;
     }
 
-    private void HeatForm_Load(object sender, EventArgs e)
+    private void DGV_Norm_SelectionChanged(object sender, EventArgs e)
     {
-      DGV.ClearSelection();
-      //DGV.CurrentCell = null;
+      DGV_Norm.ClearSelection();
     }
   }
 }

@@ -45,7 +45,7 @@
       this.DGV.Name = "DGV";
       this.DGV.Size = new System.Drawing.Size(720, 430);
       this.DGV.TabIndex = 0;
-      this.DGV.VisibleChanged += new System.EventHandler(this.DGV_VisibleChanged);
+      this.DGV.SelectionChanged += new System.EventHandler(this.DGV_SelectionChanged);
       // 
       // DGV_Norm
       // 
@@ -56,6 +56,7 @@
       this.DGV_Norm.Name = "DGV_Norm";
       this.DGV_Norm.Size = new System.Drawing.Size(720, 430);
       this.DGV_Norm.TabIndex = 1;
+      this.DGV_Norm.SelectionChanged += new System.EventHandler(this.DGV_Norm_SelectionChanged);
       // 
       // notnormLabel
       // 
@@ -86,7 +87,6 @@
       this.Controls.Add(this.DGV);
       this.Name = "HeatForm";
       this.Text = "Карта спайковых характеристик";
-      this.Load += new System.EventHandler(this.HeatForm_Load);
       ((System.ComponentModel.ISupportInitialize)(this.DGV)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.DGV_Norm)).EndInit();
       this.ResumeLayout(false);
