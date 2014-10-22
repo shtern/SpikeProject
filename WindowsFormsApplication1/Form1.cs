@@ -25,7 +25,8 @@ namespace SpikeProject
     #endregion
 
     #region Данные класса
-    private List<Tuple<double, double>> GlobalData;
+    private SpikeDataPacket GlobalData;
+    private List<SpikeDataPacket> MegaMapList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> StimSpikeList;
     private List<SpikeDataPacket> NoStimSpikeList;
     private List<PointF> DrawPointsList;
@@ -50,17 +51,23 @@ namespace SpikeProject
     {
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
+        MegaMapList = new List<SpikeDataPacket>();
         dialog.FileName = "Cell_1.txt";
+        dialog.Multiselect = true;
         dialog.InitialDirectory = Application.StartupPath + @"\..\..";
         switch (dialog.ShowDialog())
         {
           case System.Windows.Forms.DialogResult.OK:
-            FilePath = dialog.FileName;
-            loadData(FilePath);
-            SpikeGraph.Refresh();
-            NoStimCharacter.Refresh();
-            StimCharacter.Refresh();
-            break;
+            foreach (String path in dialog.FileNames)
+            {
+              FilePath = path;
+              loadData(FilePath);
+              SpikeGraph.Refresh();
+              NoStimCharacter.Refresh();
+              StimCharacter.Refresh();
+            }
+              break;
+            
           case System.Windows.Forms.DialogResult.Cancel:
 
 
@@ -108,6 +115,12 @@ namespace SpikeProject
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
           GlobalData.Add(XYData);
         }
+      }
+      MegaMapList.Add(thresholdCheck(GlobalData));
+      if (MegaMapList.Count == 13)
+      {
+        HeatForm hf = new HeatForm(MegaMapList);
+        hf.Show();
       }
       buildCharactList();
       buildNoStimAverage();
@@ -468,6 +481,14 @@ namespace SpikeProject
       }
     }
 
+    private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
+    {
+      SpikeDataPacket resultList = new SpikeDataPacket();
+      for (int i = 0; i < list.Count; i++)
+        if (list[i].Item2 > threshold)
+          resultList.Add(list[i]);
+      return resultList;
+    }
     private void mapButton_Click(object sender, EventArgs e)
     {
       if (NoStimSpikeList.Count > 0 && StimSpikeList.Count > 0)
@@ -482,6 +503,11 @@ namespace SpikeProject
 
         HeatForm hf = new HeatForm(MapList);
         hf.Show();
+      }
+      else
+      {
+        MessageBox.Show("Нечего отображать", "Карта спайковых характеристик",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
       }
     }
 
