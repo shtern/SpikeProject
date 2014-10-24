@@ -32,14 +32,15 @@
       this.DGV_Norm = new System.Windows.Forms.DataGridView();
       this.notnormLabel = new System.Windows.Forms.Label();
       this.normLabel = new System.Windows.Forms.Label();
+      this.excelbutton = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.DGV)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.DGV_Norm)).BeginInit();
       this.SuspendLayout();
       // 
       // DGV
       // 
-      this.DGV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.DGV.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.DGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.DGV.Location = new System.Drawing.Point(12, 31);
       this.DGV.Name = "DGV";
@@ -49,8 +50,8 @@
       // 
       // DGV_Norm
       // 
-      this.DGV_Norm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.DGV_Norm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.DGV_Norm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.DGV_Norm.Location = new System.Drawing.Point(12, 491);
       this.DGV_Norm.Name = "DGV_Norm";
@@ -76,11 +77,22 @@
       this.normLabel.TabIndex = 3;
       this.normLabel.Text = "С нормализацией";
       // 
+      // excelbutton
+      // 
+      this.excelbutton.Location = new System.Drawing.Point(644, 1);
+      this.excelbutton.Name = "excelbutton";
+      this.excelbutton.Size = new System.Drawing.Size(75, 23);
+      this.excelbutton.TabIndex = 4;
+      this.excelbutton.Text = "В Excel";
+      this.excelbutton.UseVisualStyleBackColor = true;
+      this.excelbutton.Click += new System.EventHandler(this.excelbutton_Click);
+      // 
       // HeatForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(744, 941);
+      this.Controls.Add(this.excelbutton);
       this.Controls.Add(this.normLabel);
       this.Controls.Add(this.notnormLabel);
       this.Controls.Add(this.DGV_Norm);
@@ -100,5 +112,6 @@
     private System.Windows.Forms.DataGridView DGV_Norm;
     private System.Windows.Forms.Label notnormLabel;
     private System.Windows.Forms.Label normLabel;
+    private System.Windows.Forms.Button excelbutton;
   }
 }

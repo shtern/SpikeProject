@@ -11,6 +11,7 @@ using System.Drawing.Drawing2D;
 namespace SpikeProject
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
+  using Excel = Microsoft.Office.Interop.Excel;
   public partial class HeatForm : Form
   {
 
@@ -66,8 +67,8 @@ namespace SpikeProject
             double k = (_y[1] - _y[0]) / (_x[1] - _x[0]);
             double b = _y[0] - k * _x[0];
             double y = k * x + b;
-            if (y>eps)
-            resultListElement.Add(new Tuple<double, double>(x, y));
+            if (y > eps)
+              resultListElement.Add(new Tuple<double, double>(x, y));
           }
         }
         resultList.Add(resultListElement);
@@ -87,19 +88,19 @@ namespace SpikeProject
         if (max > eps)
           for (int j = 0; j < list[i].Count; j++)
             temppacket.Add(new Tuple<double, double>(list[i][j].Item1, list[i][j].Item2 / max));
-        else temppacket.Add(new Tuple<double, double>(eps,eps));
+        else temppacket.Add(new Tuple<double, double>(eps, eps));
         resultList.Add(temppacket);
       }
       return resultList;
     }
 
-    void fillData(DataGridView gridview,List<SpikeDataPacket> list)
+    void fillData(DataGridView gridview, List<SpikeDataPacket> list)
     {
       int maxRow = list.Count;
       int maxCol = list.Last().Count;
 
       for (int i = 0; i < list.Count; i++)
-      if (list[i].Count < maxCol && list[i].Count>1) maxCol = list[i].Count;
+        if (list[i].Count < maxCol && list[i].Count > 1) maxCol = list[i].Count;
 
       double factor = 999;
       double minVal = 0;
@@ -140,7 +141,7 @@ namespace SpikeProject
 
       for (int r = 0; r < maxRow; r++)
       {
-        for (int c = 0; c < maxCol && c<list[r].Count; c++)
+        for (int c = 0; c < maxCol && c < list[r].Count; c++)
         {
           gridview[c, r].Style.BackColor =
                          colors[Convert.ToInt16((list[r][c].Item2 / maxVal) * factor)];
@@ -148,6 +149,179 @@ namespace SpikeProject
       }
     }
 
+    private void CreateExcel(string sPath, DataGridView  gridview)
+    {
+      DataTable dt = (DataTable)gridview.DataSource;
+      int n = gridview.Columns.Count;
+      string[] strArr = new string[n];
+      object objValue = System.Reflection.Missing.Value;
+      Excel.Application sXLApp = new Excel.Application();
+      sXLApp.DefaultSaveFormat = Excel.XlFileFormat.xlOpenXMLWorkbook;
+      Excel.Workbooks sXLBooks = (Excel.Workbooks)sXLApp.Workbooks;
+      Excel._Workbook sXLBook = (Excel._Workbook)(sXLBooks.Add(objValue));
+      Excel.Sheets sXLSheets = (Excel.Sheets)sXLBook.Worksheets;
+      Excel.Worksheet sXLWorksheet = (Excel.Worksheet)sXLSheets[1];
+     
+      for (int x = 0; x < n; x++)
+      {
+        strArr[x] = "";
+      }
+
+      object objHeaders = (object)strArr;
+      Excel.Range sXLRange = sXLWorksheet.get_Range("A1", "IV1");
+      sXLRange.set_Value(objValue, objHeaders);
+      Excel.Font sXLFont = sXLRange.Font;
+      // To Assign Empty Column Header is null
+      for (int y = n + 1; y <= sXLRange.Count; y++)
+      {
+        sXLRange[1, y] = null;
+      }
+      sXLFont.Bold = true;    // To Assign Header in Bold
+      object[,] objData = new object[gridview.Rows.Count, gridview.Columns.Count];
+      for (int nRow = 0; nRow < gridview.Rows.Count; nRow++)
+      {
+        for (int nCol = 0; nCol < gridview.Rows.Count; nCol++)
+        {
+          objData[nRow, nCol] = "";
+        }
+      }
+      sXLRange = sXLWorksheet.get_Range("A2", objValue);
+      sXLRange = sXLRange.get_Resize(gridview.Rows.Count, gridview.Columns.Count);
+      sXLRange.set_Value(objValue, objData);
+      sXLRange.EntireColumn.ColumnWidth = 0.5;
+      //If you need Apply the color into Excel Cell based on Grid Cell     
+      for (int c = 0; c < gridview.Columns.Count; c++)
+      {
+        // To get the Excel Cell Name     
+        string sCell = GetExcelCell(c + 1);
+        for (int r = 0; r < gridview.Rows.Count; r++)
+        {
+          sXLRange = sXLWorksheet.get_Range(sCell + (r + 2), sCell + (r + 2));
+          sXLRange.Interior.Color = ColorTranslator.ToOle(gridview[c, r].Style.BackColor);
+        }
+      }
+
+      sXLApp.Columns.EntireColumn.AutoFit();
+      sXLApp.Columns.EntireRow.AutoFit();
+      sXLBook.SaveAs(sPath, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+            false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
+            Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+      sXLBook.Close();
+      sXLApp.Quit();
+      GC.WaitForPendingFinalizers();
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+      GC.Collect();
+    }
+
+    private string GetExcelCell(int nID)
+    {
+      string sCell = string.Empty;
+      if (nID < 27)
+      {
+        switch (nID)
+        {
+          case 0:
+            sCell = "z";
+            break;
+          case 1:
+            sCell = "A";
+            break;
+          case 2:
+            sCell = "B";
+            break;
+          case 3:
+            sCell = "C";
+            break;
+          case 4:
+            sCell = "D";
+            break;
+          case 5:
+            sCell = "E";
+            break;
+          case 6:
+            sCell = "F";
+            break;
+          case 7:
+            sCell = "G";
+            break;
+          case 8:
+            sCell = "H";
+            break;
+          case 9:
+            sCell = "I";
+            break;
+          case 10:
+            sCell = "J";
+            break;
+          case 11:
+            sCell = "K";
+            break;
+          case 12:
+            sCell = "L";
+            break;
+          case 13:
+            sCell = "M";
+            break;
+          case 14:
+            sCell = "N";
+            break;
+          case 15:
+            sCell = "O";
+            break;
+          case 16:
+            sCell = "P";
+            break;
+          case 17:
+            sCell = "Q";
+            break;
+          case 18:
+            sCell = "R";
+            break;
+          case 19:
+            sCell = "S";
+            break;
+          case 20:
+            sCell = "T";
+            break;
+          case 21:
+            sCell = "U";
+            break;
+          case 22:
+            sCell = "V";
+            break;
+          case 23:
+            sCell = "W";
+            break;
+          case 24:
+            sCell = "X";
+            break;
+          case 25:
+            sCell = "Y";
+            break;
+          case 26:
+            sCell = "Z";
+            break;
+          default:
+            sCell = String.Empty;
+            break;
+        }
+        return sCell;
+      }
+      else
+      {
+        int nDiv = nID / 26;
+        int nMod = nID % 26;
+        if (nMod.Equals(0))
+        {
+          nDiv = nDiv - 1;
+        }
+        sCell = GetExcelCell(nDiv);
+        sCell = sCell + GetExcelCell(nMod);
+        return sCell;
+      }
+    }
+    
     private Color HeatMapColor(double value, double min, double max)
     {
       //Это старая и ненужная версия, раскрашивает в синий цвет, но она работает, и мне жалко её отсюда удалять
@@ -209,6 +383,11 @@ namespace SpikeProject
     private void DGV_Norm_SelectionChanged(object sender, EventArgs e)
     {
       DGV_Norm.ClearSelection();
+    }
+
+    private void excelbutton_Click(object sender, EventArgs e)
+    {
+      CreateExcel("table", DGV);
     }
   }
 }
