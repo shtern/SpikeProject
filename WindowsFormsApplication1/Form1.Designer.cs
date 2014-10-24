@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
       this.SpikeGraph = new System.Windows.Forms.PictureBox();
       this.label1 = new System.Windows.Forms.Label();
       this.Load_Button = new System.Windows.Forms.Button();
@@ -51,6 +52,7 @@
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
       this.mapButton = new System.Windows.Forms.Button();
+      this.cellName = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -346,11 +348,22 @@
       this.mapButton.UseVisualStyleBackColor = true;
       this.mapButton.Click += new System.EventHandler(this.mapButton_Click);
       // 
+      // cellName
+      // 
+      this.cellName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cellName.AutoSize = true;
+      this.cellName.Location = new System.Drawing.Point(654, 189);
+      this.cellName.Name = "cellName";
+      this.cellName.Size = new System.Drawing.Size(105, 13);
+      this.cellName.TabIndex = 20;
+      this.cellName.Text = "Клетка не выбрана";
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1220, 925);
+      this.Controls.Add(this.cellName);
       this.Controls.Add(this.mapButton);
       this.Controls.Add(this.StimLabel);
       this.Controls.Add(this.NoStimLabel);
@@ -363,6 +376,7 @@
       this.Controls.Add(this.Load_Button);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.SpikeGraph);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimumSize = new System.Drawing.Size(1236, 903);
       this.Name = "Form1";
       this.Text = "Анализ спайковых характеристик";
@@ -409,6 +423,7 @@
     private System.Windows.Forms.Label NoStimLabel;
     private System.Windows.Forms.Label StimLabel;
     private System.Windows.Forms.Button mapButton;
+    public System.Windows.Forms.Label cellName;
   }
 }
 

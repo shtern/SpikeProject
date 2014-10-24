@@ -61,6 +61,7 @@ namespace SpikeProject
             foreach (String path in dialog.FileNames)
             {
               FilePath = path;
+              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
               loadData(FilePath);
               SpikeGraph.Refresh();
               NoStimCharacter.Refresh();
@@ -119,7 +120,7 @@ namespace SpikeProject
       MegaMapList.Add(thresholdCheck(GlobalData));
       if (MegaMapList.Count == 13)
       {
-        HeatForm hf = new HeatForm(MegaMapList);
+        HeatForm hf = new HeatForm(MegaMapList, "MegaMap");
         hf.Show();
       }
       buildCharactList();
@@ -467,7 +468,7 @@ namespace SpikeProject
     {
       if (NoStimSpikeList.Count > 0)
       {
-        HeatForm hf = new HeatForm(NoStimSpikeList);
+        HeatForm hf = new HeatForm(NoStimSpikeList, cellName.Text);
         hf.Show();
       }
     }
@@ -476,7 +477,7 @@ namespace SpikeProject
     {
       if (StimSpikeList.Count > 0)
       {
-        HeatForm hf = new HeatForm(StimSpikeList);
+        HeatForm hf = new HeatForm(StimSpikeList, cellName.Text);
         hf.Show();
       }
     }
@@ -501,7 +502,7 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatForm hf = new HeatForm(MapList);
+        HeatForm hf = new HeatForm(MapList,cellName.Text);
         hf.Show();
       }
       else

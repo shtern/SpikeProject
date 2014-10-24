@@ -48,6 +48,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>1414196359_201479.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
@@ -111,6 +114,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="1414196359_201479.ico" />
     <Content Include="Cell_1.txt" />
   </ItemGroup>
   <ItemGroup>

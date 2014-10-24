@@ -14,12 +14,13 @@ namespace SpikeProject
   using Excel = Microsoft.Office.Interop.Excel;
   public partial class HeatForm : Form
   {
-
+    String CellName="";
     double eps = 1e-20;
-    public HeatForm(List<SpikeDataPacket> list)
+    public HeatForm(List<SpikeDataPacket> list, String cellname)
     {
       InitializeComponent();
       List<SpikeDataPacket> FillList = buildUniform(list);
+      CellName = cellname;
       fillData(DGV, FillList);
       fillData(DGV_Norm, buildNormalized(FillList));
     }
@@ -151,7 +152,7 @@ namespace SpikeProject
 
     private void CreateExcel(string sPath, DataGridView  gridview)
     {
-      DataTable dt = (DataTable)gridview.DataSource;
+      //DataTable dt = (DataTable)gridview.DataSource;
       int n = gridview.Columns.Count;
       string[] strArr = new string[n];
       object objValue = System.Reflection.Missing.Value;
@@ -203,6 +204,45 @@ namespace SpikeProject
 
       sXLApp.Columns.EntireColumn.AutoFit();
       sXLApp.Columns.EntireRow.AutoFit();
+      sXLBook.SaveAs(sPath, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+            false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
+            Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+      sXLBook.Close();
+      sXLApp.Quit();
+      GC.WaitForPendingFinalizers();
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
+      GC.Collect();
+    }
+
+    private void CreateExcelVert(string sPath, DataGridView gridview)
+    {
+      //DataTable dt = (DataTable)gridview.DataSource;
+      int n = gridview.Columns.Count;
+      string[] strArr = new string[n];
+      object objValue = System.Reflection.Missing.Value;
+      Excel.Application sXLApp = new Excel.Application();
+      sXLApp.DefaultSaveFormat = Excel.XlFileFormat.xlOpenXMLWorkbook;
+      Excel.Workbooks sXLBooks = (Excel.Workbooks)sXLApp.Workbooks;
+      Excel._Workbook sXLBook = (Excel._Workbook)(sXLBooks.Add(objValue));
+      Excel.Sheets sXLSheets = (Excel.Sheets)sXLBook.Worksheets;
+      Excel.Worksheet sXLWorksheet = (Excel.Worksheet)sXLSheets[1];
+      Excel.Range sXLRange = sXLWorksheet.get_Range("A1", "IV1");
+
+      //If you need Apply the color into Excel Cell based on Grid Cell     
+      for (int c = 0; c < gridview.Rows.Count; c++)
+      {
+        // To get the Excel Cell Name     
+        string sCell = GetExcelCell(c + 1);
+        for (int r = 0; r < gridview.Columns.Count; r++)
+        {
+          sXLRange = sXLWorksheet.get_Range(sCell + (r + 2), sCell + (r + 2));
+          sXLRange.Interior.Color = ColorTranslator.ToOle(gridview[r, c].Style.BackColor);
+        }
+      }
+
+      sXLApp.Columns.EntireColumn.ColumnWidth=1;
+      sXLApp.Columns.EntireRow.RowHeight=0.75;
       sXLBook.SaveAs(sPath, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
             false, false, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
             Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
@@ -385,9 +425,22 @@ namespace SpikeProject
       DGV_Norm.ClearSelection();
     }
 
-    private void excelbutton_Click(object sender, EventArgs e)
+    private void NoNormExcel_Click(object sender, EventArgs e)
     {
-      CreateExcel("table", DGV);
+      if (CellName != "MegaMap")
+        CreateExcel("D:\\Dropbox\\НейроУИР\\Теплокарты Excel\\HeatMap" + CellName + "NotNorm", DGV);
+      else
+        CreateExcelVert("D:\\Dropbox\\НейроУИР\\Теплокарты Excel\\HeatMegaMapNotNorm", DGV);
     }
+
+    private void NormExcel_Click(object sender, EventArgs e)
+    {
+      if (CellName != "MegaMap")
+        CreateExcel("D:\\Dropbox\\НейроУИР\\Теплокарты Excel\\HeatMap" + CellName + "Norm", DGV_Norm);
+      else
+        CreateExcelVert("D:\\Dropbox\\НейроУИР\\Теплокарты Excel\\HeatMegaMapNorm", DGV_Norm);
+    }
+
+
   }
 }
