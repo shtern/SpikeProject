@@ -120,8 +120,10 @@ namespace SpikeProject
       MegaMapList.Add(thresholdCheck(GlobalData));
       if (MegaMapList.Count == 13)
       {
-        HeatForm hf = new HeatForm(MegaMapList, "MegaMap");
-        hf.Show();
+        HeatPictureForm hpf = new HeatPictureForm(MegaMapList, "MegaMap");
+        hpf.Show();
+       // HeatForm hf = new HeatForm(MegaMapList, "MegaMap");
+       // hf.Show();
       }
       buildCharactList();
       buildNoStimAverage();
@@ -468,6 +470,8 @@ namespace SpikeProject
     {
       if (NoStimSpikeList.Count > 0)
       {
+        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, cellName.Text);
+        hpf.Show();
         HeatForm hf = new HeatForm(NoStimSpikeList, cellName.Text);
         hf.Show();
       }
@@ -477,6 +481,8 @@ namespace SpikeProject
     {
       if (StimSpikeList.Count > 0)
       {
+        HeatPictureForm hpf = new HeatPictureForm(StimSpikeList, cellName.Text);
+        hpf.Show();
         HeatForm hf = new HeatForm(StimSpikeList, cellName.Text);
         hf.Show();
       }
@@ -502,7 +508,9 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatForm hf = new HeatForm(MapList,cellName.Text);
+        HeatPictureForm hpf = new HeatPictureForm(MapList,cellName.Text);
+        hpf.Show();
+        HeatForm hf = new HeatForm(MapList, cellName.Text);
         hf.Show();
       }
       else
