@@ -1,6 +1,6 @@
 ﻿namespace SpikeProject
 {
-  partial class Form1
+  partial class MainForm
   {
     /// <summary>
     /// Required designer variable.
@@ -28,7 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.SpikeGraph = new System.Windows.Forms.PictureBox();
       this.label1 = new System.Windows.Forms.Label();
       this.Load_Button = new System.Windows.Forms.Button();
@@ -67,8 +67,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 13);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -107,7 +107,6 @@
       this.NoStimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
-      this.NoStimCharacter.Click += new System.EventHandler(this.NoStimCharacter_Click);
       this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
       // 
       // TopScroll
@@ -149,15 +148,14 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.StimCharacter.Location = new System.Drawing.Point(10, 599);
       this.StimCharacter.Name = "StimCharacter";
       this.StimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
-      this.StimCharacter.Click += new System.EventHandler(this.StimCharacter_Click);
       this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
       // 
       // label4
@@ -318,8 +316,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(13, 223);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -358,7 +356,7 @@
       this.cellName.TabIndex = 20;
       this.cellName.Text = "Клетка не выбрана";
       // 
-      // Form1
+      // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -378,7 +376,7 @@
       this.Controls.Add(this.SpikeGraph);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MinimumSize = new System.Drawing.Size(1236, 903);
-      this.Name = "Form1";
+      this.Name = "MainForm";
       this.Text = "Анализ спайковых характеристик";
       this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).EndInit();

@@ -69,17 +69,11 @@
     <Compile Include="FCompareForm.Designer.cs">
       <DependentUpon>FCompareForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="HeatForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HeatForm.Designer.cs">
-      <DependentUpon>HeatForm.cs</DependentUpon>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HeatPictureForm.cs">
       <SubType>Form</SubType>
@@ -92,11 +86,8 @@
     <EmbeddedResource Include="FCompareForm.resx">
       <DependentUpon>FCompareForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HeatForm.resx">
-      <DependentUpon>HeatForm.cs</DependentUpon>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HeatPictureForm.resx">
       <DependentUpon>HeatPictureForm.cs</DependentUpon>

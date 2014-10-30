@@ -28,89 +28,148 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HeatPictureForm));
       this.notStimSpikes = new System.Windows.Forms.PictureBox();
-      this.Panel = new System.Windows.Forms.Panel();
-      this.exportButton = new System.Windows.Forms.Button();
-      this.panel1 = new System.Windows.Forms.Panel();
-      this.pictureBox2 = new System.Windows.Forms.PictureBox();
+      this.NoStimPanel = new System.Windows.Forms.Panel();
+      this.StimPanel = new System.Windows.Forms.Panel();
+      this.StimSpikes = new System.Windows.Forms.PictureBox();
+      this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+      this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.экспортВBMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.нормализацияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.вклToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.выклToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.notStimSpikes)).BeginInit();
-      this.Panel.SuspendLayout();
-      this.panel1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+      this.NoStimPanel.SuspendLayout();
+      this.StimPanel.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.StimSpikes)).BeginInit();
+      this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // notStimSpikes
       // 
       this.notStimSpikes.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this.notStimSpikes.Location = new System.Drawing.Point(3, 3);
+      this.notStimSpikes.Location = new System.Drawing.Point(0, 0);
       this.notStimSpikes.Name = "notStimSpikes";
-      this.notStimSpikes.Size = new System.Drawing.Size(730, 340);
+      this.notStimSpikes.Size = new System.Drawing.Size(581, 241);
       this.notStimSpikes.TabIndex = 0;
       this.notStimSpikes.TabStop = false;
       this.notStimSpikes.Paint += new System.Windows.Forms.PaintEventHandler(this.notStimSpikes_Paint);
       // 
-      // Panel
+      // NoStimPanel
       // 
-      this.Panel.AutoScroll = true;
-      this.Panel.Controls.Add(this.notStimSpikes);
-      this.Panel.Location = new System.Drawing.Point(12, 12);
-      this.Panel.Name = "Panel";
-      this.Panel.Size = new System.Drawing.Size(689, 330);
-      this.Panel.TabIndex = 1;
-      this.Panel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Panel_Scroll);
+      this.NoStimPanel.AutoScroll = true;
+      this.NoStimPanel.Controls.Add(this.notStimSpikes);
+      this.NoStimPanel.Location = new System.Drawing.Point(12, 37);
+      this.NoStimPanel.Name = "NoStimPanel";
+      this.NoStimPanel.Size = new System.Drawing.Size(689, 330);
+      this.NoStimPanel.TabIndex = 1;
+      this.NoStimPanel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.Panel_Scroll);
       // 
-      // exportButton
+      // StimPanel
       // 
-      this.exportButton.Location = new System.Drawing.Point(961, 118);
-      this.exportButton.Name = "exportButton";
-      this.exportButton.Size = new System.Drawing.Size(75, 23);
-      this.exportButton.TabIndex = 2;
-      this.exportButton.Text = "Export";
-      this.exportButton.UseVisualStyleBackColor = true;
-      this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+      this.StimPanel.AutoScroll = true;
+      this.StimPanel.Controls.Add(this.StimSpikes);
+      this.StimPanel.Location = new System.Drawing.Point(15, 395);
+      this.StimPanel.Name = "StimPanel";
+      this.StimPanel.Size = new System.Drawing.Size(689, 330);
+      this.StimPanel.TabIndex = 3;
       // 
-      // panel1
+      // StimSpikes
       // 
-      this.panel1.AutoScroll = true;
-      this.panel1.Controls.Add(this.pictureBox2);
-      this.panel1.Location = new System.Drawing.Point(15, 395);
-      this.panel1.Name = "panel1";
-      this.panel1.Size = new System.Drawing.Size(689, 330);
-      this.panel1.TabIndex = 3;
+      this.StimSpikes.BackColor = System.Drawing.SystemColors.ControlLightLight;
+      this.StimSpikes.Location = new System.Drawing.Point(0, 0);
+      this.StimSpikes.Name = "StimSpikes";
+      this.StimSpikes.Size = new System.Drawing.Size(570, 242);
+      this.StimSpikes.TabIndex = 0;
+      this.StimSpikes.TabStop = false;
+      this.StimSpikes.Paint += new System.Windows.Forms.PaintEventHandler(this.StimSpikes_Paint);
       // 
-      // pictureBox2
+      // menuStrip1
       // 
-      this.pictureBox2.BackColor = System.Drawing.SystemColors.ControlLightLight;
-      this.pictureBox2.Location = new System.Drawing.Point(3, 3);
-      this.pictureBox2.Name = "pictureBox2";
-      this.pictureBox2.Size = new System.Drawing.Size(730, 340);
-      this.pictureBox2.TabIndex = 0;
-      this.pictureBox2.TabStop = false;
+      this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.файлToolStripMenuItem,
+            this.нормализацияToolStripMenuItem});
+      this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+      this.menuStrip1.Name = "menuStrip1";
+      this.menuStrip1.Size = new System.Drawing.Size(1135, 24);
+      this.menuStrip1.TabIndex = 7;
+      this.menuStrip1.Text = "menuStrip1";
+      // 
+      // файлToolStripMenuItem
+      // 
+      this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.экспортВBMPToolStripMenuItem});
+      this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+      this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+      this.файлToolStripMenuItem.Text = "Файл";
+      // 
+      // экспортВBMPToolStripMenuItem
+      // 
+      this.экспортВBMPToolStripMenuItem.Name = "экспортВBMPToolStripMenuItem";
+      this.экспортВBMPToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+      this.экспортВBMPToolStripMenuItem.Text = "Экспорт в BMP";
+      this.экспортВBMPToolStripMenuItem.Click += new System.EventHandler(this.экспортВBMPToolStripMenuItem_Click);
+      // 
+      // нормализацияToolStripMenuItem
+      // 
+      this.нормализацияToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.вклToolStripMenuItem,
+            this.выклToolStripMenuItem});
+      this.нормализацияToolStripMenuItem.Name = "нормализацияToolStripMenuItem";
+      this.нормализацияToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
+      this.нормализацияToolStripMenuItem.Text = "Нормализация";
+      // 
+      // вклToolStripMenuItem
+      // 
+      this.вклToolStripMenuItem.CheckOnClick = true;
+      this.вклToolStripMenuItem.Name = "вклToolStripMenuItem";
+      this.вклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.вклToolStripMenuItem.Text = "Вкл";
+      // 
+      // выклToolStripMenuItem
+      // 
+      this.выклToolStripMenuItem.Checked = true;
+      this.выклToolStripMenuItem.CheckOnClick = true;
+      this.выклToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.выклToolStripMenuItem.Name = "выклToolStripMenuItem";
+      this.выклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.выклToolStripMenuItem.Text = "Выкл";
       // 
       // HeatPictureForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1135, 807);
-      this.Controls.Add(this.panel1);
-      this.Controls.Add(this.exportButton);
-      this.Controls.Add(this.Panel);
+      this.Controls.Add(this.StimPanel);
+      this.Controls.Add(this.NoStimPanel);
+      this.Controls.Add(this.menuStrip1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.MainMenuStrip = this.menuStrip1;
       this.Name = "HeatPictureForm";
-      this.Text = "HeatPictureForm";
+      this.Text = "Карта спайковых характеристик";
       ((System.ComponentModel.ISupportInitialize)(this.notStimSpikes)).EndInit();
-      this.Panel.ResumeLayout(false);
-      this.panel1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+      this.NoStimPanel.ResumeLayout(false);
+      this.StimPanel.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.StimSpikes)).EndInit();
+      this.menuStrip1.ResumeLayout(false);
+      this.menuStrip1.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
     #endregion
 
     private System.Windows.Forms.PictureBox notStimSpikes;
-    private System.Windows.Forms.Panel Panel;
-    private System.Windows.Forms.Button exportButton;
-    private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.PictureBox pictureBox2;
+    private System.Windows.Forms.Panel NoStimPanel;
+    private System.Windows.Forms.Panel StimPanel;
+    private System.Windows.Forms.PictureBox StimSpikes;
+    private System.Windows.Forms.MenuStrip menuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem экспортВBMPToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem нормализацияToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem вклToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem выклToolStripMenuItem;
   }
 }

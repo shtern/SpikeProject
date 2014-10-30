@@ -13,7 +13,7 @@ namespace SpikeProject
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
   using PointList = List<PointF>;
-  public partial class Form1 : Form
+  public partial class MainForm : Form
   {
     #region Константы
     private double threshold = 0.02;
@@ -22,6 +22,7 @@ namespace SpikeProject
     private int KxBottom = 300;
     double eps = 1e-20;
     int nostimcount = 11;
+    int cellCount = 13;
     #endregion
 
     #region Данные класса
@@ -37,7 +38,7 @@ namespace SpikeProject
     private List<PointList> AveragePointsNoStim = new List<PointList>();
     #endregion
 
-    public Form1()
+    public MainForm()
     {
       InitializeComponent();
 
@@ -118,12 +119,11 @@ namespace SpikeProject
         }
       }
       MegaMapList.Add(thresholdCheck(GlobalData));
-      if (MegaMapList.Count == 13)
+      if (MegaMapList.Count == cellCount)
       {
-        HeatPictureForm hpf = new HeatPictureForm(MegaMapList, "MegaMap");
-        hpf.Show();
-       // HeatForm hf = new HeatForm(MegaMapList, "MegaMap");
-       // hf.Show();
+        //HeatPictureForm hpf = new HeatPictureForm(MegaMapList, "MegaMap");
+        //hpf.Show();
+
       }
       buildCharactList();
       buildNoStimAverage();
@@ -466,27 +466,7 @@ namespace SpikeProject
 
     }
 
-    private void NoStimCharacter_Click(object sender, EventArgs e)
-    {
-      if (NoStimSpikeList.Count > 0)
-      {
-        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, cellName.Text);
-        hpf.Show();
-        HeatForm hf = new HeatForm(NoStimSpikeList, cellName.Text);
-        hf.Show();
-      }
-    }
 
-    private void StimCharacter_Click(object sender, EventArgs e)
-    {
-      if (StimSpikeList.Count > 0)
-      {
-        HeatPictureForm hpf = new HeatPictureForm(StimSpikeList, cellName.Text);
-        hpf.Show();
-        HeatForm hf = new HeatForm(StimSpikeList, cellName.Text);
-        hf.Show();
-      }
-    }
 
     private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
     {
@@ -508,10 +488,9 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatPictureForm hpf = new HeatPictureForm(MapList,cellName.Text);
+        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList,StimSpikeList, cellName.Text);
         hpf.Show();
-        HeatForm hf = new HeatForm(MapList, cellName.Text);
-        hf.Show();
+
       }
       else
       {

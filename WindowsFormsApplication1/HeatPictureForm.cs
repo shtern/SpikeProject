@@ -14,13 +14,15 @@ namespace SpikeProject
   {
     String CellName = "";
     double eps = 1e-20;
-    List<SpikeDataPacket> FillList = new List<SpikeDataPacket>();
-    public HeatPictureForm(List<SpikeDataPacket> list, String cellname)
+    List<SpikeDataPacket> NoStimList = new List<SpikeDataPacket>();
+    List<SpikeDataPacket>   StimList = new List<SpikeDataPacket>();
+    public HeatPictureForm(List<SpikeDataPacket> list,List<SpikeDataPacket> stimlist, String cellname)
     {
       InitializeComponent();
-      FillList = buildUniform(list);
+      NoStimList = buildUniform(list);
+      StimList = buildUniform(stimlist);
       CellName = cellname;
-
+      HeatPictureForm.ActiveForm.Text = cellname;
 
     }
 
@@ -121,24 +123,25 @@ namespace SpikeProject
 
     private void notStimSpikes_Paint(object sender, PaintEventArgs e)
     {
-      int maxRow = FillList.Count;
-      int maxCol = FillList.Last().Count;
+      int maxRow = NoStimList.Count;
+      int maxCol = NoStimList.Last().Count;
       int rectheight = 20;
       
-      for (int i = 0; i < FillList.Count; i++)
-        if (FillList[i].Count < maxCol && FillList[i].Count > 1) maxCol = FillList[i].Count;
+      for (int i = 0; i < NoStimList.Count; i++)
+        if (NoStimList[i].Count < maxCol && NoStimList[i].Count > 1) maxCol = NoStimList[i].Count;
       int rectwidth = 5;
-      notStimSpikes.Width = rectwidth * FillList.FirstOrDefault().Count;
-      notStimSpikes.Height = rectheight * FillList.Count;
-      Panel.Height = notStimSpikes.Height + 20;
+      notStimSpikes.Width = rectwidth * maxCol;
+      NoStimPanel.Width = rectwidth * maxCol+20;
+      notStimSpikes.Height = rectheight * NoStimList.Count;
+      //Panel.Height = notStimSpikes.Height + 20;
       double factor = 999;
       double minVal = 0;
       double maxVal = 0;
-      for (int i = 0; i < FillList.Count; i++)
-        for (int j = 0; j < FillList[i].Count; j++)
+      for (int i = 0; i < NoStimList.Count; i++)
+        for (int j = 0; j < NoStimList[i].Count; j++)
         {
-          if (minVal > FillList[i][j].Item2) minVal = FillList[i][j].Item2;
-          if (maxVal < FillList[i][j].Item2) maxVal = FillList[i][j].Item2;
+          if (minVal > NoStimList[i][j].Item2) minVal = NoStimList[i][j].Item2;
+          if (maxVal < NoStimList[i][j].Item2) maxVal = NoStimList[i][j].Item2;
         }
       List<Color> baseColors = new List<Color>();  // create a color list
       baseColors.Add(Color.RoyalBlue);
@@ -148,16 +151,16 @@ namespace SpikeProject
       baseColors.Add(Color.Orange);
       baseColors.Add(Color.Red);
       List<Color> colors = interpolateColors(baseColors, 1000);
-      for (int i = 0; i < FillList.Count; i++)
+      for (int i = 0; i < NoStimList.Count; i++)
       {
-        for (int j = 0; j < FillList[i].Count && j < maxCol; j++)
+        for (int j = 0; j < NoStimList[i].Count && j < maxCol; j++)
         {
-          Brush brush = new SolidBrush(colors[Convert.ToInt16((FillList[i][j].Item2 / maxVal) * factor)]);
+          Brush brush = new SolidBrush(colors[Convert.ToInt16((NoStimList[i][j].Item2 / maxVal) * factor)]);
           Pen pen = new Pen(brush, 5);
           e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
         }
       }
-
+      
     }
 
     private void Panel_Scroll(object sender, ScrollEventArgs e)
@@ -165,13 +168,58 @@ namespace SpikeProject
       //pictureBox1.Refresh();
     }
 
-    private void exportButton_Click(object sender, EventArgs e)
+
+
+    private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
       Bitmap bmp = new Bitmap(notStimSpikes.Width, notStimSpikes.Height);
       notStimSpikes.DrawToBitmap(bmp, notStimSpikes.ClientRectangle);
       bmp.Save("D:\\testBmp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      //bitmap = (Bitmap)pictureBox1; 
     }
+
+    private void StimSpikes_Paint(object sender, PaintEventArgs e)
+    {
+      int maxRow = StimList.Count;
+      int maxCol = StimList.Last().Count;
+      int rectheight = 20;
+
+      for (int i = 0; i < StimList.Count; i++)
+        if (StimList[i].Count < maxCol && StimList[i].Count > 1) maxCol = StimList[i].Count;
+      int rectwidth = 5;
+      StimSpikes.Width = rectwidth * maxCol;
+      StimPanel.Width = rectwidth * maxCol + 20;
+      StimSpikes.Height = rectheight * StimList.Count;
+      //Panel.Height = notStimSpikes.Height + 20;
+      double factor = 999;
+      double minVal = 0;
+      double maxVal = 0;
+      for (int i = 0; i < StimList.Count; i++)
+        for (int j = 0; j < StimList[i].Count; j++)
+        {
+          if (minVal > StimList[i][j].Item2) minVal = StimList[i][j].Item2;
+          if (maxVal < StimList[i][j].Item2) maxVal = StimList[i][j].Item2;
+        }
+      List<Color> baseColors = new List<Color>();  // create a color list
+      baseColors.Add(Color.RoyalBlue);
+      baseColors.Add(Color.LightSkyBlue);
+      baseColors.Add(Color.LightGreen);
+      baseColors.Add(Color.Yellow);
+      baseColors.Add(Color.Orange);
+      baseColors.Add(Color.Red);
+      List<Color> colors = interpolateColors(baseColors, 1000);
+      for (int i = 0; i < StimList.Count; i++)
+      {
+        for (int j = 0; j < StimList[i].Count && j < maxCol; j++)
+        {
+          Brush brush = new SolidBrush(colors[Convert.ToInt16((StimList[i][j].Item2 / maxVal) * factor)]);
+          Pen pen = new Pen(brush, 5);
+          e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
+        }
+      }
+
+    }
+
+
 
   }
 }
