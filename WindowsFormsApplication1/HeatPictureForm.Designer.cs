@@ -124,8 +124,9 @@
       // 
       this.вклToolStripMenuItem.CheckOnClick = true;
       this.вклToolStripMenuItem.Name = "вклToolStripMenuItem";
-      this.вклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.вклToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.вклToolStripMenuItem.Text = "Вкл";
+      this.вклToolStripMenuItem.Click += new System.EventHandler(this.вклToolStripMenuItem_Click);
       // 
       // выклToolStripMenuItem
       // 
@@ -133,8 +134,9 @@
       this.выклToolStripMenuItem.CheckOnClick = true;
       this.выклToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.выклToolStripMenuItem.Name = "выклToolStripMenuItem";
-      this.выклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.выклToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.выклToolStripMenuItem.Text = "Выкл";
+      this.выклToolStripMenuItem.Click += new System.EventHandler(this.выклToolStripMenuItem_Click);
       // 
       // HeatPictureForm
       // 

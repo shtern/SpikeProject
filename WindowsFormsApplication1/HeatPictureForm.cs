@@ -14,16 +14,34 @@ namespace SpikeProject
   {
     String CellName = "";
     double eps = 1e-20;
+    Bitmap NoStimBmp;
+    Bitmap NormNoStimBmp;
+    Bitmap StimBmp;
+    Bitmap NormStimBmp;
     List<SpikeDataPacket> NoStimList = new List<SpikeDataPacket>();
-    List<SpikeDataPacket>   StimList = new List<SpikeDataPacket>();
+    List<SpikeDataPacket> StimList = new List<SpikeDataPacket>();
+    List<SpikeDataPacket> NormNoStimList = new List<SpikeDataPacket>();
+    List<SpikeDataPacket> NormStimList = new List<SpikeDataPacket>();
     public HeatPictureForm(List<SpikeDataPacket> list,List<SpikeDataPacket> stimlist, String cellname)
     {
       InitializeComponent();
-      NoStimList = buildUniform(list);
-      StimList = buildUniform(stimlist);
+      if (list.Count > 0) 
+      {
+        NoStimList = buildUniform(list);
+        NormNoStimList = buildUniform(buildNormalized(list));
+      }
+      if (stimlist.Count > 0)
+      {
+        StimList = buildUniform(stimlist);
+        NormStimList = buildUniform(buildNormalized(stimlist));
+      }
       CellName = cellname;
       HeatPictureForm.ActiveForm.Text = cellname;
-
+      NoStimBmp = DrawTask(NoStimList);
+      StimBmp = DrawTask(StimList);
+      NormNoStimBmp = DrawTask(NormNoStimList);
+      NormStimBmp = DrawTask(NormStimList);
+ 
     }
 
     private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
@@ -123,25 +141,51 @@ namespace SpikeProject
 
     private void notStimSpikes_Paint(object sender, PaintEventArgs e)
     {
-      int maxRow = NoStimList.Count;
-      int maxCol = NoStimList.Last().Count;
+
+      if (вклToolStripMenuItem.Checked)
+      {
+        if (NormNoStimBmp != null)
+        {
+          notStimSpikes.Image = NormNoStimBmp;
+          notStimSpikes.Width = NormNoStimBmp.Width;
+          notStimSpikes.Height = NormNoStimBmp.Height;
+          NoStimPanel.Height = NormNoStimBmp.Height+20;
+        }
+        else notStimSpikes.Visible = false; 
+      }
+      else {
+        if (NoStimBmp != null)
+        {
+          notStimSpikes.Image = NoStimBmp;
+          notStimSpikes.Width = NoStimBmp.Width;
+          notStimSpikes.Height = NoStimBmp.Height;
+          NoStimPanel.Height = NoStimBmp.Height+20;
+        }
+        else notStimSpikes.Visible = false; 
+      };
+
+    }
+
+    private Bitmap DrawTask(List<SpikeDataPacket> DrawList)
+    {
+      if (DrawList.Count <= 0) return null;
+      int maxRow = DrawList.Count;
+      int maxCol = DrawList.Last().Count;
       int rectheight = 20;
-      
-      for (int i = 0; i < NoStimList.Count; i++)
-        if (NoStimList[i].Count < maxCol && NoStimList[i].Count > 1) maxCol = NoStimList[i].Count;
+
+      for (int i = 0; i < DrawList.Count; i++)
+        if (DrawList[i].Count < maxCol && DrawList[i].Count > 1) maxCol = DrawList[i].Count;
       int rectwidth = 5;
-      notStimSpikes.Width = rectwidth * maxCol;
-      NoStimPanel.Width = rectwidth * maxCol+20;
-      notStimSpikes.Height = rectheight * NoStimList.Count;
-      //Panel.Height = notStimSpikes.Height + 20;
+      
+      Bitmap bmp = new Bitmap(rectwidth * maxCol, rectheight * DrawList.Count);
       double factor = 999;
       double minVal = 0;
       double maxVal = 0;
-      for (int i = 0; i < NoStimList.Count; i++)
-        for (int j = 0; j < NoStimList[i].Count; j++)
+      for (int i = 0; i < DrawList.Count; i++)
+        for (int j = 0; j < DrawList[i].Count; j++)
         {
-          if (minVal > NoStimList[i][j].Item2) minVal = NoStimList[i][j].Item2;
-          if (maxVal < NoStimList[i][j].Item2) maxVal = NoStimList[i][j].Item2;
+          if (minVal > DrawList[i][j].Item2) minVal = DrawList[i][j].Item2;
+          if (maxVal < DrawList[i][j].Item2) maxVal = DrawList[i][j].Item2;
         }
       List<Color> baseColors = new List<Color>();  // create a color list
       baseColors.Add(Color.RoyalBlue);
@@ -150,76 +194,106 @@ namespace SpikeProject
       baseColors.Add(Color.Yellow);
       baseColors.Add(Color.Orange);
       baseColors.Add(Color.Red);
+      Graphics graph = Graphics.FromImage(bmp);
       List<Color> colors = interpolateColors(baseColors, 1000);
-      for (int i = 0; i < NoStimList.Count; i++)
+      for (int i = 0; i < DrawList.Count; i++)
       {
-        for (int j = 0; j < NoStimList[i].Count && j < maxCol; j++)
+        for (int j = 0; j < DrawList[i].Count && j < maxCol; j++)
         {
-          Brush brush = new SolidBrush(colors[Convert.ToInt16((NoStimList[i][j].Item2 / maxVal) * factor)]);
+          Brush brush = new SolidBrush(colors[Convert.ToInt16((DrawList[i][j].Item2 / maxVal) * factor)]);
           Pen pen = new Pen(brush, 5);
-          e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
+         // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
+          graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
         }
       }
-      
+      return bmp;
     }
 
     private void Panel_Scroll(object sender, ScrollEventArgs e)
     {
-      //pictureBox1.Refresh();
+      notStimSpikes.Refresh();
     }
 
 
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      Bitmap bmp = new Bitmap(notStimSpikes.Width, notStimSpikes.Height);
-      notStimSpikes.DrawToBitmap(bmp, notStimSpikes.ClientRectangle);
-      bmp.Save("D:\\testBmp.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      if (вклToolStripMenuItem.Checked)
+      {
+        if (NormNoStimBmp != null)
+        NormNoStimBmp.Save("D:\\" + CellName + "NoStimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+        if (NormStimBmp != null)
+        NormStimBmp.Save("D:\\" + CellName + "StimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      }
+      else
+      {
+        if (NoStimBmp != null)
+        NoStimBmp.Save("D:\\" + CellName + "NoStim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+        if (StimBmp != null)
+        StimBmp.Save("D:\\" + CellName + "Stim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      }
+
+
     }
 
     private void StimSpikes_Paint(object sender, PaintEventArgs e)
     {
-      int maxRow = StimList.Count;
-      int maxCol = StimList.Last().Count;
-      int rectheight = 20;
 
-      for (int i = 0; i < StimList.Count; i++)
-        if (StimList[i].Count < maxCol && StimList[i].Count > 1) maxCol = StimList[i].Count;
-      int rectwidth = 5;
-      StimSpikes.Width = rectwidth * maxCol;
-      StimPanel.Width = rectwidth * maxCol + 20;
-      StimSpikes.Height = rectheight * StimList.Count;
-      //Panel.Height = notStimSpikes.Height + 20;
-      double factor = 999;
-      double minVal = 0;
-      double maxVal = 0;
-      for (int i = 0; i < StimList.Count; i++)
-        for (int j = 0; j < StimList[i].Count; j++)
-        {
-          if (minVal > StimList[i][j].Item2) minVal = StimList[i][j].Item2;
-          if (maxVal < StimList[i][j].Item2) maxVal = StimList[i][j].Item2;
-        }
-      List<Color> baseColors = new List<Color>();  // create a color list
-      baseColors.Add(Color.RoyalBlue);
-      baseColors.Add(Color.LightSkyBlue);
-      baseColors.Add(Color.LightGreen);
-      baseColors.Add(Color.Yellow);
-      baseColors.Add(Color.Orange);
-      baseColors.Add(Color.Red);
-      List<Color> colors = interpolateColors(baseColors, 1000);
-      for (int i = 0; i < StimList.Count; i++)
+      if (вклToolStripMenuItem.Checked)
       {
-        for (int j = 0; j < StimList[i].Count && j < maxCol; j++)
+        if (NormStimBmp != null)
         {
-          Brush brush = new SolidBrush(colors[Convert.ToInt16((StimList[i][j].Item2 / maxVal) * factor)]);
-          Pen pen = new Pen(brush, 5);
-          e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
+          StimSpikes.Image = NormStimBmp;
+          StimSpikes.Width = NormStimBmp.Width;
+          StimSpikes.Height = NormStimBmp.Height;
+          StimPanel.Height = NormStimBmp.Height + 20;
         }
+        else StimSpikes.Visible = false;
       }
+      else
+      {
+        if (StimBmp != null)
+        {
+          StimSpikes.Image = StimBmp;
+          StimSpikes.Width = StimBmp.Width;
+          StimSpikes.Height = StimBmp.Height;
+          StimPanel.Height = StimBmp.Height + 20;
+        }
+        else StimSpikes.Visible = false;
+      };
 
     }
 
+    private void выклToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      UncheckOtherToolStripMenuItems((ToolStripMenuItem)sender);
+      notStimSpikes.Refresh();
+      StimSpikes.Refresh();
+    }
 
+    private void вклToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      UncheckOtherToolStripMenuItems((ToolStripMenuItem)sender);
+      notStimSpikes.Refresh();
+      StimSpikes.Refresh();
+
+    }
+
+    public void UncheckOtherToolStripMenuItems(ToolStripMenuItem selectedMenuItem)
+    {
+      selectedMenuItem.Checked = true;
+
+      foreach (var ltoolStripMenuItem in (from object
+                                              item in selectedMenuItem.Owner.Items
+                                          let ltoolStripMenuItem = item as ToolStripMenuItem
+                                          where ltoolStripMenuItem != null
+                                          where !item.Equals(selectedMenuItem)
+                                          select ltoolStripMenuItem))
+        (ltoolStripMenuItem).Checked = false;
+
+      // Для показа меню после нажатия
+      //selectedMenuItem.Owner.Show();
+    }
 
   }
 }

@@ -121,8 +121,8 @@ namespace SpikeProject
       MegaMapList.Add(thresholdCheck(GlobalData));
       if (MegaMapList.Count == cellCount)
       {
-        //HeatPictureForm hpf = new HeatPictureForm(MegaMapList, "MegaMap");
-        //hpf.Show();
+        HeatPictureForm hpf = new HeatPictureForm(MegaMapList, new List<SpikeDataPacket>(), "MegaMap");
+        hpf.Show();
 
       }
       buildCharactList();
