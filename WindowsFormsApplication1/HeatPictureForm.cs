@@ -41,7 +41,7 @@ namespace SpikeProject
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
       NormStimBmp = DrawTask(NormStimList);
- 
+
     }
 
     private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
@@ -206,6 +206,7 @@ namespace SpikeProject
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
         }
       }
+      graph.Flush();
       return bmp;
     }
 

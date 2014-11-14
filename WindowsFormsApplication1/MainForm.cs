@@ -28,6 +28,8 @@ namespace SpikeProject
     #region Данные класса
     private SpikeDataPacket GlobalData;
     private List<SpikeDataPacket> MegaMapList = new List<SpikeDataPacket>();
+    private List<SpikeDataPacket> MegaMapStimList = new List<SpikeDataPacket>();
+    private List<SpikeDataPacket> MegaMapNoStimList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> StimSpikeList;
     private List<SpikeDataPacket> NoStimSpikeList;
     private List<PointF> DrawPointsList;
@@ -118,16 +120,66 @@ namespace SpikeProject
           GlobalData.Add(XYData);
         }
       }
-      MegaMapList.Add(thresholdCheck(GlobalData));
+      MegaMapList.Add((GlobalData));
       if (MegaMapList.Count == cellCount)
       {
-        HeatPictureForm hpf = new HeatPictureForm(MegaMapList, new List<SpikeDataPacket>(), "MegaMap");
+        buildMegaLists();
+        HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, "MegaMap");
         hpf.Show();
 
       }
       buildCharactList();
       buildNoStimAverage();
       buildStimAverage();
+    }
+
+    private void buildMegaLists()
+    {
+ 
+      for (int i = 0; i < MegaMapList.Count; i++)
+      {
+        MegaMapNoStimList.Add(new SpikeDataPacket());
+        MegaMapStimList.Add(new SpikeDataPacket());
+        int CountVar=0;
+        for (int j = 1; j< MegaMapList[i].Count; j++)
+        {
+          //int CountVar = 0;
+          SpikeData packet = MegaMapList[i][j];
+          double x = packet.Item1, y = packet.Item2;
+          if (y > threshold)
+          {
+            SpikeDataPacket currentSpike = new SpikeDataPacket();
+            currentSpike.Add(new SpikeData(x, y));
+            //double ZeroPositionX = ApproxX(MegaMapList[i][j - 1].Item1, MegaMapList[i][j - 1].Item2, x, y);
+            //currentSpike.Add(new SpikeData(0, 0));
+            while (y > threshold && j < MegaMapList[i].Count)
+            {
+              if (y < threshold) break;
+              x = MegaMapList[i][j].Item1;
+              y = MegaMapList[i][j].Item2;
+              SpikeData Spikedata = new SpikeData(x , y - threshold);
+              if (y - threshold > eps)
+                currentSpike.Add(Spikedata);
+              j++;
+            }
+            if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+            {
+              CountVar++;
+              if (CountVar < nostimcount) MegaMapNoStimList[i].AddRange(currentSpike);
+              else MegaMapStimList[i].AddRange(currentSpike);
+            }
+          }
+        }
+        SpikeDataPacket zeropacket = new SpikeDataPacket();
+        zeropacket.Add(new SpikeData(0, 0));
+        zeropacket.Add(new SpikeData(0, 0));
+        zeropacket.Add(new SpikeData(0, 0));
+        zeropacket.Add(new SpikeData(0, 0));
+        zeropacket.Add(new SpikeData(0, 0));
+        if (MegaMapNoStimList[i].Count == 0) MegaMapNoStimList[i].AddRange(zeropacket);
+        if (MegaMapStimList[i].Count == 0) MegaMapStimList[i].AddRange(zeropacket);
+
+      }
     }
 
     private void buildCharactList()

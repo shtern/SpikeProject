@@ -87,6 +87,7 @@
       // 
       // menuStrip1
       // 
+      this.menuStrip1.BackColor = System.Drawing.SystemColors.InactiveCaption;
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
             this.нормализацияToolStripMenuItem});
@@ -100,6 +101,7 @@
       // 
       this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.экспортВBMPToolStripMenuItem});
+      this.файлToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlText;
       this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
       this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
       this.файлToolStripMenuItem.Text = "Файл";
