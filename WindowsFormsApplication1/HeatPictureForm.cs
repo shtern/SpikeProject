@@ -236,11 +236,11 @@ namespace SpikeProject
           Pen pen = new Pen(brush, 5);
          // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
-          brush.Dispose();
+          //brush.Dispose();
         }
       }
       graph.Flush();
-      graph.Dispose();
+      //graph.Dispose();
       return bmp;
     }
 
@@ -248,9 +248,11 @@ namespace SpikeProject
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      String savepath = "D:\\MAPS"+new string(DateTime.UtcNow.ToString().Where(Char.IsDigit).ToArray());
+      String savepath = "D:\\MAPS"+DateTime.Now.ToString("yyyyMMddHHmm");
       if (!System.IO.Directory.Exists(savepath))
       System.IO.Directory.CreateDirectory(savepath);
+      if (doOpenMenuItem.Checked==true)
+      System.Diagnostics.Process.Start(@savepath);
       if (вклToolStripMenuItem.Checked)
       {
         if (NormNoStimBmp != null)
@@ -298,6 +300,12 @@ namespace SpikeProject
 
       // Для показа меню после нажатия
       //selectedMenuItem.Owner.Show();
+    }
+
+    private void doOpenMenuItem_Click(object sender, EventArgs e)
+    {
+      if (doOpenMenuItem.Checked == true) doOpenMenuItem.Checked = false;
+      else doOpenMenuItem.Checked = true;
     }
 
   }

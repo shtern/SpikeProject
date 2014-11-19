@@ -41,6 +41,8 @@
       this.выклToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
+      this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.doOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.notStimSpikes)).BeginInit();
       this.NoStimPanel.SuspendLayout();
       this.StimPanel.SuspendLayout();
@@ -89,7 +91,8 @@
       this.menuStrip1.BackColor = System.Drawing.SystemColors.InactiveCaption;
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
-            this.нормализацияToolStripMenuItem});
+            this.нормализацияToolStripMenuItem,
+            this.настройкиToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
       this.menuStrip1.Size = new System.Drawing.Size(1135, 24);
@@ -141,8 +144,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(15, 38);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -152,14 +155,31 @@
       // 
       // StimLabel
       // 
-      this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.StimLabel.AutoSize = true;
       this.StimLabel.Location = new System.Drawing.Point(15, 405);
       this.StimLabel.Name = "StimLabel";
       this.StimLabel.Size = new System.Drawing.Size(118, 13);
       this.StimLabel.TabIndex = 9;
       this.StimLabel.Text = "Во время стимуляции";
+      // 
+      // настройкиToolStripMenuItem
+      // 
+      this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.doOpenMenuItem});
+      this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
+      this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
+      this.настройкиToolStripMenuItem.Text = "Настройки";
+      // 
+      // doOpenMenuItem
+      // 
+      this.doOpenMenuItem.Checked = true;
+      this.doOpenMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.doOpenMenuItem.Name = "doOpenMenuItem";
+      this.doOpenMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.doOpenMenuItem.Text = "Открывать окно при сохранении";
+      this.doOpenMenuItem.Click += new System.EventHandler(this.doOpenMenuItem_Click);
       // 
       // HeatPictureForm
       // 
@@ -200,5 +220,7 @@
     private System.Windows.Forms.ToolStripMenuItem выклToolStripMenuItem;
     private System.Windows.Forms.Label NoStimLabel;
     private System.Windows.Forms.Label StimLabel;
+    private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem doOpenMenuItem;
   }
 }
