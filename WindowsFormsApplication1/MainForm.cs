@@ -55,6 +55,8 @@ namespace SpikeProject
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
         MegaMapList = new List<SpikeDataPacket>();
+        MegaMapStimList = new List<SpikeDataPacket>();
+        MegaMapNoStimList = new List<SpikeDataPacket>();
         dialog.FileName = "Cell_1.txt";
         dialog.Multiselect = true;
         dialog.InitialDirectory = Application.StartupPath + @"\..\..";
@@ -124,8 +126,7 @@ namespace SpikeProject
       if (MegaMapList.Count == cellCount)
       {
         buildMegaLists();
-        HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, "MegaMap");
-        hpf.Show();
+       
 
       }
       buildCharactList();
@@ -176,10 +177,12 @@ namespace SpikeProject
         zeropacket.Add(new SpikeData(0, 0));
         zeropacket.Add(new SpikeData(0, 0));
         zeropacket.Add(new SpikeData(0, 0));
-        if (MegaMapNoStimList[i].Count == 0) MegaMapNoStimList[i].AddRange(zeropacket);
-        if (MegaMapStimList[i].Count == 0) MegaMapStimList[i].AddRange(zeropacket);
+        if (MegaMapNoStimList[i].Count < 2) MegaMapNoStimList[i].AddRange(zeropacket);
+        if (MegaMapStimList[i].Count < 2) MegaMapStimList[i].AddRange(zeropacket);
 
       }
+      HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, "MegaMap");
+      hpf.Show();
     }
 
     private void buildCharactList()

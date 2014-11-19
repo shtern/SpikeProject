@@ -36,7 +36,7 @@ namespace SpikeProject
         NormStimList = buildUniform(buildNormalized(stimlist));
       }
       CellName = cellname;
-      HeatPictureForm.ActiveForm.Text = cellname;
+      //HeatPictureForm.ActiveForm.Text = cellname;
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
@@ -176,7 +176,7 @@ namespace SpikeProject
       for (int i = 0; i < DrawList.Count; i++)
         if (DrawList[i].Count < maxCol && DrawList[i].Count > 1) maxCol = DrawList[i].Count;
       int rectwidth = 5;
-      
+      if (maxCol == 0) return null;
       Bitmap bmp = new Bitmap(rectwidth * maxCol, rectheight * DrawList.Count);
       double factor = 999;
       double minVal = 0;
@@ -219,19 +219,22 @@ namespace SpikeProject
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      String savepath = "D:\\MAPS"+new string(DateTime.UtcNow.ToString().Where(Char.IsDigit).ToArray());
+      if (!System.IO.Directory.Exists(savepath))
+      System.IO.Directory.CreateDirectory(savepath);
       if (вклToolStripMenuItem.Checked)
       {
         if (NormNoStimBmp != null)
-        NormNoStimBmp.Save("D:\\" + CellName + "NoStimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+          NormNoStimBmp.Save(savepath + "\\" + CellName + "NoStimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
         if (NormStimBmp != null)
-        NormStimBmp.Save("D:\\" + CellName + "StimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+          NormStimBmp.Save(savepath + "\\" + CellName + "StimNormalized.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
       }
       else
       {
         if (NoStimBmp != null)
-        NoStimBmp.Save("D:\\" + CellName + "NoStim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+          NoStimBmp.Save(savepath+ "\\" + CellName + "NoStim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
         if (StimBmp != null)
-        StimBmp.Save("D:\\" + CellName + "Stim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+          StimBmp.Save(savepath+ "\\" + CellName + "Stim.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
       }
 
 
