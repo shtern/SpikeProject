@@ -41,7 +41,10 @@ namespace SpikeProject
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
       NormStimBmp = DrawTask(NormStimList);
-
+      notStimSpikesSetPic();
+      StimSpikesSetPic();
+      this.Height = NoStimPanel.Height + StimPanel.Height + 300;
+      this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
 
     private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
@@ -139,7 +142,8 @@ namespace SpikeProject
       return ColorList;
     }
 
-    private void notStimSpikes_Paint(object sender, PaintEventArgs e)
+
+    private void notStimSpikesSetPic()
     {
 
       if (вклToolStripMenuItem.Checked)
@@ -149,22 +153,50 @@ namespace SpikeProject
           notStimSpikes.Image = NormNoStimBmp;
           notStimSpikes.Width = NormNoStimBmp.Width;
           notStimSpikes.Height = NormNoStimBmp.Height;
-          NoStimPanel.Height = NormNoStimBmp.Height+20;
+          NoStimPanel.Height = NormNoStimBmp.Height + 20;
         }
-        else notStimSpikes.Visible = false; 
+        else notStimSpikes.Visible = false;
       }
-      else {
+      else
+      {
         if (NoStimBmp != null)
         {
           notStimSpikes.Image = NoStimBmp;
           notStimSpikes.Width = NoStimBmp.Width;
           notStimSpikes.Height = NoStimBmp.Height;
-          NoStimPanel.Height = NoStimBmp.Height+20;
+          NoStimPanel.Height = NoStimBmp.Height + 20;
         }
-        else notStimSpikes.Visible = false; 
+        else notStimSpikes.Visible = false;
       };
-
     }
+
+    private void StimSpikesSetPic()
+    {
+      if (вклToolStripMenuItem.Checked)
+      {
+        if (NormStimBmp != null)
+        {
+          StimSpikes.Image = NormStimBmp;
+          StimSpikes.Width = NormStimBmp.Width;
+          StimSpikes.Height = NormStimBmp.Height;
+          StimPanel.Height = NormStimBmp.Height + 20;
+        }
+        else StimSpikes.Visible = false;
+      }
+      else
+      {
+        if (StimBmp != null)
+        {
+
+          StimSpikes.Image = StimBmp;
+          StimSpikes.Width = StimBmp.Width;
+          StimSpikes.Height = StimBmp.Height;
+          StimPanel.Height = StimBmp.Height + 20;
+        }
+        else StimSpikes.Visible = false;
+      };
+    }
+
 
     private Bitmap DrawTask(List<SpikeDataPacket> DrawList)
     {
@@ -204,15 +236,12 @@ namespace SpikeProject
           Pen pen = new Pen(brush, 5);
          // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
+          brush.Dispose();
         }
       }
       graph.Flush();
+      graph.Dispose();
       return bmp;
-    }
-
-    private void Panel_Scroll(object sender, ScrollEventArgs e)
-    {
-      notStimSpikes.Refresh();
     }
 
 
@@ -240,46 +269,18 @@ namespace SpikeProject
 
     }
 
-    private void StimSpikes_Paint(object sender, PaintEventArgs e)
-    {
-
-      if (вклToolStripMenuItem.Checked)
-      {
-        if (NormStimBmp != null)
-        {
-          StimSpikes.Image = NormStimBmp;
-          StimSpikes.Width = NormStimBmp.Width;
-          StimSpikes.Height = NormStimBmp.Height;
-          StimPanel.Height = NormStimBmp.Height + 20;
-        }
-        else StimSpikes.Visible = false;
-      }
-      else
-      {
-        if (StimBmp != null)
-        {
-          StimSpikes.Image = StimBmp;
-          StimSpikes.Width = StimBmp.Width;
-          StimSpikes.Height = StimBmp.Height;
-          StimPanel.Height = StimBmp.Height + 20;
-        }
-        else StimSpikes.Visible = false;
-      };
-
-    }
-
     private void выклToolStripMenuItem_Click(object sender, EventArgs e)
     {
       UncheckOtherToolStripMenuItems((ToolStripMenuItem)sender);
-      notStimSpikes.Refresh();
-      StimSpikes.Refresh();
+      notStimSpikesSetPic();
+      StimSpikesSetPic();
     }
 
     private void вклToolStripMenuItem_Click(object sender, EventArgs e)
     {
       UncheckOtherToolStripMenuItems((ToolStripMenuItem)sender);
-      notStimSpikes.Refresh();
-      StimSpikes.Refresh();
+      notStimSpikesSetPic();
+      StimSpikesSetPic();
 
     }
 
