@@ -30,6 +30,8 @@ namespace SpikeProject
     private List<SpikeDataPacket> MegaMapList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapStimList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapNoStimList = new List<SpikeDataPacket>();
+    private List<SpikeDataPacket> MegaMapStimMax = new List<SpikeDataPacket>();
+    private List<SpikeDataPacket> MegaMapNoStimMax = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> StimSpikeList;
     private List<SpikeDataPacket> NoStimSpikeList;
     private List<PointF> DrawPointsList;
@@ -57,6 +59,8 @@ namespace SpikeProject
         MegaMapList = new List<SpikeDataPacket>();
         MegaMapStimList = new List<SpikeDataPacket>();
         MegaMapNoStimList = new List<SpikeDataPacket>();
+        MegaMapStimMax = new List<SpikeDataPacket>();
+        MegaMapNoStimMax = new List<SpikeDataPacket>();
         dialog.FileName = "Cell_1.txt";
         dialog.Multiselect = true;
         dialog.InitialDirectory = Application.StartupPath + @"\..\..";
@@ -133,38 +137,43 @@ namespace SpikeProject
 
     private void buildMegaLists()
     {
- 
+      MegaMapStimList = new List<SpikeDataPacket>();
+      MegaMapNoStimList = new List<SpikeDataPacket>();
+      MegaMapStimMax = new List<SpikeDataPacket>();
+      MegaMapNoStimMax = new List<SpikeDataPacket>();
       for (int i = 0; i < MegaMapList.Count; i++)
       {
         MegaMapNoStimList.Add(new SpikeDataPacket());
         MegaMapStimList.Add(new SpikeDataPacket());
+        MegaMapNoStimMax.Add(new SpikeDataPacket());
+        MegaMapStimMax.Add(new SpikeDataPacket());
         int CountVar=0;
         for (int j = 1; j< MegaMapList[i].Count; j++)
         {
           //int CountVar = 0;
+          SpikeData max = new SpikeData(eps,eps);
           SpikeData packet = MegaMapList[i][j];
           double x = packet.Item1, y = packet.Item2;
           if (y > threshold)
           {
             SpikeDataPacket currentSpike = new SpikeDataPacket();
             currentSpike.Add(new SpikeData(x, y));
-            //double ZeroPositionX = ApproxX(MegaMapList[i][j - 1].Item1, MegaMapList[i][j - 1].Item2, x, y);
-            //currentSpike.Add(new SpikeData(0, 0));
             while (y > threshold && j < MegaMapList[i].Count)
             {
               if (y < threshold) break;
               x = MegaMapList[i][j].Item1;
               y = MegaMapList[i][j].Item2;
-              SpikeData Spikedata = new SpikeData(x , y - threshold);
-              if (y - threshold > eps)
+              if (y > max.Item2) max = new SpikeData(x,y);
+              SpikeData Spikedata = new SpikeData(x , y);
+              if (y > eps)
                 currentSpike.Add(Spikedata);
               j++;
             }
             if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
             {
               CountVar++;
-              if (CountVar < nostimcount) MegaMapNoStimList[i].AddRange(currentSpike);
-              else MegaMapStimList[i].AddRange(currentSpike);
+              if (CountVar < nostimcount) { MegaMapNoStimList[i].AddRange(currentSpike); MegaMapNoStimMax[i].Add(max); }
+              else { MegaMapStimList[i].AddRange(currentSpike); MegaMapStimMax[i].Add(max); }
             }
           }
         }
@@ -178,7 +187,7 @@ namespace SpikeProject
         if (MegaMapStimList[i].Count < 2) MegaMapStimList[i].AddRange(zeropacket);
 
       }
-      HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, "MegaMap");
+      HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, MegaMapNoStimMax, MegaMapStimMax);
       hpf.Show();
     }
 
@@ -340,7 +349,6 @@ namespace SpikeProject
 
     }
 
-
     private double ApproxX(double x0, double y0, double x1, double y1)
     {
       // zero fix
@@ -453,8 +461,6 @@ namespace SpikeProject
       StimCharacter.Refresh();
     }
 
-
-
     private void numericNo_ValueChanged(object sender, EventArgs e)
     {
       NoStimCharacter.Refresh();
@@ -464,7 +470,6 @@ namespace SpikeProject
     {
       StimCharacter.Refresh();
     }
-
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)
     {
@@ -482,8 +487,6 @@ namespace SpikeProject
 
     }
 
-
-
     private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
     {
       threshold = (double)Threshold_Scroll.Value / 1000;
@@ -499,8 +502,6 @@ namespace SpikeProject
       }
 
     }
-
- 
 
     private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
     {
@@ -561,7 +562,7 @@ namespace SpikeProject
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyyMMddHHmm");
+      String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
       if (!System.IO.Directory.Exists(savepath))
         System.IO.Directory.CreateDirectory(savepath);
       if (openDirToolStripMenuItem.Checked == true)
@@ -583,6 +584,10 @@ namespace SpikeProject
       if (e.KeyCode == Keys.O && e.Modifiers == Keys.Control)
       {
         loadDialogOpen();
+      }
+      if (e.KeyCode == Keys.B && e.Modifiers == Keys.Control)
+      {
+        построитьToolStripMenuItem.ShowDropDown();
       }
     }
 

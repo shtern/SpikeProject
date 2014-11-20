@@ -47,6 +47,31 @@ namespace SpikeProject
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
 
+    public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
+    {
+      InitializeComponent();
+      if (list.Count > 0)
+      {
+        NoStimList = buildUniform(list);
+        NormNoStimList = buildUniform(buildNormalized(list));
+      }
+      if (stimlist.Count > 0)
+      {
+        StimList = buildUniform(stimlist);
+        NormStimList = buildUniform(buildNormalized(stimlist));
+      }
+      CellName = "MeagMap";
+      //HeatPictureForm.ActiveForm.Text = cellname;
+      NoStimBmp = DrawTask(NoStimList);
+      StimBmp = DrawTask(StimList);
+      NormNoStimBmp = DrawTask(NormNoStimList);
+      NormStimBmp = DrawTask(NormStimList);
+      notStimSpikesSetPic();
+      StimSpikesSetPic();
+      this.Height = NoStimPanel.Height + StimPanel.Height + 300;
+      this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
+    }
+
     private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
     {
       double maxLenght = 0;
@@ -244,11 +269,9 @@ namespace SpikeProject
       return bmp;
     }
 
-
-
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      String savepath = "D:\\MAPS"+DateTime.Now.ToString("yyyyMMddHHmm");
+      String savepath = "D:\\MAPS"+DateTime.Now.ToString("yyyy_MMdd_HHmm");
       if (!System.IO.Directory.Exists(savepath))
       System.IO.Directory.CreateDirectory(savepath);
       if (doOpenMenuItem.Checked==true)
