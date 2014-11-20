@@ -43,13 +43,42 @@ namespace SpikeProject
     public MainForm()
     {
       InitializeComponent();
-      KeyDown += Control_KeyDown;
+      KeyPreview = true;
       threshold = (double)Threshold_Scroll.Value / 1000;
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
     }
 
+    private void loadDialogOpen()
+    {
+      using (OpenFileDialog dialog = new OpenFileDialog())
+      {
+        MegaMapList = new List<SpikeDataPacket>();
+        MegaMapStimList = new List<SpikeDataPacket>();
+        MegaMapNoStimList = new List<SpikeDataPacket>();
+        dialog.FileName = "Cell_1.txt";
+        dialog.Multiselect = true;
+        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
+        switch (dialog.ShowDialog())
+        {
+          case System.Windows.Forms.DialogResult.OK:
+            foreach (String path in dialog.FileNames)
+            {
+              FilePath = path;
+              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+              loadData(FilePath);
+              SpikeGraph.Refresh();
+              NoStimCharacter.Refresh();
+              StimCharacter.Refresh();
+            }
+            break;
+
+          case System.Windows.Forms.DialogResult.Cancel:
+            break;
+        }
+      }
+    }
 
     private void loadData(string FilePath)
     {
@@ -471,40 +500,7 @@ namespace SpikeProject
 
     }
 
-    void Control_KeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.Control && e.KeyCode == Keys.O)
-      {
-        using (OpenFileDialog dialog = new OpenFileDialog())
-        {
-          MegaMapList = new List<SpikeDataPacket>();
-          MegaMapStimList = new List<SpikeDataPacket>();
-          MegaMapNoStimList = new List<SpikeDataPacket>();
-          dialog.FileName = "Cell_1.txt";
-          dialog.Multiselect = true;
-          dialog.InitialDirectory = Application.StartupPath + @"\..\..";
-          switch (dialog.ShowDialog())
-          {
-            case System.Windows.Forms.DialogResult.OK:
-              foreach (String path in dialog.FileNames)
-              {
-                FilePath = path;
-                cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
-                loadData(FilePath);
-                SpikeGraph.Refresh();
-                NoStimCharacter.Refresh();
-                StimCharacter.Refresh();
-              }
-              break;
-
-            case System.Windows.Forms.DialogResult.Cancel:
-
-
-              break;
-          }
-        }
-      }
-    }
+ 
 
     private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
     {
@@ -517,34 +513,7 @@ namespace SpikeProject
 
     private void загрузитьДанныеToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      using (OpenFileDialog dialog = new OpenFileDialog())
-      {
-        MegaMapList = new List<SpikeDataPacket>();
-        MegaMapStimList = new List<SpikeDataPacket>();
-        MegaMapNoStimList = new List<SpikeDataPacket>();
-        dialog.FileName = "Cell_1.txt";
-        dialog.Multiselect = true;
-        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
-        switch (dialog.ShowDialog())
-        {
-          case System.Windows.Forms.DialogResult.OK:
-            foreach (String path in dialog.FileNames)
-            {
-              FilePath = path;
-              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
-              loadData(FilePath);
-              SpikeGraph.Refresh();
-              NoStimCharacter.Refresh();
-              StimCharacter.Refresh();
-            }
-            break;
-
-          case System.Windows.Forms.DialogResult.Cancel:
-
-
-            break;
-        }
-      }
+      loadDialogOpen();
     }
 
     private void сравнениеСреднихToolStripMenuItem_Click(object sender, EventArgs e)
@@ -607,6 +576,14 @@ namespace SpikeProject
       SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
       bmp.Save(savepath + "\\" + cellName.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
 
+    }
+
+    private void MainForm_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.O && e.Modifiers == Keys.Control)
+      {
+        loadDialogOpen();
+      }
     }
 
 

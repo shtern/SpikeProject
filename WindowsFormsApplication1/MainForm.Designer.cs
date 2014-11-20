@@ -73,8 +73,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -97,7 +97,7 @@
       // TopScroll
       // 
       this.TopScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.TopScroll.Location = new System.Drawing.Point(13, 26);
+      this.TopScroll.Location = new System.Drawing.Point(13, 36);
       this.TopScroll.Maximum = 50;
       this.TopScroll.Name = "TopScroll";
       this.TopScroll.Size = new System.Drawing.Size(160, 45);
@@ -109,7 +109,7 @@
       // BottomScroll
       // 
       this.BottomScroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.BottomScroll.Location = new System.Drawing.Point(27, 33);
+      this.BottomScroll.Location = new System.Drawing.Point(27, 35);
       this.BottomScroll.Maximum = 50;
       this.BottomScroll.Name = "BottomScroll";
       this.BottomScroll.Size = new System.Drawing.Size(200, 45);
@@ -122,7 +122,7 @@
       // 
       this.Threshold_Scroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.Threshold_Scroll.AutoSize = false;
-      this.Threshold_Scroll.Location = new System.Drawing.Point(13, 70);
+      this.Threshold_Scroll.Location = new System.Drawing.Point(13, 82);
       this.Threshold_Scroll.Maximum = 150;
       this.Threshold_Scroll.Name = "Threshold_Scroll";
       this.Threshold_Scroll.Size = new System.Drawing.Size(160, 24);
@@ -133,10 +133,10 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(10, 646);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 637);
       this.StimCharacter.Name = "StimCharacter";
       this.StimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.StimCharacter.TabIndex = 10;
@@ -146,7 +146,7 @@
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(179, 29);
+      this.label4.Location = new System.Drawing.Point(179, 39);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(53, 13);
       this.label4.TabIndex = 9;
@@ -155,7 +155,7 @@
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(179, 70);
+      this.label8.Location = new System.Drawing.Point(179, 85);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(38, 13);
       this.label8.TabIndex = 12;
@@ -164,7 +164,7 @@
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(50, 80);
+      this.label7.Location = new System.Drawing.Point(50, 89);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(202, 13);
       this.label7.TabIndex = 11;
@@ -173,7 +173,7 @@
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.Location = new System.Drawing.Point(233, 33);
+      this.label6.Location = new System.Drawing.Point(233, 37);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(53, 13);
       this.label6.TabIndex = 10;
@@ -182,13 +182,14 @@
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cellName);
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.TopScroll);
       this.groupBox1.Controls.Add(this.Threshold_Scroll);
       this.groupBox1.Location = new System.Drawing.Point(644, 45);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(254, 120);
+      this.groupBox1.Size = new System.Drawing.Size(254, 192);
       this.groupBox1.TabIndex = 13;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Общий график";
@@ -205,7 +206,7 @@
       this.groupBox2.Controls.Add(this.label6);
       this.groupBox2.Location = new System.Drawing.Point(918, 45);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(292, 169);
+      this.groupBox2.Size = new System.Drawing.Size(292, 192);
       this.groupBox2.TabIndex = 14;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Графики спайковых характеристик";
@@ -213,7 +214,7 @@
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(184, 105);
+      this.label5.Location = new System.Drawing.Point(184, 114);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(102, 13);
       this.label5.TabIndex = 18;
@@ -222,7 +223,7 @@
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(17, 105);
+      this.label2.Location = new System.Drawing.Point(17, 114);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(85, 13);
       this.label2.TabIndex = 17;
@@ -230,7 +231,7 @@
       // 
       // numericAfterStim
       // 
-      this.numericAfterStim.Location = new System.Drawing.Point(202, 130);
+      this.numericAfterStim.Location = new System.Drawing.Point(202, 139);
       this.numericAfterStim.Maximum = new decimal(new int[] {
             50,
             0,
@@ -253,7 +254,7 @@
       // 
       // numericNoStim
       // 
-      this.numericNoStim.Location = new System.Drawing.Point(33, 130);
+      this.numericNoStim.Location = new System.Drawing.Point(33, 139);
       this.numericNoStim.Maximum = new decimal(new int[] {
             50,
             0,
@@ -276,10 +277,10 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
-      this.NoStimLabel.Location = new System.Drawing.Point(13, 247);
+      this.NoStimLabel.Location = new System.Drawing.Point(13, 250);
       this.NoStimLabel.Name = "NoStimLabel";
       this.NoStimLabel.Size = new System.Drawing.Size(85, 13);
       this.NoStimLabel.TabIndex = 17;
@@ -289,7 +290,7 @@
       // 
       this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.StimLabel.AutoSize = true;
-      this.StimLabel.Location = new System.Drawing.Point(13, 626);
+      this.StimLabel.Location = new System.Drawing.Point(13, 617);
       this.StimLabel.Name = "StimLabel";
       this.StimLabel.Size = new System.Drawing.Size(118, 13);
       this.StimLabel.TabIndex = 18;
@@ -299,7 +300,7 @@
       // 
       this.cellName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cellName.AutoSize = true;
-      this.cellName.Location = new System.Drawing.Point(654, 197);
+      this.cellName.Location = new System.Drawing.Point(68, 138);
       this.cellName.Name = "cellName";
       this.cellName.Size = new System.Drawing.Size(105, 13);
       this.cellName.TabIndex = 20;
@@ -397,7 +398,6 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1220, 972);
-      this.Controls.Add(this.cellName);
       this.Controls.Add(this.StimLabel);
       this.Controls.Add(this.NoStimLabel);
       this.Controls.Add(this.groupBox2);
@@ -412,7 +412,7 @@
       this.Name = "MainForm";
       this.Text = "Анализ спайковых характеристик";
       this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
-      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Control_KeyDown);
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).EndInit();
