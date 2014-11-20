@@ -30,8 +30,6 @@
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.SpikeGraph = new System.Windows.Forms.PictureBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.Load_Button = new System.Windows.Forms.Button();
       this.NoStimCharacter = new System.Windows.Forms.PictureBox();
       this.TopScroll = new System.Windows.Forms.TrackBar();
       this.BottomScroll = new System.Windows.Forms.TrackBar();
@@ -47,12 +45,19 @@
       this.label2 = new System.Windows.Forms.Label();
       this.numericAfterStim = new System.Windows.Forms.NumericUpDown();
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
-      this.compareButton = new System.Windows.Forms.Button();
-      this.AvgCheckBox = new System.Windows.Forms.CheckBox();
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
-      this.mapButton = new System.Windows.Forms.Button();
       this.cellName = new System.Windows.Forms.Label();
+      this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+      this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.загрузитьДанныеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.экспортВBMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.построитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.сравнениеСреднихToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.тепловыеКартыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -63,6 +68,7 @@
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericAfterStim)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericNoStim)).BeginInit();
+      this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // SpikeGraph
@@ -70,39 +76,18 @@
       this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.SpikeGraph.Location = new System.Drawing.Point(10, 13);
+      this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
       this.SpikeGraph.Name = "SpikeGraph";
       this.SpikeGraph.Size = new System.Drawing.Size(615, 194);
       this.SpikeGraph.TabIndex = 0;
       this.SpikeGraph.TabStop = false;
       this.SpikeGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.SpikeGraph_Paint);
       // 
-      // label1
-      // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(913, 12);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(86, 13);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Выберите файл";
-      // 
-      // Load_Button
-      // 
-      this.Load_Button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.Load_Button.Location = new System.Drawing.Point(1135, 7);
-      this.Load_Button.Name = "Load_Button";
-      this.Load_Button.Size = new System.Drawing.Size(75, 23);
-      this.Load_Button.TabIndex = 2;
-      this.Load_Button.Text = "Выбрать";
-      this.Load_Button.UseVisualStyleBackColor = true;
-      this.Load_Button.Click += new System.EventHandler(this.Load_Button_Click);
-      // 
       // NoStimCharacter
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.Location = new System.Drawing.Point(10, 243);
+      this.NoStimCharacter.Location = new System.Drawing.Point(10, 274);
       this.NoStimCharacter.Name = "NoStimCharacter";
       this.NoStimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.NoStimCharacter.TabIndex = 7;
@@ -151,7 +136,7 @@
       this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(10, 599);
+      this.StimCharacter.Location = new System.Drawing.Point(10, 646);
       this.StimCharacter.Name = "StimCharacter";
       this.StimCharacter.Size = new System.Drawing.Size(1200, 320);
       this.StimCharacter.TabIndex = 10;
@@ -201,7 +186,7 @@
       this.groupBox1.Controls.Add(this.label4);
       this.groupBox1.Controls.Add(this.TopScroll);
       this.groupBox1.Controls.Add(this.Threshold_Scroll);
-      this.groupBox1.Location = new System.Drawing.Point(644, 9);
+      this.groupBox1.Location = new System.Drawing.Point(644, 45);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(254, 120);
       this.groupBox1.TabIndex = 13;
@@ -218,7 +203,7 @@
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.BottomScroll);
       this.groupBox2.Controls.Add(this.label6);
-      this.groupBox2.Location = new System.Drawing.Point(918, 38);
+      this.groupBox2.Location = new System.Drawing.Point(918, 45);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(292, 169);
       this.groupBox2.TabIndex = 14;
@@ -289,37 +274,12 @@
             0});
       this.numericNoStim.ValueChanged += new System.EventHandler(this.numericNo_ValueChanged);
       // 
-      // compareButton
-      // 
-      this.compareButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.compareButton.Location = new System.Drawing.Point(823, 142);
-      this.compareButton.Name = "compareButton";
-      this.compareButton.Size = new System.Drawing.Size(75, 23);
-      this.compareButton.TabIndex = 15;
-      this.compareButton.Text = "Сравнить";
-      this.compareButton.UseVisualStyleBackColor = true;
-      this.compareButton.Click += new System.EventHandler(this.compareButton_Click);
-      // 
-      // AvgCheckBox
-      // 
-      this.AvgCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.AvgCheckBox.AutoSize = true;
-      this.AvgCheckBox.Checked = true;
-      this.AvgCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.AvgCheckBox.Location = new System.Drawing.Point(657, 148);
-      this.AvgCheckBox.Name = "AvgCheckBox";
-      this.AvgCheckBox.Size = new System.Drawing.Size(119, 17);
-      this.AvgCheckBox.TabIndex = 16;
-      this.AvgCheckBox.Text = "Рисовать средние";
-      this.AvgCheckBox.UseVisualStyleBackColor = true;
-      this.AvgCheckBox.CheckedChanged += new System.EventHandler(this.AvgCheckBox_CheckedChanged);
-      // 
       // NoStimLabel
       // 
       this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
-      this.NoStimLabel.Location = new System.Drawing.Point(13, 223);
+      this.NoStimLabel.Location = new System.Drawing.Point(13, 247);
       this.NoStimLabel.Name = "NoStimLabel";
       this.NoStimLabel.Size = new System.Drawing.Size(85, 13);
       this.NoStimLabel.TabIndex = 17;
@@ -329,56 +289,130 @@
       // 
       this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.StimLabel.AutoSize = true;
-      this.StimLabel.Location = new System.Drawing.Point(13, 579);
+      this.StimLabel.Location = new System.Drawing.Point(13, 626);
       this.StimLabel.Name = "StimLabel";
       this.StimLabel.Size = new System.Drawing.Size(118, 13);
       this.StimLabel.TabIndex = 18;
       this.StimLabel.Text = "Во время стимуляции";
       // 
-      // mapButton
-      // 
-      this.mapButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mapButton.Location = new System.Drawing.Point(823, 184);
-      this.mapButton.Name = "mapButton";
-      this.mapButton.Size = new System.Drawing.Size(75, 23);
-      this.mapButton.TabIndex = 19;
-      this.mapButton.Text = "Карта";
-      this.mapButton.UseVisualStyleBackColor = true;
-      this.mapButton.Click += new System.EventHandler(this.mapButton_Click);
-      // 
       // cellName
       // 
       this.cellName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cellName.AutoSize = true;
-      this.cellName.Location = new System.Drawing.Point(654, 189);
+      this.cellName.Location = new System.Drawing.Point(654, 197);
       this.cellName.Name = "cellName";
       this.cellName.Size = new System.Drawing.Size(105, 13);
       this.cellName.TabIndex = 20;
       this.cellName.Text = "Клетка не выбрана";
       // 
+      // menuStrip1
+      // 
+      this.menuStrip1.BackColor = System.Drawing.SystemColors.InactiveCaption;
+      this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.файлToolStripMenuItem,
+            this.построитьToolStripMenuItem,
+            this.настройкиToolStripMenuItem});
+      this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+      this.menuStrip1.Name = "menuStrip1";
+      this.menuStrip1.Size = new System.Drawing.Size(1220, 24);
+      this.menuStrip1.TabIndex = 21;
+      this.menuStrip1.Text = "menuStrip1";
+      // 
+      // файлToolStripMenuItem
+      // 
+      this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.загрузитьДанныеToolStripMenuItem,
+            this.экспортВBMPToolStripMenuItem});
+      this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+      this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+      this.файлToolStripMenuItem.Text = "Файл";
+      // 
+      // загрузитьДанныеToolStripMenuItem
+      // 
+      this.загрузитьДанныеToolStripMenuItem.Name = "загрузитьДанныеToolStripMenuItem";
+      this.загрузитьДанныеToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+      this.загрузитьДанныеToolStripMenuItem.Text = "Загрузить данные";
+      this.загрузитьДанныеToolStripMenuItem.Click += new System.EventHandler(this.загрузитьДанныеToolStripMenuItem_Click);
+      // 
+      // экспортВBMPToolStripMenuItem
+      // 
+      this.экспортВBMPToolStripMenuItem.Name = "экспортВBMPToolStripMenuItem";
+      this.экспортВBMPToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+      this.экспортВBMPToolStripMenuItem.Text = "Экспорт в BMP";
+      this.экспортВBMPToolStripMenuItem.Click += new System.EventHandler(this.экспортВBMPToolStripMenuItem_Click);
+      // 
+      // построитьToolStripMenuItem
+      // 
+      this.построитьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.сравнениеСреднихToolStripMenuItem,
+            this.тепловыеКартыToolStripMenuItem});
+      this.построитьToolStripMenuItem.Name = "построитьToolStripMenuItem";
+      this.построитьToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+      this.построитьToolStripMenuItem.Text = "Построить";
+      // 
+      // сравнениеСреднихToolStripMenuItem
+      // 
+      this.сравнениеСреднихToolStripMenuItem.Name = "сравнениеСреднихToolStripMenuItem";
+      this.сравнениеСреднихToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.сравнениеСреднихToolStripMenuItem.Text = "Сравнение средних";
+      this.сравнениеСреднихToolStripMenuItem.Click += new System.EventHandler(this.сравнениеСреднихToolStripMenuItem_Click);
+      // 
+      // тепловыеКартыToolStripMenuItem
+      // 
+      this.тепловыеКартыToolStripMenuItem.Name = "тепловыеКартыToolStripMenuItem";
+      this.тепловыеКартыToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.тепловыеКартыToolStripMenuItem.Text = "Тепловые карты";
+      this.тепловыеКартыToolStripMenuItem.Click += new System.EventHandler(this.тепловыеКартыToolStripMenuItem_Click);
+      // 
+      // настройкиToolStripMenuItem
+      // 
+      this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AvgToolStripMenuItem,
+            this.openDirToolStripMenuItem});
+      this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
+      this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
+      this.настройкиToolStripMenuItem.Text = "Настройки";
+      // 
+      // AvgToolStripMenuItem
+      // 
+      this.AvgToolStripMenuItem.Checked = true;
+      this.AvgToolStripMenuItem.CheckOnClick = true;
+      this.AvgToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.AvgToolStripMenuItem.Name = "AvgToolStripMenuItem";
+      this.AvgToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.AvgToolStripMenuItem.Text = "Рисовать средние";
+      this.AvgToolStripMenuItem.CheckedChanged += new System.EventHandler(this.AvgToolStripMenuItem_CheckedChanged);
+      // 
+      // openDirToolStripMenuItem
+      // 
+      this.openDirToolStripMenuItem.Checked = true;
+      this.openDirToolStripMenuItem.CheckOnClick = true;
+      this.openDirToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.openDirToolStripMenuItem.Name = "openDirToolStripMenuItem";
+      this.openDirToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.openDirToolStripMenuItem.Text = "Открывать окно при сохранении";
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1220, 925);
+      this.ClientSize = new System.Drawing.Size(1220, 972);
       this.Controls.Add(this.cellName);
-      this.Controls.Add(this.mapButton);
       this.Controls.Add(this.StimLabel);
       this.Controls.Add(this.NoStimLabel);
-      this.Controls.Add(this.AvgCheckBox);
-      this.Controls.Add(this.compareButton);
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.StimCharacter);
       this.Controls.Add(this.NoStimCharacter);
-      this.Controls.Add(this.Load_Button);
-      this.Controls.Add(this.label1);
       this.Controls.Add(this.SpikeGraph);
+      this.Controls.Add(this.menuStrip1);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.MinimumSize = new System.Drawing.Size(1236, 903);
+      this.MainMenuStrip = this.menuStrip1;
+      this.MinimumSize = new System.Drawing.Size(1236, 1010);
       this.Name = "MainForm";
       this.Text = "Анализ спайковых характеристик";
       this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Control_KeyDown);
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).EndInit();
@@ -391,6 +425,8 @@
       this.groupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericAfterStim)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericNoStim)).EndInit();
+      this.menuStrip1.ResumeLayout(false);
+      this.menuStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -399,8 +435,6 @@
     #endregion
 
     private System.Windows.Forms.PictureBox SpikeGraph;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button Load_Button;
     private System.Windows.Forms.PictureBox NoStimCharacter;
     private System.Windows.Forms.TrackBar TopScroll;
     private System.Windows.Forms.TrackBar BottomScroll;
@@ -416,12 +450,19 @@
     private System.Windows.Forms.NumericUpDown numericAfterStim;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Button compareButton;
-    private System.Windows.Forms.CheckBox AvgCheckBox;
     private System.Windows.Forms.Label NoStimLabel;
     private System.Windows.Forms.Label StimLabel;
-    private System.Windows.Forms.Button mapButton;
     public System.Windows.Forms.Label cellName;
+    private System.Windows.Forms.MenuStrip menuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem загрузитьДанныеToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem экспортВBMPToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem построитьToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem сравнениеСреднихToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem тепловыеКартыToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem AvgToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem openDirToolStripMenuItem;
   }
 }
 

@@ -43,43 +43,11 @@ namespace SpikeProject
     public MainForm()
     {
       InitializeComponent();
-
+      KeyDown += Control_KeyDown;
       threshold = (double)Threshold_Scroll.Value / 1000;
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
-    }
-
-    private void Load_Button_Click(object sender, EventArgs e)
-    {
-      using (OpenFileDialog dialog = new OpenFileDialog())
-      {
-        MegaMapList = new List<SpikeDataPacket>();
-        MegaMapStimList = new List<SpikeDataPacket>();
-        MegaMapNoStimList = new List<SpikeDataPacket>();
-        dialog.FileName = "Cell_1.txt";
-        dialog.Multiselect = true;
-        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
-        switch (dialog.ShowDialog())
-        {
-          case System.Windows.Forms.DialogResult.OK:
-            foreach (String path in dialog.FileNames)
-            {
-              FilePath = path;
-              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
-              loadData(FilePath);
-              SpikeGraph.Refresh();
-              NoStimCharacter.Refresh();
-              StimCharacter.Refresh();
-            }
-              break;
-            
-          case System.Windows.Forms.DialogResult.Cancel:
-
-
-            break;
-        }
-      }
     }
 
 
@@ -386,7 +354,7 @@ namespace SpikeProject
 
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 5);
-      if (AverageDrawPointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AverageDrawPointsStim.Count && AvgCheckBox.Checked == true)
+      if (AverageDrawPointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AverageDrawPointsStim.Count && AvgToolStripMenuItem.Checked == true)
       {
         PointF[] AverageList = (AverageDrawPointsStim[(int)numericAfterStim.Value - 1]).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
@@ -415,7 +383,7 @@ namespace SpikeProject
 
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 5);
-      if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgCheckBox.Checked == true)
+      if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgToolStripMenuItem.Checked == true)
       {
         PointF[] AverageList = (AverageDrawPointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
 
@@ -468,19 +436,6 @@ namespace SpikeProject
       StimCharacter.Refresh();
     }
 
-    private void compareButton_Click(object sender, EventArgs e)
-    {
-      if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgCheckBox.Checked == true)
-      {
-        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
-        compareForm.Show();
-      }
-      else
-      {
-        MessageBox.Show("Нечего отображать", "Сравнение характеристик",
-        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-      }
-    }
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)
     {
@@ -498,12 +453,7 @@ namespace SpikeProject
 
     }
 
-    private void AvgCheckBox_CheckedChanged(object sender, EventArgs e)
-    {
-      NoStimCharacter.Refresh();
-      StimCharacter.Refresh();
-    }
-   
+
 
     private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
     {
@@ -521,7 +471,40 @@ namespace SpikeProject
 
     }
 
+    void Control_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Control && e.KeyCode == Keys.O)
+      {
+        using (OpenFileDialog dialog = new OpenFileDialog())
+        {
+          MegaMapList = new List<SpikeDataPacket>();
+          MegaMapStimList = new List<SpikeDataPacket>();
+          MegaMapNoStimList = new List<SpikeDataPacket>();
+          dialog.FileName = "Cell_1.txt";
+          dialog.Multiselect = true;
+          dialog.InitialDirectory = Application.StartupPath + @"\..\..";
+          switch (dialog.ShowDialog())
+          {
+            case System.Windows.Forms.DialogResult.OK:
+              foreach (String path in dialog.FileNames)
+              {
+                FilePath = path;
+                cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+                loadData(FilePath);
+                SpikeGraph.Refresh();
+                NoStimCharacter.Refresh();
+                StimCharacter.Refresh();
+              }
+              break;
 
+            case System.Windows.Forms.DialogResult.Cancel:
+
+
+              break;
+          }
+        }
+      }
+    }
 
     private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
     {
@@ -531,7 +514,54 @@ namespace SpikeProject
           resultList.Add(list[i]);
       return resultList;
     }
-    private void mapButton_Click(object sender, EventArgs e)
+
+    private void загрузитьДанныеToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      using (OpenFileDialog dialog = new OpenFileDialog())
+      {
+        MegaMapList = new List<SpikeDataPacket>();
+        MegaMapStimList = new List<SpikeDataPacket>();
+        MegaMapNoStimList = new List<SpikeDataPacket>();
+        dialog.FileName = "Cell_1.txt";
+        dialog.Multiselect = true;
+        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
+        switch (dialog.ShowDialog())
+        {
+          case System.Windows.Forms.DialogResult.OK:
+            foreach (String path in dialog.FileNames)
+            {
+              FilePath = path;
+              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+              loadData(FilePath);
+              SpikeGraph.Refresh();
+              NoStimCharacter.Refresh();
+              StimCharacter.Refresh();
+            }
+            break;
+
+          case System.Windows.Forms.DialogResult.Cancel:
+
+
+            break;
+        }
+      }
+    }
+
+    private void сравнениеСреднихToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
+      {
+        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
+        compareForm.Show();
+      }
+      else
+      {
+        MessageBox.Show("Нечего отображать", "Сравнение характеристик",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+      }
+    }
+
+    private void тепловыеКартыToolStripMenuItem_Click(object sender, EventArgs e)
     {
       if (NoStimSpikeList.Count > 0 && StimSpikeList.Count > 0)
       {
@@ -543,7 +573,7 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList,StimSpikeList, cellName.Text);
+        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, cellName.Text);
         hpf.Show();
 
       }
@@ -552,6 +582,31 @@ namespace SpikeProject
         MessageBox.Show("Нечего отображать", "Карта спайковых характеристик",
         MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
       }
+    }
+
+    private void AvgToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+    {
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
+    }
+
+    private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyyMMddHHmm");
+      if (!System.IO.Directory.Exists(savepath))
+        System.IO.Directory.CreateDirectory(savepath);
+      if (openDirToolStripMenuItem.Checked == true)
+        System.Diagnostics.Process.Start(@savepath);
+      Bitmap bmp = new Bitmap(NoStimCharacter.Width, NoStimCharacter.Height);
+      NoStimCharacter.DrawToBitmap(bmp, NoStimCharacter.ClientRectangle);
+      bmp.Save(savepath + "\\" + cellName.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      bmp = new Bitmap(StimCharacter.Width, StimCharacter.Height);
+      StimCharacter.DrawToBitmap(bmp, StimCharacter.ClientRectangle);
+      bmp.Save(savepath + "\\" + cellName.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      bmp = new Bitmap(SpikeGraph.Width, SpikeGraph.Height);
+      SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
+      bmp.Save(savepath + "\\" + cellName.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
     }
 
 
