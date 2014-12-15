@@ -40,6 +40,7 @@
       this.label7 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.cellName = new System.Windows.Forms.Label();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label5 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -47,10 +48,10 @@
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
-      this.cellName = new System.Windows.Forms.Label();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.загрузитьДанныеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.загрузитьТеплокартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.экспортВBMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.построитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.сравнениеСреднихToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,8 +74,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -133,8 +134,8 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.StimCharacter.Location = new System.Drawing.Point(10, 637);
       this.StimCharacter.Name = "StimCharacter";
@@ -193,6 +194,16 @@
       this.groupBox1.TabIndex = 13;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Общий график";
+      // 
+      // cellName
+      // 
+      this.cellName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cellName.AutoSize = true;
+      this.cellName.Location = new System.Drawing.Point(68, 138);
+      this.cellName.Name = "cellName";
+      this.cellName.Size = new System.Drawing.Size(105, 13);
+      this.cellName.TabIndex = 20;
+      this.cellName.Text = "Клетка не выбрана";
       // 
       // groupBox2
       // 
@@ -277,8 +288,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(13, 250);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -295,16 +306,6 @@
       this.StimLabel.Size = new System.Drawing.Size(118, 13);
       this.StimLabel.TabIndex = 18;
       this.StimLabel.Text = "Во время стимуляции";
-      // 
-      // cellName
-      // 
-      this.cellName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.cellName.AutoSize = true;
-      this.cellName.Location = new System.Drawing.Point(68, 138);
-      this.cellName.Name = "cellName";
-      this.cellName.Size = new System.Drawing.Size(105, 13);
-      this.cellName.TabIndex = 20;
-      this.cellName.Text = "Клетка не выбрана";
       // 
       // menuStrip1
       // 
@@ -323,6 +324,7 @@
       // 
       this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.загрузитьДанныеToolStripMenuItem,
+            this.загрузитьТеплокартуToolStripMenuItem,
             this.экспортВBMPToolStripMenuItem});
       this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
       this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
@@ -331,14 +333,21 @@
       // загрузитьДанныеToolStripMenuItem
       // 
       this.загрузитьДанныеToolStripMenuItem.Name = "загрузитьДанныеToolStripMenuItem";
-      this.загрузитьДанныеToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+      this.загрузитьДанныеToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
       this.загрузитьДанныеToolStripMenuItem.Text = "Загрузить данные";
       this.загрузитьДанныеToolStripMenuItem.Click += new System.EventHandler(this.загрузитьДанныеToolStripMenuItem_Click);
+      // 
+      // загрузитьТеплокартуToolStripMenuItem
+      // 
+      this.загрузитьТеплокартуToolStripMenuItem.Name = "загрузитьТеплокартуToolStripMenuItem";
+      this.загрузитьТеплокартуToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.загрузитьТеплокартуToolStripMenuItem.Text = "Загрузить теплокарту";
+      this.загрузитьТеплокартуToolStripMenuItem.Click += new System.EventHandler(this.загрузитьТеплокартуToolStripMenuItem_Click);
       // 
       // экспортВBMPToolStripMenuItem
       // 
       this.экспортВBMPToolStripMenuItem.Name = "экспортВBMPToolStripMenuItem";
-      this.экспортВBMPToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+      this.экспортВBMPToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
       this.экспортВBMPToolStripMenuItem.Text = "Экспорт в BMP";
       this.экспортВBMPToolStripMenuItem.Click += new System.EventHandler(this.экспортВBMPToolStripMenuItem_Click);
       // 
@@ -463,6 +472,7 @@
     private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem AvgToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem openDirToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem загрузитьТеплокартуToolStripMenuItem;
   }
 }
 

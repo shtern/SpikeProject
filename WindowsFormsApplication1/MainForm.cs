@@ -52,7 +52,7 @@ namespace SpikeProject
       NoStimSpikeList = new List<SpikeDataPacket>();
     }
 
-    private void loadDialogOpen()
+    private void loadDialogOpen(int megacheck)
     {
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
@@ -62,6 +62,7 @@ namespace SpikeProject
         MegaMapStimMax = new List<SpikeDataPacket>();
         MegaMapNoStimMax = new List<SpikeDataPacket>();
         dialog.FileName = "Cell_1.txt";
+        if (megacheck == 1) dialog.FileName="\"Cell_13\" \"Cell_1\" \"Cell_2\" \"Cell_3\" \"Cell_4\" \"Cell_5\" \"Cell_6\" \"Cell_7\" \"Cell_8\" \"Cell_9\" \"Cell_10\" \"Cell_11\" \"Cell_12\" ";
         dialog.Multiselect = true;
         dialog.InitialDirectory = Application.StartupPath + @"\..\..";
         switch (dialog.ShowDialog())
@@ -71,10 +72,7 @@ namespace SpikeProject
             {
               FilePath = path;
               cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
-              loadData(FilePath);
-              SpikeGraph.Refresh();
-              NoStimCharacter.Refresh();
-              StimCharacter.Refresh();
+              loadData(FilePath,megacheck);
             }
             break;
 
@@ -84,7 +82,7 @@ namespace SpikeProject
       }
     }
 
-    private void loadData(string FilePath)
+    private void loadData(string FilePath, int megacheck)
     {
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
@@ -123,16 +121,23 @@ namespace SpikeProject
           GlobalData.Add(XYData);
         }
       }
-      MegaMapList.Add((GlobalData));
-      if (MegaMapList.Count == cellCount)
+      if (megacheck == 1)
       {
-        buildMegaLists();
-       
-
+        MegaMapList.Add((GlobalData));
+        if (MegaMapList.Count == cellCount)
+        {
+          buildMegaLists();
+        }
       }
-      buildCharactList();
-      buildNoStimAverage();
-      buildStimAverage();
+      else
+      {
+        buildCharactList();
+        buildNoStimAverage();
+        buildStimAverage();
+        SpikeGraph.Refresh();
+        NoStimCharacter.Refresh();
+        StimCharacter.Refresh();
+      }
     }
 
     private void buildMegaLists()
@@ -475,7 +480,7 @@ namespace SpikeProject
     {
       threshold = (double)Threshold_Scroll.Value / 1000;
       if (FilePath != "")
-        loadData(FilePath);
+        loadData(FilePath,0);
       if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
@@ -491,7 +496,7 @@ namespace SpikeProject
     {
       threshold = (double)Threshold_Scroll.Value / 1000;
       if (FilePath != "")
-        loadData(FilePath);
+        loadData(FilePath,0);
       if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
@@ -514,7 +519,7 @@ namespace SpikeProject
 
     private void загрузитьДанныеToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      loadDialogOpen();
+      loadDialogOpen(0);
     }
 
     private void сравнениеСреднихToolStripMenuItem_Click(object sender, EventArgs e)
@@ -583,11 +588,45 @@ namespace SpikeProject
     {
       if (e.KeyCode == Keys.O && e.Modifiers == Keys.Control)
       {
-        loadDialogOpen();
+        loadDialogOpen(0);
+      }
+      if (e.KeyCode == Keys.M && e.Modifiers == Keys.Control)
+      {
+        loadDialogOpen(1);
       }
       if (e.KeyCode == Keys.B && e.Modifiers == Keys.Control)
       {
         построитьToolStripMenuItem.ShowDropDown();
+      }
+    }
+
+    private void загрузитьТеплокартуToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      using (OpenFileDialog dialog = new OpenFileDialog())
+      {
+        MegaMapList = new List<SpikeDataPacket>();
+        MegaMapStimList = new List<SpikeDataPacket>();
+        MegaMapNoStimList = new List<SpikeDataPacket>();
+        MegaMapStimMax = new List<SpikeDataPacket>();
+        MegaMapNoStimMax = new List<SpikeDataPacket>();
+        dialog.FileName = "Cell_1.txt";
+        dialog.Multiselect = true;
+        dialog.InitialDirectory = Application.StartupPath + @"\..\..";
+        switch (dialog.ShowDialog())
+        {
+          case System.Windows.Forms.DialogResult.OK:
+            foreach (String path in dialog.FileNames)
+            {
+              FilePath = path;
+              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+              loadData(FilePath,1);
+
+            }
+            break;
+
+          case System.Windows.Forms.DialogResult.Cancel:
+            break;
+        }
       }
     }
 

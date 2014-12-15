@@ -7,13 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.Windows;
 namespace SpikeProject
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
+  using SpikeData = Tuple<double, double>;
+  using PointList = List<PointF>;
+
   public partial class HeatPictureForm : Form
   {
     String CellName = "";
     double eps = 1e-20;
+    double checkeps = 1e-4;
     Bitmap NoStimBmp;
     Bitmap NormNoStimBmp;
     Bitmap StimBmp;
@@ -50,6 +55,17 @@ namespace SpikeProject
     public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
     {
       InitializeComponent();
+      int idx = list[0].FindIndex((s) => Math.Abs(s.Item2 - listmax[0][0].Item2) < checkeps);
+
+      int currPosition = 0;
+      int WindowLength = 20;
+      for (int i = 0; i < 100; i++)
+      {
+        SpikeDataPacket newlist = stimlist[0].GetRange(currPosition, WindowLength);
+        currPosition = newlist.Count;
+      }
+
+      
       if (list.Count > 0)
       {
         NoStimList = buildUniform(list);
@@ -60,14 +76,17 @@ namespace SpikeProject
         StimList = buildUniform(stimlist);
         NormStimList = buildUniform(buildNormalized(stimlist));
       }
-      CellName = "MeagMap";
+      CellName = "MegaMap";
+      //List<Double> averagelist = buildMax(listmax);
       //HeatPictureForm.ActiveForm.Text = cellname;
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
-      NormStimBmp = DrawTask(NormStimList);
+      NormStimBmp = DrawTask(NormStimList);  
       notStimSpikesSetPic();
       StimSpikesSetPic();
+      paintMax(buildUniform(list),listmax);
+      //paintMax(buildUniform(stimlist), stimlistmax);
       this.Height = NoStimPanel.Height + StimPanel.Height + 300;
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
@@ -167,6 +186,70 @@ namespace SpikeProject
       return ColorList;
     }
 
+    private  List<Double> buildMax(List<SpikeDataPacket> listmax)
+    {
+      List<Double> nostimmaxpoints = new List<double>();
+      List<Double> averagelist = new List<double>();
+      double eps = 1;
+      int maxcount = 0;
+      for (int i = 0; i < listmax.Count; i++)
+        if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
+      for (int i=0; i<listmax[0].Count; i++)
+      {
+        averagelist = new List<double>();
+        for (int j = 0; j< listmax.Count;j++)
+          if (i<listmax[j].Count)
+          if (Math.Abs(listmax[j][i].Item1-listmax[0][i].Item1)<eps) averagelist.Add(listmax[j][i].Item1);
+        if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
+      }
+      if (nostimmaxpoints.Count == listmax[0].Count) return nostimmaxpoints;
+      else
+        return null;
+    }
+
+    private void paintMax(List<SpikeDataPacket> list, List<SpikeDataPacket> listmax)
+    {
+      List<Double> maxpoints = buildMax(listmax);
+       SpikeDataPacket range = new SpikeDataPacket();
+      foreach (double maxpoint in maxpoints) 
+      {
+        List<SpikeDataPacket> bmplist = new List<SpikeDataPacket>();
+        for (int i = 0; i < list.Count; i++)
+        {
+          int closest = ClosestTo(list[0], maxpoint);
+          if (closest-10>0 && closest+100<list[i].Count)
+             range = list[i].GetRange(closest - 10, 100);
+          bmplist.Add(range);
+          
+        }
+        Bitmap bmp = DrawTask(bmplist);
+        String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
+        if (!System.IO.Directory.Exists(savepath))
+          System.IO.Directory.CreateDirectory(savepath);
+        bmp.Save(savepath+"\\Maximum"+maxpoint+".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      }
+    }
+
+    public static int ClosestTo(SpikeDataPacket list, double target)
+    {
+      // NB Method will return int.MaxValue for a sequence containing no elements.
+      // Apply any defensive coding here as necessary.
+      Double closest = Double.MaxValue;
+      Double minDifference = Double.MaxValue;
+      int position = 0;
+      for (int i = 0; i<list.Count; i++)
+      {
+        var difference = Math.Abs((long)list[i].Item1 - target);
+        if (minDifference > difference)
+        {
+          minDifference = (int)difference;
+          closest = list[i].Item1;
+          position = i;
+        }
+      }
+
+      return position;
+    }
 
     private void notStimSpikesSetPic()
     {
@@ -178,6 +261,8 @@ namespace SpikeProject
           notStimSpikes.Image = NormNoStimBmp;
           notStimSpikes.Width = NormNoStimBmp.Width;
           notStimSpikes.Height = NormNoStimBmp.Height;
+          if ( NormNoStimBmp.Width < Screen.FromControl(this).Bounds.Width )
+          NoStimPanel.Width = NormNoStimBmp.Width;
           NoStimPanel.Height = NormNoStimBmp.Height + 20;
         }
         else notStimSpikes.Visible = false;
@@ -189,6 +274,8 @@ namespace SpikeProject
           notStimSpikes.Image = NoStimBmp;
           notStimSpikes.Width = NoStimBmp.Width;
           notStimSpikes.Height = NoStimBmp.Height;
+          if (NoStimBmp.Width < Screen.FromControl(this).Bounds.Width)
+          NoStimPanel.Width = NoStimBmp.Width;
           NoStimPanel.Height = NoStimBmp.Height + 20;
         }
         else notStimSpikes.Visible = false;
@@ -204,6 +291,8 @@ namespace SpikeProject
           StimSpikes.Image = NormStimBmp;
           StimSpikes.Width = NormStimBmp.Width;
           StimSpikes.Height = NormStimBmp.Height;
+          if (NormStimBmp.Width < Screen.FromControl(this).Bounds.Width)
+          StimPanel.Width = NormStimBmp.Width;
           StimPanel.Height = NormStimBmp.Height + 20;
         }
         else StimSpikes.Visible = false;
@@ -215,6 +304,8 @@ namespace SpikeProject
 
           StimSpikes.Image = StimBmp;
           StimSpikes.Width = StimBmp.Width;
+          if (StimBmp.Width < Screen.FromControl(this).Bounds.Width)
+          StimPanel.Width = StimBmp.Width;
           StimSpikes.Height = StimBmp.Height;
           StimPanel.Height = StimBmp.Height + 20;
         }
@@ -329,6 +420,14 @@ namespace SpikeProject
     {
       if (doOpenMenuItem.Checked == true) doOpenMenuItem.Checked = false;
       else doOpenMenuItem.Checked = true;
+    }
+
+    private void HeatPictureForm_Resize(object sender, EventArgs e)
+    {
+      if (StimBmp != null && StimBmp.Width > Screen.FromControl(this).Bounds.Width)
+        StimPanel.Width = this.Width - 50;
+      if (NoStimBmp != null && NoStimBmp.Width > Screen.FromControl(this).Bounds.Width)
+        NoStimPanel.Width = this.Width - 50;
     }
 
   }
