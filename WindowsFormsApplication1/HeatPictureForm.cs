@@ -86,7 +86,7 @@ namespace SpikeProject
       notStimSpikesSetPic();
       StimSpikesSetPic();
       paintMax(buildUniform(list),listmax);
-      //paintMax(buildUniform(stimlist), stimlistmax);
+      paintMax(buildUniform(stimlist), stimlistmax);
       this.Height = NoStimPanel.Height + StimPanel.Height + 300;
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
@@ -190,18 +190,30 @@ namespace SpikeProject
     {
       List<Double> nostimmaxpoints = new List<double>();
       List<Double> averagelist = new List<double>();
-      double eps = 1;
+      double eps = 10;
       int maxcount = 0;
-      for (int i = 0; i < listmax.Count; i++)
-        if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
-      for (int i=0; i<listmax[0].Count; i++)
+
+      //for (int i = 0; i < listmax.Count; i++)
+      //  if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
+      //for (int i=0; i<listmax[0].Count; i++)
+      //{
+      //  averagelist = new List<double>();
+      //  for (int j = 0; j< listmax.Count;j++)
+      //    if (i<listmax[j].Count)
+      //    if (Math.Abs(listmax[j][i].Item1-listmax[0][i].Item1)<eps) averagelist.Add(listmax[j][i].Item1);
+      //  if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
+      //}
+      for (int i = 0; i < listmax[0].Count; i++)
       {
         averagelist = new List<double>();
-        for (int j = 0; j< listmax.Count;j++)
-          if (i<listmax[j].Count)
-          if (Math.Abs(listmax[j][i].Item1-listmax[0][i].Item1)<eps) averagelist.Add(listmax[j][i].Item1);
+        for (int j = 1; j < listmax.Count; j++)
+        {
+          double closest = ClosestVal(listmax[j], listmax[0][i].Item1);
+          if (Math.Abs(listmax[0][i].Item1 -closest) < eps) averagelist.Add(closest);
+        }
         if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
-      }
+       }
+
       if (nostimmaxpoints.Count == listmax[0].Count) return nostimmaxpoints;
       else
         return null;
@@ -210,33 +222,46 @@ namespace SpikeProject
     private void paintMax(List<SpikeDataPacket> list, List<SpikeDataPacket> listmax)
     {
       List<Double> maxpoints = buildMax(listmax);
-       SpikeDataPacket range = new SpikeDataPacket();
+      SpikeDataPacket range = new SpikeDataPacket();
+      if (maxpoints == null || maxpoints.Count == 0)
+      {
+        MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        return;
+      }
       foreach (double maxpoint in maxpoints) 
       {
         List<SpikeDataPacket> bmplist = new List<SpikeDataPacket>();
         for (int i = 0; i < list.Count; i++)
         {
-          int closest = ClosestTo(list[0], maxpoint);
-          if (closest-10>0 && closest+100<list[i].Count)
-             range = list[i].GetRange(closest - 10, 100);
+          int closest = ClosestPos(list[0], maxpoint);
+          if (closest-30>0 && closest+70<list[i].Count)
+             range = list[i].GetRange(closest - 30, 100);
           bmplist.Add(range);
           
         }
         Bitmap bmp = DrawTask(bmplist);
+        if (bmp == null)
+        {
+          MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
+          MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+          return;
+        }
         String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
         if (!System.IO.Directory.Exists(savepath))
           System.IO.Directory.CreateDirectory(savepath);
-        bmp.Save(savepath+"\\Maximum"+maxpoint+".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+        bmp.Save(savepath + "\\Maximum" + DateTime.Now.ToString("HHmmss") + maxpoint + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
       }
     }
 
-    public static int ClosestTo(SpikeDataPacket list, double target)
+    public static int ClosestPos(SpikeDataPacket list, double target)
     {
       // NB Method will return int.MaxValue for a sequence containing no elements.
       // Apply any defensive coding here as necessary.
       Double closest = Double.MaxValue;
       Double minDifference = Double.MaxValue;
       int position = 0;
+
       for (int i = 0; i<list.Count; i++)
       {
         var difference = Math.Abs((long)list[i].Item1 - target);
@@ -249,6 +274,25 @@ namespace SpikeProject
       }
 
       return position;
+    }
+
+    public static double ClosestVal(SpikeDataPacket list, double target)
+    {
+      // NB Method will return int.MaxValue for a sequence containing no elements.
+      // Apply any defensive coding here as necessary.
+      Double closest = Double.MaxValue;
+      Double minDifference = Double.MaxValue;
+      if (list.Count == 0) return 0;
+      for (int i = 0; i < list.Count; i++)
+      {
+        var difference = Math.Abs((long)list[i].Item1 - target);
+        if (minDifference > difference)
+        {
+          minDifference = (int)difference;
+          closest = list[i].Item1;
+        }
+      }
+      return closest;
     }
 
     private void notStimSpikesSetPic()
