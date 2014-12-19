@@ -55,15 +55,8 @@ namespace SpikeProject
     public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
     {
       InitializeComponent();
-      int idx = list[0].FindIndex((s) => Math.Abs(s.Item2 - listmax[0][0].Item2) < checkeps);
+      //int idx = list[0].FindIndex((s) => Math.Abs(s.Item2 - listmax[0][0].Item2) < checkeps);
 
-      int currPosition = 0;
-      int WindowLength = 20;
-      for (int i = 0; i < 100; i++)
-      {
-        SpikeDataPacket newlist = stimlist[0].GetRange(currPosition, WindowLength);
-        currPosition = newlist.Count;
-      }
 
       
       if (list.Count > 0)

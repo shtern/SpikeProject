@@ -18,11 +18,14 @@ namespace SpikeProject
     #region Константы
     private double threshold = 0.02;
     private string FilePath = "";
+    private int KyTop = 1000;
+    private int KyBottom = 1000;
+
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
     int nostimcount = 11;
-    int cellCount = 13;
+    int cellCount=0;
     #endregion
 
     #region Данные класса
@@ -45,6 +48,7 @@ namespace SpikeProject
     public MainForm()
     {
       InitializeComponent();
+      cellCount = Int32.Parse(cellCountTextBox.Text);
       KeyPreview = true;
       threshold = (double)Threshold_Scroll.Value / 1000;
       GlobalData = new List<Tuple<double, double>>();
@@ -174,7 +178,7 @@ namespace SpikeProject
                 currentSpike.Add(Spikedata);
               j++;
             }
-            if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+            if (currentSpike.Count > 10)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
             {
               CountVar++;
               if (CountVar < nostimcount) { MegaMapNoStimList[i].AddRange(currentSpike); MegaMapNoStimMax[i].Add(max); }
@@ -198,6 +202,7 @@ namespace SpikeProject
 
     private void buildCharactList()
     {
+      threshold = countThreshold();
       for (int i = 1; i < GlobalData.Count; i++)
       {
         double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
@@ -216,7 +221,7 @@ namespace SpikeProject
               currentSpike.Add(Spikedata);
             i++;
           }
-          if (currentSpike.Count > 10 && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+          if (currentSpike.Count > 10)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
           {
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
@@ -227,6 +232,39 @@ namespace SpikeProject
       numericAfterStim.Maximum = StimSpikeList.Count;
       numericNoStim.Value = NoStimSpikeList.Count;
       numericAfterStim.Value = StimSpikeList.Count;
+      KxBottom = countKx();
+    }
+
+    private double countThreshold()
+    {
+      double thd = 0;
+      double max = Double.MinValue;
+      double min = Double.MaxValue;
+      foreach (SpikeData data in GlobalData)
+      {
+        if (data.Item2 > max) max = data.Item2;
+        if (data.Item2 < min) min = data.Item2;
+      }
+      thd = (max - min) /3+min;
+      KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / max);
+      KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / max);
+      return thd;
+    }
+
+    private int countKx()
+    {
+      int Kx=1;
+      double max = double.MinValue;
+      foreach (SpikeDataPacket data in StimSpikeList)
+      {
+        if (data.Last().Item1 > max) max = data.Last().Item1;
+      }
+      foreach (SpikeDataPacket data in NoStimSpikeList)
+      {
+        if (data.Last().Item1 > max) max = data.Last().Item1;
+      }
+      Kx = Convert.ToInt32(NoStimCharacter.Width / max);
+      return Kx;
     }
 
     private void buildNoStimAverage()
@@ -242,7 +280,8 @@ namespace SpikeProject
           if (NoStimSpikeList[i].Last().Item1 > maxLenght) maxLenght = NoStimSpikeList[i].Last().Item1;
         }
 
-        double StepWidth = 1e-3;
+        //double StepWidth = 1e-3;
+        double StepWidth = threshold / 10;
         DrawPointsList = new PointList();
         PointsList = new PointList();
         for (double x = (NoStimSpikeList[0] != null && NoStimSpikeList[0].Count > 1) ? NoStimSpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
@@ -281,7 +320,7 @@ namespace SpikeProject
           {
             Average /= count;
             PointsList.Add(new PointF((float)x, (float)Average));
-            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(NoStimCharacter.Height - Average * 2000)));
+            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(NoStimCharacter.Height - Average * KyBottom)));
           }
         }
         AveragePointsNoStim.Add(PointsList);
@@ -304,7 +343,8 @@ namespace SpikeProject
           if (StimSpikeList[i].Last().Item1 > maxLenght) maxLenght = StimSpikeList[i].Last().Item1;
         }
 
-        double StepWidth = 1e-3;
+        double StepWidth = threshold / 10;
+        //double StepWidth = 1e-3;
         DrawPointsList = new PointList();
         PointsList = new PointList();
         for (double x = (StimSpikeList[0] != null && StimSpikeList[0].Count > 1) ? StimSpikeList[0][0].Item1 : eps; x < minLength; x += StepWidth)
@@ -345,7 +385,7 @@ namespace SpikeProject
           {
             Average /= count;
             PointsList.Add(new PointF((float)x, (float)Average));
-            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * 2000)));
+            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * KyBottom)));
           }
         }
         AveragePointsStim.Add(PointsList);
@@ -387,9 +427,9 @@ namespace SpikeProject
           mainpen = new Pen(brush, 2);
           e.Graphics.DrawLine(mainpen,
             (float)StimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
             (float)StimSpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i].Item2 * 2000));
+            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i].Item2 * KyBottom));
         }
       }
 
@@ -417,9 +457,9 @@ namespace SpikeProject
           mainpen = new Pen(brush, 2);
           e.Graphics.DrawLine(mainpen,
             (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * 2000),
+            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
             (float)NoStimSpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i].Item2 * 2000));
+            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i].Item2 *  KyBottom));
         }
       }
 
@@ -444,13 +484,13 @@ namespace SpikeProject
 
         e.Graphics.DrawLine(mainpen,
           (float)GlobalData[i - 1].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - GlobalData[i - 1].Item2 * 1000),
+          (float)(e.ClipRectangle.Height - GlobalData[i - 1].Item2 * KyTop),
           (float)GlobalData[i].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - GlobalData[i].Item2 * 1000));
+          (float)(e.ClipRectangle.Height - GlobalData[i].Item2 * KyTop));
       }
       Brush threshholdbrush = new SolidBrush(Color.Red);
       Pen thresholdpen = new Pen(threshholdbrush);
-      e.Graphics.DrawLine(thresholdpen, (float)0, (float)(e.ClipRectangle.Height - threshold * 1000), (float)e.ClipRectangle.Width, (float)(e.ClipRectangle.Height - threshold * 1000));
+      e.Graphics.DrawLine(thresholdpen, (float)0, (float)(e.ClipRectangle.Height - threshold * KyTop), (float)e.ClipRectangle.Width, (float)(e.ClipRectangle.Height - threshold * KyTop));
     }
 
     private void TopScroll_Scroll(object sender, EventArgs e)
@@ -629,6 +669,30 @@ namespace SpikeProject
         }
       }
     }
+
+    private void toolStripTextBox1_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+      {
+        e.Handled = true;
+      }
+
+    }
+
+    private void cellCountTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+      {
+        cellCount = cellCount = Int32.Parse(cellCountTextBox.Text);
+        настройкиToolStripMenuItem.HideDropDown();
+      }
+    }
+
+    private void cellCountTextBox_Leave(object sender, EventArgs e)
+    {
+      cellCountTextBox.Text = cellCount+"";
+    }
+
 
 
   }

@@ -59,6 +59,8 @@
       this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.cellcountmenu = new System.Windows.Forms.ToolStripMenuItem();
+      this.cellCountTextBox = new System.Windows.Forms.ToolStripTextBox();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -74,8 +76,8 @@
       // 
       // SpikeGraph
       // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
       this.SpikeGraph.Name = "SpikeGraph";
@@ -134,8 +136,8 @@
       // 
       // StimCharacter
       // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.StimCharacter.Location = new System.Drawing.Point(10, 637);
       this.StimCharacter.Name = "StimCharacter";
@@ -288,8 +290,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(13, 250);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -378,7 +380,8 @@
       // 
       this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.AvgToolStripMenuItem,
-            this.openDirToolStripMenuItem});
+            this.openDirToolStripMenuItem,
+            this.cellcountmenu});
       this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
       this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
       this.настройкиToolStripMenuItem.Text = "Настройки";
@@ -401,6 +404,23 @@
       this.openDirToolStripMenuItem.Name = "openDirToolStripMenuItem";
       this.openDirToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
       this.openDirToolStripMenuItem.Text = "Открывать окно при сохранении";
+      // 
+      // cellcountmenu
+      // 
+      this.cellcountmenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cellCountTextBox});
+      this.cellcountmenu.Name = "cellcountmenu";
+      this.cellcountmenu.Size = new System.Drawing.Size(255, 22);
+      this.cellcountmenu.Text = "Количество клеток";
+      // 
+      // cellCountTextBox
+      // 
+      this.cellCountTextBox.Name = "cellCountTextBox";
+      this.cellCountTextBox.Size = new System.Drawing.Size(100, 23);
+      this.cellCountTextBox.Text = "13";
+      this.cellCountTextBox.Leave += new System.EventHandler(this.cellCountTextBox_Leave);
+      this.cellCountTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cellCountTextBox_KeyDown);
+      this.cellCountTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolStripTextBox1_KeyPress);
       // 
       // MainForm
       // 
@@ -473,6 +493,8 @@
     private System.Windows.Forms.ToolStripMenuItem AvgToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem openDirToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem загрузитьТеплокартуToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem cellcountmenu;
+    private System.Windows.Forms.ToolStripTextBox cellCountTextBox;
   }
 }
 
