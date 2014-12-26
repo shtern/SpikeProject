@@ -24,8 +24,10 @@ namespace SpikeProject
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
-    int nostimcount = 11;
-    int cellCount=0;
+    double min = Double.MaxValue;
+    double max = Double.MinValue;
+    public static int nostimcount { get; set; }
+    public static int cellCount {get; set;}
     #endregion
 
     #region Данные класса
@@ -48,7 +50,8 @@ namespace SpikeProject
     public MainForm()
     {
       InitializeComponent();
-      cellCount = Int32.Parse(cellCountTextBox.Text);
+      cellCount = Properties.Settings.Default.cellcount;
+      nostimcount = Properties.Settings.Default.stimstart;
       KeyPreview = true;
       threshold = (double)Threshold_Scroll.Value / 1000;
       GlobalData = new List<Tuple<double, double>>();
@@ -88,6 +91,9 @@ namespace SpikeProject
 
     private void loadData(string FilePath, int megacheck)
     {
+      int zerocount = 0;
+      min = Double.MaxValue;
+      max = Double.MinValue;
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
@@ -122,9 +128,26 @@ namespace SpikeProject
             double.TryParse(resultxy2[1], out y);
           }
           Tuple<double, double> XYData = new Tuple<double, double>(x, y);
+          if (XYData.Item2 <= 0) zerocount++;
           GlobalData.Add(XYData);
         }
+
       }
+
+      if (zerocount < 0.3 * GlobalData.Count) GlobalData.RemoveAll(s => s.Item2 <= 0);  
+
+      //Вычитаем минимальное значение, чтобы все шло из нуля
+      foreach (SpikeData data in GlobalData)
+      {
+        if (data.Item2 > max) max = data.Item2;
+        if (data.Item2 < min) min = data.Item2;
+      }
+
+      for (int i = 0; i < GlobalData.Count; i++)
+        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - min);
+      max -= min;
+      min = 0;
+
       if (megacheck == 1)
       {
         MegaMapList.Add((GlobalData));
@@ -178,7 +201,7 @@ namespace SpikeProject
                 currentSpike.Add(Spikedata);
               j++;
             }
-            if (currentSpike.Count > 10)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+            if (currentSpike.Count > nostimcount)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
             {
               CountVar++;
               if (CountVar < nostimcount) { MegaMapNoStimList[i].AddRange(currentSpike); MegaMapNoStimMax[i].Add(max); }
@@ -221,7 +244,7 @@ namespace SpikeProject
               currentSpike.Add(Spikedata);
             i++;
           }
-          if (currentSpike.Count > 10)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > 10)
+          if (currentSpike.Count > nostimcount)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
           {
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
@@ -238,14 +261,24 @@ namespace SpikeProject
     private double countThreshold()
     {
       double thd = 0;
-      double max = Double.MinValue;
-      double min = Double.MaxValue;
+
+      int count = 0;
+      double avg = 0;
+      SpikeDataPacket temppacket = new SpikeDataPacket();
+
       foreach (SpikeData data in GlobalData)
       {
-        if (data.Item2 > max) max = data.Item2;
-        if (data.Item2 < min) min = data.Item2;
+        if ((data.Item2) < (0.8 * max) && (data.Item2) > (0.3 * max)) temppacket.Add(new SpikeData(data.Item1,data.Item2));
       }
-      thd = (max - min) /3+min;
+
+      foreach (SpikeData data in temppacket)
+      {
+        count++;
+        avg += data.Item2;
+      }
+      if (count <= 0)
+        thd = max;
+      else thd = avg / (3 * count);
       KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / max);
       KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / max);
       return thd;
@@ -254,16 +287,16 @@ namespace SpikeProject
     private int countKx()
     {
       int Kx=1;
-      double max = double.MinValue;
+      double x_max = double.MinValue;
       foreach (SpikeDataPacket data in StimSpikeList)
       {
-        if (data.Last().Item1 > max) max = data.Last().Item1;
+        if (data.Last().Item1 > max) x_max = data.Last().Item1;
       }
       foreach (SpikeDataPacket data in NoStimSpikeList)
       {
-        if (data.Last().Item1 > max) max = data.Last().Item1;
+        if (data.Last().Item1 > max) x_max = data.Last().Item1;
       }
-      Kx = Convert.ToInt32(NoStimCharacter.Width / max);
+      Kx = Convert.ToInt32(NoStimCharacter.Width / x_max);
       return Kx;
     }
 
@@ -448,7 +481,7 @@ namespace SpikeProject
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-      for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < 11; SpikeIdx++)
+      for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < nostimcount; SpikeIdx++)
       {
         for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
         {
@@ -478,7 +511,6 @@ namespace SpikeProject
     {
       Brush brush = new SolidBrush(Color.Black);
       Pen mainpen = new Pen(brush);
-
       for (int i = 1; i < GlobalData.Count; i++)
       {
 
@@ -679,18 +711,10 @@ namespace SpikeProject
 
     }
 
-    private void cellCountTextBox_KeyDown(object sender, KeyEventArgs e)
-    {
-      if (e.KeyCode == Keys.Enter)
-      {
-        cellCount = cellCount = Int32.Parse(cellCountTextBox.Text);
-        настройкиToolStripMenuItem.HideDropDown();
-      }
-    }
 
-    private void cellCountTextBox_Leave(object sender, EventArgs e)
+    private void общиеНастройкиToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      cellCountTextBox.Text = cellCount+"";
+      new SettingsForm().Show();
     }
 
 
