@@ -119,8 +119,8 @@ namespace SpikeProject
           double.TryParse("3,5", out parsevar);
           if (parsevar == 3.5)
           {
-            double.TryParse(resultxy[0], out x);
-            double.TryParse(resultxy[1], out y);
+            double.TryParse(resultxy[0].Replace(".", ","), out x);
+            double.TryParse(resultxy[1].Replace(".", ","), out y);
           }
           else
           {
@@ -233,6 +233,7 @@ namespace SpikeProject
         {
           SpikeDataPacket currentSpike = new SpikeDataPacket();
           double ZeroPositionX = ApproxX(GlobalData[i - 1].Item1, GlobalData[i - 1].Item2, x, y);
+          if (Math.Abs(ZeroPositionX) > double.MaxValue) ZeroPositionX = x;
           currentSpike.Add(new SpikeData(0, 0));
           while (y > threshold && i < GlobalData.Count)
           {
@@ -244,7 +245,7 @@ namespace SpikeProject
               currentSpike.Add(Spikedata);
             i++;
           }
-          if (currentSpike.Count > nostimcount)// && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
+          if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
           {
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
