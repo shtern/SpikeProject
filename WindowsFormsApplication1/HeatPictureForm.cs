@@ -339,10 +339,15 @@ namespace SpikeProject
           StimSpikes.Width = NormStimBmp.Width;
           StimSpikes.Height = NormStimBmp.Height;
           if (NormStimBmp.Width < Screen.FromControl(this).Bounds.Width)
-          StimPanel.Width = NormStimBmp.Width;
+            StimPanel.Width = NormStimBmp.Width;
           StimPanel.Height = NormStimBmp.Height + 20;
         }
-        else StimSpikes.Visible = false;
+        else
+        {
+          NoStimLabel.Visible = false;
+          StimSpikes.Visible = false;
+          StimPanel.Visible = false;
+        }
       }
       else
       {
@@ -352,11 +357,16 @@ namespace SpikeProject
           StimSpikes.Image = StimBmp;
           StimSpikes.Width = StimBmp.Width;
           if (StimBmp.Width < Screen.FromControl(this).Bounds.Width)
-          StimPanel.Width = StimBmp.Width;
+            StimPanel.Width = StimBmp.Width;
           StimSpikes.Height = StimBmp.Height;
           StimPanel.Height = StimBmp.Height + 20;
         }
-        else StimSpikes.Visible = false;
+        else
+        {
+          StimLabel.Visible = false;
+          StimSpikes.Visible = false;
+          StimPanel.Visible = false;
+        }
       };
     }
 

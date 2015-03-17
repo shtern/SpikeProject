@@ -269,6 +269,31 @@ namespace SpikeProject
 
     }
 
+    public double countArea(SpikeData point1, SpikeData point2)
+    {
+      double area = 0;
+      if (point1.Item2 > point2.Item2)
+        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point1.Item2 - point2.Item2));
+      else
+        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point2.Item2 - point1.Item2));
+      return area;
+
+    }
+
+    public double countCorrArr(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      packet2 = movePacket(packet1, packet2);
+      double area1 = 0;
+      double area2 = 0;
+      for (int i = 1; i < packet1.Count; i++)
+        area1 += countArea(packet1[i - 1], packet1[i]);
+      for (int i = 1; i < packet2.Count; i++)
+        area2 += countArea(packet2[i - 1], packet2[i]);
+      if (area1 > area2)
+        return 2 * (area1 - area2) / (area1 + area2);
+      else return 2 * (area2 - area1) / (area1 + area2);
+
+    }
 
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
@@ -808,7 +833,7 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j=0; j<NoStimSpikeList.Count;j++)
-          row.Add(new SpikeData(0,countCorr(NoStimSpikeList[i],NoStimSpikeList[j])));
+          row.Add(new SpikeData(0, countCorr(NoStimSpikeList[i], NoStimSpikeList[j])));
         nostimcor.Add(row);
       }
       List<SpikeDataPacket> stimcor = new List<SpikeDataPacket>();
@@ -816,11 +841,25 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j=0; j<StimSpikeList.Count;j++)
-          row.Add(new SpikeData(0,countCorr(StimSpikeList[i],StimSpikeList[j])));
+          row.Add(new SpikeData(0, countCorr(StimSpikeList[i], StimSpikeList[j])));
         stimcor.Add(row);
       }
 
+      List<SpikeDataPacket> fullist = new List<SpikeDataPacket>();
+      fullist.AddRange(NoStimSpikeList);
+      fullist.AddRange(StimSpikeList);
+      List<SpikeDataPacket> fullcor = new List<SpikeDataPacket>();
+      for (int i = 0; i < fullist.Count; i++)
+      {
+        SpikeDataPacket row = new SpikeDataPacket();
+        for (int j = 0; j < fullist.Count; j++)
+          row.Add(new SpikeData(0, countCorr(buildNormalized(fullist[i]), buildNormalized(fullist[j]))));
+        fullcor.Add(row);
+      }
+
       HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
+      HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция");
+      newhpf.Show();
       hpf.Show();
 
     }
