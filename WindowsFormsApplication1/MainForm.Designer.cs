@@ -60,6 +60,7 @@
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.общиеНастройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.матрицуКорToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -356,7 +357,8 @@
       // 
       this.построитьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.сравнениеСреднихToolStripMenuItem,
-            this.тепловыеКартыToolStripMenuItem});
+            this.тепловыеКартыToolStripMenuItem,
+            this.матрицуКорToolStripMenuItem});
       this.построитьToolStripMenuItem.Name = "построитьToolStripMenuItem";
       this.построитьToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
       this.построитьToolStripMenuItem.Text = "Построить";
@@ -364,14 +366,14 @@
       // сравнениеСреднихToolStripMenuItem
       // 
       this.сравнениеСреднихToolStripMenuItem.Name = "сравнениеСреднихToolStripMenuItem";
-      this.сравнениеСреднихToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.сравнениеСреднихToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
       this.сравнениеСреднихToolStripMenuItem.Text = "Сравнение средних";
       this.сравнениеСреднихToolStripMenuItem.Click += new System.EventHandler(this.сравнениеСреднихToolStripMenuItem_Click);
       // 
       // тепловыеКартыToolStripMenuItem
       // 
       this.тепловыеКартыToolStripMenuItem.Name = "тепловыеКартыToolStripMenuItem";
-      this.тепловыеКартыToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+      this.тепловыеКартыToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
       this.тепловыеКартыToolStripMenuItem.Text = "Тепловые карты";
       this.тепловыеКартыToolStripMenuItem.Click += new System.EventHandler(this.тепловыеКартыToolStripMenuItem_Click);
       // 
@@ -410,6 +412,13 @@
       this.общиеНастройкиToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
       this.общиеНастройкиToolStripMenuItem.Text = "Общие настройки";
       this.общиеНастройкиToolStripMenuItem.Click += new System.EventHandler(this.общиеНастройкиToolStripMenuItem_Click);
+      // 
+      // матрицуКорToolStripMenuItem
+      // 
+      this.матрицуКорToolStripMenuItem.Name = "матрицуКорToolStripMenuItem";
+      this.матрицуКорToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.матрицуКорToolStripMenuItem.Text = "Матрицу корреляции";
+      this.матрицуКорToolStripMenuItem.Click += new System.EventHandler(this.матрицуКорToolStripMenuItem_Click);
       // 
       // MainForm
       // 
@@ -483,6 +492,7 @@
     private System.Windows.Forms.ToolStripMenuItem openDirToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem загрузитьТеплокартуToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem общиеНастройкиToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem матрицуКорToolStripMenuItem;
   }
 }
 

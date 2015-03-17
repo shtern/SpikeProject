@@ -223,6 +223,75 @@ namespace SpikeProject
       hpf.Show();
     }
 
+    public double countAverage(SpikeDataPacket packet)
+    {
+      if (packet.Count > 0)
+      {
+        double sum = 0;
+        for (int i = 0; i < packet.Count; i++)
+          sum += packet[i].Item2;
+        return sum / packet.Count;
+      }
+      else return 0;
+
+    }
+
+    public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      double max1=double.MinValue;
+      double max_x1 = 0;
+      double max2 = double.MinValue;
+      double max_x2 = 0;
+      foreach (SpikeData data in packet1)
+      {
+        if (data.Item2 > max)
+        {
+          max1 = data.Item2;
+          max_x1 = data.Item1;
+        }
+      }
+
+      foreach (SpikeData data in packet2)
+      {
+        if (data.Item2 > max)
+        {
+          max2 = data.Item2;
+          max_x2 = data.Item1;
+        }
+      }
+
+      double diff = max_x1 - max_x2;
+      SpikeDataPacket resultpacket = new SpikeDataPacket();
+      foreach (SpikeData data in packet2)
+        resultpacket.Add(new SpikeData(data.Item1+diff, data.Item2));
+      return resultpacket;
+
+
+    }
+
+
+
+    public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      packet2 = movePacket(packet1, packet2);
+      double avg1 = countAverage(packet1);
+      double avg2 = countAverage(packet2);
+      double topsum = 0;
+      for (int i = 0; i < packet1.Count; i++)
+        if (i < packet2.Count)
+          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
+      double sump1 = 0;
+      double sump2 = 0;
+      for (int i = 0; i < packet1.Count; i++)
+        sump1 += Math.Pow(packet1[i].Item2 - avg1 , 2);
+      for (int i = 0; i < packet2.Count; i++)
+        sump2 += Math.Pow(packet2[i].Item2 - avg2 , 2);
+      if (Math.Sqrt(sump1 * sump2) > eps)
+        return topsum / Math.Sqrt(sump1 * sump2);
+      else return 0;
+    }
+
+
     private void buildCharactList()
     {
       threshold = countThreshold();
@@ -716,6 +785,44 @@ namespace SpikeProject
     private void общиеНастройкиToolStripMenuItem_Click(object sender, EventArgs e)
     {
       new SettingsForm().Show();
+    }
+
+
+
+    public SpikeDataPacket buildNormalized(SpikeDataPacket list)
+    {
+      SpikeDataPacket resultList = new SpikeDataPacket();
+      double max = double.MinValue;
+      for (int i = 0; i < list.Count; i++)
+        if (list[i].Item2 > max) max = list[i].Item2;
+      foreach ( SpikeData data in list)
+        if (Math.Abs(max) > eps) resultList.Add(new SpikeData(data.Item1, data.Item2 / Math.Abs(max)));
+        else resultList.Add(new SpikeData(data.Item1, data.Item2));
+      return resultList;
+    }
+
+    private void матрицуКорToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      List<SpikeDataPacket> nostimcor = new List<SpikeDataPacket>();
+      for (int i=0; i<NoStimSpikeList.Count; i++)
+      {
+        SpikeDataPacket row = new SpikeDataPacket();
+        for (int j=0; j<NoStimSpikeList.Count;j++)
+          row.Add(new SpikeData(0,countCorr(NoStimSpikeList[i],NoStimSpikeList[j])));
+        nostimcor.Add(row);
+      }
+      List<SpikeDataPacket> stimcor = new List<SpikeDataPacket>();
+      for (int i=0; i<StimSpikeList.Count; i++)
+      {
+        SpikeDataPacket row = new SpikeDataPacket();
+        for (int j=0; j<StimSpikeList.Count;j++)
+          row.Add(new SpikeData(0,countCorr(StimSpikeList[i],StimSpikeList[j])));
+        stimcor.Add(row);
+      }
+
+      HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
+      hpf.Show();
+
     }
 
 

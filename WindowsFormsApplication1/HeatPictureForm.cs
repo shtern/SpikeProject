@@ -18,6 +18,8 @@ namespace SpikeProject
   {
     String CellName = "";
     double eps = 1e-20;
+    int rectheight = 20;
+    int rectwidth = 5;
     double checkeps = 1e-4;
     Bitmap NoStimBmp;
     Bitmap NormNoStimBmp;
@@ -30,7 +32,8 @@ namespace SpikeProject
     public HeatPictureForm(List<SpikeDataPacket> list,List<SpikeDataPacket> stimlist, String cellname)
     {
       InitializeComponent();
-      if (list.Count > 0) 
+      
+      if (list.Count > 0)
       {
         NoStimList = buildUniform(list);
         NormNoStimList = buildUniform(buildNormalized(list));
@@ -40,8 +43,16 @@ namespace SpikeProject
         StimList = buildUniform(stimlist);
         NormStimList = buildUniform(buildNormalized(stimlist));
       }
+      if (cellname.Equals("Корреляция"))
+      {
+        rectwidth = 25;
+        NoStimList = list;
+        StimList = stimlist;
+      }
+
+
       CellName = cellname;
-      //HeatPictureForm.ActiveForm.Text = cellname;
+      this.Text = cellname;
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
@@ -71,7 +82,7 @@ namespace SpikeProject
       }
       CellName = "MegaMap";
       //List<Double> averagelist = buildMax(listmax);
-      //HeatPictureForm.ActiveForm.Text = cellname;
+      this.Text = CellName;
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
@@ -135,13 +146,13 @@ namespace SpikeProject
       return resultList;
     }
 
-    private List<SpikeDataPacket> buildNormalized(List<SpikeDataPacket> list)
+    public List<SpikeDataPacket> buildNormalized(List<SpikeDataPacket> list)
     {
       List<SpikeDataPacket> resultList = new List<SpikeDataPacket>();
       for (int i = 0; i < list.Count; i++)
       {
         SpikeDataPacket temppacket = new SpikeDataPacket();
-        double max = eps;
+        double max = double.MinValue;
         for (int j = 0; j < list[i].Count; j++)
           if (list[i][j].Item2 > max) max = list[i][j].Item2;
         if (max > eps)
@@ -184,7 +195,6 @@ namespace SpikeProject
       List<Double> nostimmaxpoints = new List<double>();
       List<Double> averagelist = new List<double>();
       double eps = 10;
-      int maxcount = 0;
 
       //for (int i = 0; i < listmax.Count; i++)
       //  if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
@@ -356,11 +366,10 @@ namespace SpikeProject
       if (DrawList.Count <= 0) return null;
       int maxRow = DrawList.Count;
       int maxCol = DrawList.Last().Count;
-      int rectheight = 20;
-
+      
       for (int i = 0; i < DrawList.Count; i++)
         if (DrawList[i].Count < maxCol && DrawList[i].Count > 1) maxCol = DrawList[i].Count;
-      int rectwidth = 5;
+      
       if (maxCol == 0) return null;
       Bitmap bmp = new Bitmap(rectwidth * maxCol, rectheight * DrawList.Count);
       double factor = 999;
@@ -385,7 +394,7 @@ namespace SpikeProject
       {
         for (int j = 0; j < DrawList[i].Count && j < maxCol; j++)
         {
-          Brush brush = new SolidBrush(colors[Convert.ToInt16((DrawList[i][j].Item2 / maxVal) * factor)]);
+          Brush brush = new SolidBrush(colors[Convert.ToInt16(Math.Abs(DrawList[i][j].Item2 / maxVal) * factor)]);
           Pen pen = new Pen(brush, 5);
          // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
