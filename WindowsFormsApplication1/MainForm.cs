@@ -24,8 +24,8 @@ namespace SpikeProject
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
-    double min = Double.MaxValue;
-    double max = Double.MinValue;
+    double GlobalMin = Double.MaxValue;
+    double GlobalMax = Double.MinValue;
     public static int nostimcount { get; set; }
     public static int cellCount {get; set;}
     #endregion
@@ -45,6 +45,8 @@ namespace SpikeProject
     private List<PointList> AverageDrawPointsNoStim = new List<PointList>();
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
+    private List<Tuple<int,SpikeData>> PeakList = new List<Tuple<int,SpikeData>>();
+    private List<int> WidthList = new List<int>();
     #endregion
 
     public MainForm()
@@ -68,6 +70,8 @@ namespace SpikeProject
         MegaMapNoStimList = new List<SpikeDataPacket>();
         MegaMapStimMax = new List<SpikeDataPacket>();
         MegaMapNoStimMax = new List<SpikeDataPacket>();
+        PeakList = new List<Tuple<int, SpikeData>>();
+        WidthList = new List<int>();
         dialog.FileName = "Cell_1.txt";
         if (megacheck == 1) dialog.FileName="\"Cell_13\" \"Cell_1\" \"Cell_2\" \"Cell_3\" \"Cell_4\" \"Cell_5\" \"Cell_6\" \"Cell_7\" \"Cell_8\" \"Cell_9\" \"Cell_10\" \"Cell_11\" \"Cell_12\" ";
         dialog.Multiselect = true;
@@ -92,8 +96,8 @@ namespace SpikeProject
     private void loadData(string FilePath, int megacheck)
     {
       int zerocount = 0;
-      min = Double.MaxValue;
-      max = Double.MinValue;
+      GlobalMin = Double.MaxValue;
+      GlobalMax = Double.MinValue;
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
@@ -136,17 +140,16 @@ namespace SpikeProject
 
       if (zerocount < 0.3 * GlobalData.Count) GlobalData.RemoveAll(s => s.Item2 <= 0);  
 
-      //Вычитаем минимальное значение, чтобы все шло из нуля
       foreach (SpikeData data in GlobalData)
       {
-        if (data.Item2 > max) max = data.Item2;
-        if (data.Item2 < min) min = data.Item2;
+        if (data.Item2 > GlobalMax) GlobalMax = data.Item2;
+        if (data.Item2 < GlobalMin) GlobalMin = data.Item2;
       }
 
       for (int i = 0; i < GlobalData.Count; i++)
-        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - min);
-      max -= min;
-      min = 0;
+        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - GlobalMin);
+      GlobalMax -= GlobalMin;
+      GlobalMin = 0;
 
       if (megacheck == 1)
       {
@@ -244,7 +247,7 @@ namespace SpikeProject
       double max_x2 = 0;
       foreach (SpikeData data in packet1)
       {
-        if (data.Item2 > max)
+        if (data.Item2 > max1)
         {
           max1 = data.Item2;
           max_x1 = data.Item1;
@@ -253,7 +256,7 @@ namespace SpikeProject
 
       foreach (SpikeData data in packet2)
       {
-        if (data.Item2 > max)
+        if (data.Item2 > max2)
         {
           max2 = data.Item2;
           max_x2 = data.Item1;
@@ -323,9 +326,13 @@ namespace SpikeProject
       for (int i = 1; i < GlobalData.Count; i++)
       {
         double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
+        double x_max = 0, y_max = double.MinValue;
+        int i_max = 0;
         if (y > threshold)
         {
+          int istart = i;
           SpikeDataPacket currentSpike = new SpikeDataPacket();
+
           double ZeroPositionX = ApproxX(GlobalData[i - 1].Item1, GlobalData[i - 1].Item2, x, y);
           if (Math.Abs(ZeroPositionX) > double.MaxValue) ZeroPositionX = x;
           currentSpike.Add(new SpikeData(0, 0));
@@ -334,6 +341,12 @@ namespace SpikeProject
             if (y < threshold) break;
             x = GlobalData[i].Item1;
             y = GlobalData[i].Item2;
+            if (y > y_max)
+            {
+              x_max=x;
+              y_max = y;
+              i_max = i-istart;
+            }
             SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
             if (y - threshold > eps)
               currentSpike.Add(Spikedata);
@@ -341,6 +354,8 @@ namespace SpikeProject
           }
           if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
           {
+            PeakList.Add(new Tuple<int, SpikeData>(i_max, new SpikeData(x_max, y_max)));
+            WidthList.Add(currentSpike.Count);
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
           }
@@ -363,7 +378,7 @@ namespace SpikeProject
 
       foreach (SpikeData data in GlobalData)
       {
-        if ((data.Item2) < (0.8 * max) && (data.Item2) > (0.3 * max)) temppacket.Add(new SpikeData(data.Item1,data.Item2));
+        if ((data.Item2) < (0.8 * GlobalMax) && (data.Item2) > (0.3 * GlobalMax)) temppacket.Add(new SpikeData(data.Item1,data.Item2));
       }
 
       foreach (SpikeData data in temppacket)
@@ -372,10 +387,10 @@ namespace SpikeProject
         avg += data.Item2;
       }
       if (count <= 0)
-        thd = max;
+        thd = GlobalMax;
       else thd = avg / (3 * count);
-      KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / max);
-      KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / max);
+      KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / GlobalMax);
+      KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / GlobalMax);
       return thd;
     }
 
@@ -385,11 +400,11 @@ namespace SpikeProject
       double x_max = double.MinValue;
       foreach (SpikeDataPacket data in StimSpikeList)
       {
-        if (data.Last().Item1 > max) x_max = data.Last().Item1;
+        if (data.Last().Item1 > x_max) x_max = data.Last().Item1;
       }
       foreach (SpikeDataPacket data in NoStimSpikeList)
       {
-        if (data.Last().Item1 > max) x_max = data.Last().Item1;
+        if (data.Last().Item1 > x_max) x_max = data.Last().Item1;
       }
       Kx = Convert.ToInt32(NoStimCharacter.Width / x_max);
       return Kx;
@@ -853,7 +868,7 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
-          row.Add(new SpikeData(0, countCorr(buildNormalized(fullist[i]), buildNormalized(fullist[j]))));
+          row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 
