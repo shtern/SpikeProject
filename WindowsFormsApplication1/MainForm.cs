@@ -12,6 +12,7 @@ namespace SpikeProject
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
+  using SpikePeakList = List<Tuple<int, double, double>>;
   using PointList = List<PointF>;
   public partial class MainForm : Form
   {
@@ -20,7 +21,8 @@ namespace SpikeProject
     private string FilePath = "";
     private int KyTop = 1000;
     private int KyBottom = 1000;
-
+    private int LeftMedian = 0;
+    private int RightMedian = 0;
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
@@ -45,7 +47,7 @@ namespace SpikeProject
     private List<PointList> AverageDrawPointsNoStim = new List<PointList>();
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
-    private List<Tuple<int,SpikeData>> PeakList = new List<Tuple<int,SpikeData>>();
+    private SpikePeakList PeakList = new SpikePeakList();
     private List<int> WidthList = new List<int>();
     #endregion
 
@@ -70,7 +72,7 @@ namespace SpikeProject
         MegaMapNoStimList = new List<SpikeDataPacket>();
         MegaMapStimMax = new List<SpikeDataPacket>();
         MegaMapNoStimMax = new List<SpikeDataPacket>();
-        PeakList = new List<Tuple<int, SpikeData>>();
+        PeakList = new SpikePeakList();
         WidthList = new List<int>();
         dialog.FileName = "Cell_1.txt";
         if (megacheck == 1) dialog.FileName="\"Cell_13\" \"Cell_1\" \"Cell_2\" \"Cell_3\" \"Cell_4\" \"Cell_5\" \"Cell_6\" \"Cell_7\" \"Cell_8\" \"Cell_9\" \"Cell_10\" \"Cell_11\" \"Cell_12\" ";
@@ -354,18 +356,39 @@ namespace SpikeProject
           }
           if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
           {
-            PeakList.Add(new Tuple<int, SpikeData>(i_max, new SpikeData(x_max, y_max)));
+            PeakList.Add(new Tuple<int, double,double>(i_max, x_max, y_max));
             WidthList.Add(currentSpike.Count);
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
           }
         }
       }
+
       numericNoStim.Maximum = NoStimSpikeList.Count;
       numericAfterStim.Maximum = StimSpikeList.Count;
       numericNoStim.Value = NoStimSpikeList.Count;
       numericAfterStim.Value = StimSpikeList.Count;
       KxBottom = countKx();
+      LeftMedian = GetMedian(PeakList.Select(t=>t.Item1).ToArray());
+      RightMedian = GetMedian(WidthList.ToArray());
+    }
+
+    public static int GetMedian(int[] sourceNumbers)
+    {
+    
+      if (sourceNumbers == null || sourceNumbers.Length == 0)
+        return 0;
+
+      //make sure the list is sorted, but use a new array
+      int[] sortedPNumbers = (int[])sourceNumbers.Clone();
+      sourceNumbers.CopyTo(sortedPNumbers, 0);
+      Array.Sort(sortedPNumbers);
+
+      //get the median
+      int size = sortedPNumbers.Length;
+      int mid = size / 2;
+      int median = (size % 2 != 0) ? sortedPNumbers[mid] : (sortedPNumbers[mid] + sortedPNumbers[mid - 1]) / 2;
+      return median;
     }
 
     private double countThreshold()
