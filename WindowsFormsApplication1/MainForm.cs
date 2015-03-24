@@ -41,8 +41,8 @@ namespace SpikeProject
     private List<SpikeDataPacket> MegaMapNoStimList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapStimMax = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapNoStimMax = new List<SpikeDataPacket>();
-    private List<SpikeDataPacket> StimSpikeList;
-    private List<SpikeDataPacket> NoStimSpikeList;
+    public List<SpikeDataPacket> StimSpikeList { get; set; }
+    public List<SpikeDataPacket> NoStimSpikeList { get; set; }
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
     private List<PointList> AverageDrawPointsStim = new List<PointList>();
@@ -986,6 +986,11 @@ namespace SpikeProject
       newhpf.Show();
       hpf.Show();
 
+    }
+
+    private void убратьХарактеристикуToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      new EraseCharactForm().Show(this);
     }
 
 

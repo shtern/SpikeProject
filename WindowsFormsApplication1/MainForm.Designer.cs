@@ -61,6 +61,8 @@
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.общиеНастройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.правкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.убратьХарактеристикуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -315,6 +317,7 @@
       this.menuStrip1.BackColor = System.Drawing.SystemColors.InactiveCaption;
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
+            this.правкаToolStripMenuItem,
             this.построитьToolStripMenuItem,
             this.настройкиToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -421,6 +424,21 @@
       this.общиеНастройкиToolStripMenuItem.Text = "Общие настройки";
       this.общиеНастройкиToolStripMenuItem.Click += new System.EventHandler(this.общиеНастройкиToolStripMenuItem_Click);
       // 
+      // правкаToolStripMenuItem
+      // 
+      this.правкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.убратьХарактеристикуToolStripMenuItem});
+      this.правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
+      this.правкаToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+      this.правкаToolStripMenuItem.Text = "Правка";
+      // 
+      // убратьХарактеристикуToolStripMenuItem
+      // 
+      this.убратьХарактеристикуToolStripMenuItem.Name = "убратьХарактеристикуToolStripMenuItem";
+      this.убратьХарактеристикуToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+      this.убратьХарактеристикуToolStripMenuItem.Text = "Убрать характеристику";
+      this.убратьХарактеристикуToolStripMenuItem.Click += new System.EventHandler(this.убратьХарактеристикуToolStripMenuItem_Click);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -494,6 +512,8 @@
     private System.Windows.Forms.ToolStripMenuItem загрузитьТеплокартуToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem общиеНастройкиToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem матрицуКорToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem правкаToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem убратьХарактеристикуToolStripMenuItem;
   }
 }
 
