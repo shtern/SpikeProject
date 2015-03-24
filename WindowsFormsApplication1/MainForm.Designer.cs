@@ -56,11 +56,11 @@
       this.построитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.сравнениеСреднихToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.тепловыеКартыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.матрицуКорToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.общиеНастройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.матрицуКорToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -126,12 +126,13 @@
       this.Threshold_Scroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.Threshold_Scroll.AutoSize = false;
       this.Threshold_Scroll.Location = new System.Drawing.Point(13, 82);
-      this.Threshold_Scroll.Maximum = 150;
+      this.Threshold_Scroll.Maximum = 500;
+      this.Threshold_Scroll.Minimum = 1;
       this.Threshold_Scroll.Name = "Threshold_Scroll";
       this.Threshold_Scroll.Size = new System.Drawing.Size(160, 24);
       this.Threshold_Scroll.TabIndex = 9;
       this.Threshold_Scroll.TickStyle = System.Windows.Forms.TickStyle.None;
-      this.Threshold_Scroll.Value = 20;
+      this.Threshold_Scroll.Value = 100;
       this.Threshold_Scroll.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Threshold_Scroll_MouseUp);
       // 
       // StimCharacter
@@ -377,6 +378,13 @@
       this.тепловыеКартыToolStripMenuItem.Text = "Тепловые карты";
       this.тепловыеКартыToolStripMenuItem.Click += new System.EventHandler(this.тепловыеКартыToolStripMenuItem_Click);
       // 
+      // матрицуКорToolStripMenuItem
+      // 
+      this.матрицуКорToolStripMenuItem.Name = "матрицуКорToolStripMenuItem";
+      this.матрицуКорToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+      this.матрицуКорToolStripMenuItem.Text = "Матрицу корреляции";
+      this.матрицуКорToolStripMenuItem.Click += new System.EventHandler(this.матрицуКорToolStripMenuItem_Click);
+      // 
       // настройкиToolStripMenuItem
       // 
       this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -412,13 +420,6 @@
       this.общиеНастройкиToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
       this.общиеНастройкиToolStripMenuItem.Text = "Общие настройки";
       this.общиеНастройкиToolStripMenuItem.Click += new System.EventHandler(this.общиеНастройкиToolStripMenuItem_Click);
-      // 
-      // матрицуКорToolStripMenuItem
-      // 
-      this.матрицуКорToolStripMenuItem.Name = "матрицуКорToolStripMenuItem";
-      this.матрицуКорToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-      this.матрицуКорToolStripMenuItem.Text = "Матрицу корреляции";
-      this.матрицуКорToolStripMenuItem.Click += new System.EventHandler(this.матрицуКорToolStripMenuItem_Click);
       // 
       // MainForm
       // 

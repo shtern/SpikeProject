@@ -19,6 +19,7 @@ namespace SpikeProject
     #region Константы
     private double threshold = 0.02;
     private double initthreshold = 0;
+    private double prev_threshold = 0.02;
     private string FilePath = "";
     private int KyTop = 1000;
     private int KyBottom = 1000;
@@ -58,7 +59,6 @@ namespace SpikeProject
       cellCount = Properties.Settings.Default.cellcount;
       nostimcount = Properties.Settings.Default.stimstart;
       KeyPreview = true;
-      threshold = (double)Threshold_Scroll.Value / 1000;
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
@@ -154,6 +154,7 @@ namespace SpikeProject
       GlobalMax -= GlobalMin;
       GlobalMin = 0;
       threshold = countThreshold();
+      prev_threshold = threshold;
       initthreshold = threshold;
       if (megacheck == 1)
       {
@@ -739,7 +740,10 @@ namespace SpikeProject
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)
     {
+      prev_threshold = threshold;
       threshold = (double)Threshold_Scroll.Value / 1000;
+      StimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeList = new List<SpikeDataPacket>();
       if (FilePath != "")
         loadData(FilePath,0);
       if (NoStimSpikeList.Count > 0)
@@ -755,7 +759,10 @@ namespace SpikeProject
 
     private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
     {
-      threshold = (double)Threshold_Scroll.Value*(0.1*initthreshold);
+      prev_threshold = threshold;
+      threshold = (double)Threshold_Scroll.Value*(0.01*initthreshold);
+      if (threshold == prev_threshold) return;
+      freeVariables();
       if (FilePath != "")
       //loadData(FilePath,0);
       {
@@ -776,6 +783,19 @@ namespace SpikeProject
       }
 
     }
+
+    private void freeVariables()
+    {
+      StimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeList = new List<SpikeDataPacket>();
+      AverageDrawPointsStim = new List<PointList>();
+      AverageDrawPointsNoStim = new List<PointList>();
+      AveragePointsStim = new List<PointList>();
+      AveragePointsNoStim = new List<PointList>();
+      PeakList = new SpikePeakList();
+      WidthList = new List<int>();
+    }
+
 
     private SpikeDataPacket thresholdCheck(SpikeDataPacket list)
     {
