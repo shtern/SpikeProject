@@ -12,12 +12,13 @@ namespace SpikeProject
 {
   using SpikeDataPacket = List<Tuple<double, double>>;
   using SpikeData = Tuple<double, double>;
-  using SpikePeakList = List<Tuple<int, double, double>>;
+  using SpikePeakList = List<Tuple<int,int, double, double>>;
   using PointList = List<PointF>;
   public partial class MainForm : Form
   {
     #region Константы
     private double threshold = 0.02;
+    private double initthreshold = 0;
     private string FilePath = "";
     private int KyTop = 1000;
     private int KyBottom = 1000;
@@ -152,7 +153,8 @@ namespace SpikeProject
         GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - GlobalMin);
       GlobalMax -= GlobalMin;
       GlobalMin = 0;
-
+      threshold = countThreshold();
+      initthreshold = threshold;
       if (megacheck == 1)
       {
         MegaMapList.Add((GlobalData));
@@ -171,6 +173,7 @@ namespace SpikeProject
         StimCharacter.Refresh();
       }
     }
+
 
     private void buildMegaLists()
     {
@@ -301,30 +304,12 @@ namespace SpikeProject
     }
 
 
-    public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
-    {
-      packet2 = movePacket(packet1, packet2);
-      double avg1 = countAverage(packet1);
-      double avg2 = countAverage(packet2);
-      double topsum = 0;
-      for (int i = 0; i < packet1.Count; i++)
-        if (i < packet2.Count)
-          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
-      double sump1 = 0;
-      double sump2 = 0;
-      for (int i = 0; i < packet1.Count; i++)
-        sump1 += Math.Pow(packet1[i].Item2 - avg1 , 2);
-      for (int i = 0; i < packet2.Count; i++)
-        sump2 += Math.Pow(packet2[i].Item2 - avg2 , 2);
-      if (Math.Sqrt(sump1 * sump2) > eps)
-        return topsum / Math.Sqrt(sump1 * sump2);
-      else return 0;
-    }
+ 
 
 
     private void buildCharactList()
     {
-      threshold = countThreshold();
+      
       for (int i = 1; i < GlobalData.Count; i++)
       {
         double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
@@ -356,7 +341,7 @@ namespace SpikeProject
           }
           if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
           {
-            PeakList.Add(new Tuple<int, double,double>(i_max, x_max, y_max));
+            PeakList.Add(new Tuple<int,int, double,double>(i_max,i, x_max, y_max));
             WidthList.Add(currentSpike.Count);
             if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
             else StimSpikeList.Add(currentSpike);
@@ -371,6 +356,77 @@ namespace SpikeProject
       KxBottom = countKx();
       LeftMedian = GetMedian(PeakList.Select(t=>t.Item1).ToArray());
       RightMedian = GetMedian(WidthList.ToArray());
+    }
+
+
+    public List<SpikeDataPacket> doCorrCompare()
+    {
+      List<SpikeDataPacket> fullcor = new List<SpikeDataPacket>();
+      for (int i = 0; i < PeakList.Count; i++)
+      {
+        SpikeDataPacket row = new SpikeDataPacket();
+        for (int j = 0; j < PeakList.Count; j++)
+        {
+          int leftborder = (PeakList[i].Item2 - LeftMedian > 0) ? PeakList[i].Item2 - LeftMedian : 0;
+          int rightborder = (PeakList[i].Item2 + RightMedian < GlobalData.Count - 1) ? PeakList[i].Item2 + RightMedian : GlobalData.Count;
+          SpikeDataPacket packet1 = GlobalData.GetRange(leftborder,rightborder-leftborder);
+
+          leftborder = (PeakList[j].Item2 - LeftMedian > 0) ? PeakList[j].Item2 - LeftMedian : 0;
+          rightborder = (PeakList[j].Item2 + RightMedian < GlobalData.Count - 1) ? PeakList[j].Item2 + RightMedian : GlobalData.Count;
+          SpikeDataPacket packet2 = GlobalData.GetRange(leftborder, rightborder - leftborder);
+          row.Add(new SpikeData(0, countCorr(packet1, packet2)));
+        }
+        fullcor.Add(row);
+      }
+      return fullcor;
+    }
+
+    public List<SpikeDataPacket> doCorrCompareMax()
+    {
+      List<SpikeDataPacket> fullcor = new List<SpikeDataPacket>();
+      for (int i = 0; i < PeakList.Count; i++)
+      {
+        SpikeDataPacket row = new SpikeDataPacket();
+        for (int j = 0; j < PeakList.Count; j++)
+        {
+          List<double> vallist = new List<double>();
+          for (int move = -2; move < 3; move++)
+          {
+            int leftborder = (PeakList[i].Item2 + move - LeftMedian > 0) ? PeakList[i].Item2 + move - LeftMedian : 0;
+            int rightborder = (PeakList[i].Item2 + move + RightMedian < GlobalData.Count - 1) ? PeakList[i].Item2 + move + RightMedian : GlobalData.Count;
+            SpikeDataPacket packet1 = GlobalData.GetRange(leftborder, rightborder - leftborder);
+
+            leftborder = (PeakList[j].Item2  - LeftMedian > 0) ? PeakList[j].Item2  - LeftMedian : 0;
+            rightborder = (PeakList[j].Item2   + RightMedian < GlobalData.Count - 1) ? PeakList[j].Item2  + RightMedian : GlobalData.Count;
+            SpikeDataPacket packet2 = GlobalData.GetRange(leftborder, rightborder - leftborder);
+            vallist.Add(countCorr(packet1, packet2));
+          }
+          row.Add(new SpikeData(0, vallist.Max()));
+        }
+        fullcor.Add(row);
+      }
+      return fullcor;
+    }
+
+
+    public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      packet2 = movePacket(packet1, packet2);
+      double avg1 = countAverage(packet1);
+      double avg2 = countAverage(packet2);
+      double topsum = 0;
+      for (int i = 0; i < packet1.Count; i++)
+        if (i < packet2.Count)
+          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
+      double sump1 = 0;
+      double sump2 = 0;
+      for (int i = 0; i < packet1.Count; i++)
+        sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+      for (int i = 0; i < packet2.Count; i++)
+        sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
+      if (Math.Sqrt(sump1 * sump2) > eps)
+        return topsum / Math.Sqrt(sump1 * sump2);
+      else return 0;
     }
 
     public static int GetMedian(int[] sourceNumbers)
@@ -699,9 +755,17 @@ namespace SpikeProject
 
     private void Threshold_Scroll_MouseUp(object sender, MouseEventArgs e)
     {
-      threshold = (double)Threshold_Scroll.Value / 1000;
+      threshold = (double)Threshold_Scroll.Value*(0.1*initthreshold);
       if (FilePath != "")
-        loadData(FilePath,0);
+      //loadData(FilePath,0);
+      {
+        buildCharactList();
+        buildNoStimAverage();
+        buildStimAverage();
+        SpikeGraph.Refresh();
+        NoStimCharacter.Refresh();
+        StimCharacter.Refresh();
+      }
       if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
@@ -895,6 +959,8 @@ namespace SpikeProject
         fullcor.Add(row);
       }
 
+
+      fullcor = doCorrCompareMax();
       HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
       HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция");
       newhpf.Show();
