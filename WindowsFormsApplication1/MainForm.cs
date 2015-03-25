@@ -43,6 +43,7 @@ namespace SpikeProject
     private List<SpikeDataPacket> MegaMapNoStimMax = new List<SpikeDataPacket>();
     public List<SpikeDataPacket> StimSpikeList { get; set; }
     public List<SpikeDataPacket> NoStimSpikeList { get; set; }
+    private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
     private List<PointList> AverageDrawPointsStim = new List<PointList>();
@@ -62,6 +63,7 @@ namespace SpikeProject
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      PreSpikeList = new List<SpikeDataPacket>();
     }
 
     private void loadDialogOpen(int megacheck)
@@ -104,6 +106,7 @@ namespace SpikeProject
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      PreSpikeList = new List<SpikeDataPacket>();
       AverageDrawPointsStim = new List<PointList>();
       AverageDrawPointsNoStim = new List<PointList>();
       using (StreamReader sr = new StreamReader(FilePath))
@@ -170,8 +173,7 @@ namespace SpikeProject
         buildNoStimAverage();
         buildStimAverage();
         SpikeGraph.Refresh();
-        NoStimCharacter.Refresh();
-        StimCharacter.Refresh();
+        Refresh_Graphs();
       }
     }
 
@@ -340,23 +342,43 @@ namespace SpikeProject
               currentSpike.Add(Spikedata);
             i++;
           }
-          if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
-          {
-            PeakList.Add(new Tuple<int,int, double,double>(i_max,i, x_max, y_max));
-            WidthList.Add(currentSpike.Count);
-            if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
-            else StimSpikeList.Add(currentSpike);
-          }
+          PreSpikeList.Add(currentSpike);
+          PeakList.Add(new Tuple<int, int, double, double>(i_max, i, x_max, y_max));
+          WidthList.Add(currentSpike.Count);
+
+          //if (currentSpike.Count > nostimcount && currentSpike.Count(s => s.Item2 > 1.4 * threshold) > nostimcount)
+          //{
+          //  PeakList.Add(new Tuple<int,int, double,double>(i_max,i, x_max, y_max));
+          //  WidthList.Add(currentSpike.Count);
+          //  if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(currentSpike);
+          //  else StimSpikeList.Add(currentSpike);
+          //}
+
         }
       }
+      int RemoveCount = 0;
+      LeftMedian = GetMedian(PeakList.Select(t => t.Item1).ToArray());
+      RightMedian = GetMedian(WidthList.ToArray());
+      for (int i = 0; i < PreSpikeList.Count; i++)
+      {
+        if (PreSpikeList[i].Count > 0.75 * RightMedian)
 
+          if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(PreSpikeList[i]);
+          else StimSpikeList.Add(PreSpikeList[i]);
+
+        else 
+        { 
+          PeakList.RemoveAt(i-RemoveCount);
+          WidthList.RemoveAt(i-RemoveCount);
+          RemoveCount++;
+        }
+      }
       numericNoStim.Maximum = NoStimSpikeList.Count;
       numericAfterStim.Maximum = StimSpikeList.Count;
       numericNoStim.Value = NoStimSpikeList.Count;
       numericAfterStim.Value = StimSpikeList.Count;
       KxBottom = countKx();
-      LeftMedian = GetMedian(PeakList.Select(t=>t.Item1).ToArray());
-      RightMedian = GetMedian(WidthList.ToArray());
+      
     }
 
 
@@ -633,8 +655,7 @@ namespace SpikeProject
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
       SpikeGraph.Refresh();
-      NoStimCharacter.Refresh();
-      StimCharacter.Refresh();
+      Refresh_Graphs();
     }
 
     private void StimCharacter_Paint(object sender, PaintEventArgs e)
@@ -715,6 +736,12 @@ namespace SpikeProject
       e.Graphics.DrawLine(thresholdpen, (float)0, (float)(e.ClipRectangle.Height - threshold * KyTop), (float)e.ClipRectangle.Width, (float)(e.ClipRectangle.Height - threshold * KyTop));
     }
 
+    public void Refresh_Graphs()
+    {
+      NoStimCharacter.Refresh();
+      StimCharacter.Refresh();
+    }
+
     private void TopScroll_Scroll(object sender, EventArgs e)
     {
       KxTop = 1 + TopScroll.Value / 2;
@@ -724,8 +751,7 @@ namespace SpikeProject
     private void BottomScroll_Scroll(object sender, EventArgs e)
     {
       KxBottom = 50 + BottomScroll.Value * 10;
-      NoStimCharacter.Refresh();
-      StimCharacter.Refresh();
+      Refresh_Graphs();
     }
 
     private void numericNo_ValueChanged(object sender, EventArgs e)
@@ -751,8 +777,7 @@ namespace SpikeProject
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;
         SpikeGraph.Refresh();
-        NoStimCharacter.Refresh();
-        StimCharacter.Refresh();
+        Refresh_Graphs();
       }
 
     }
@@ -770,16 +795,14 @@ namespace SpikeProject
         buildNoStimAverage();
         buildStimAverage();
         SpikeGraph.Refresh();
-        NoStimCharacter.Refresh();
-        StimCharacter.Refresh();
+        Refresh_Graphs();
       }
       if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;
         SpikeGraph.Refresh();
-        NoStimCharacter.Refresh();
-        StimCharacter.Refresh();
+        Refresh_Graphs();
       }
 
     }
@@ -788,6 +811,7 @@ namespace SpikeProject
     {
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      PreSpikeList = new List<SpikeDataPacket>();
       AverageDrawPointsStim = new List<PointList>();
       AverageDrawPointsNoStim = new List<PointList>();
       AveragePointsStim = new List<PointList>();
@@ -850,8 +874,7 @@ namespace SpikeProject
 
     private void AvgToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
     {
-      NoStimCharacter.Refresh();
-      StimCharacter.Refresh();
+      Refresh_Graphs();
     }
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -990,6 +1013,9 @@ namespace SpikeProject
 
     private void убратьХарактеристикуToolStripMenuItem_Click(object sender, EventArgs e)
     {
+      if (NoStimSpikeList==null || NoStimSpikeList.Count<=0 )
+        MessageBox.Show("Не загружены данные", "Редактирование данных о характеристиках",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk); else
       new EraseCharactForm().Show(this);
     }
 
