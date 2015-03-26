@@ -58,6 +58,7 @@
       this.notStimSpikes.Size = new System.Drawing.Size(581, 241);
       this.notStimSpikes.TabIndex = 0;
       this.notStimSpikes.TabStop = false;
+      this.notStimSpikes.Click += new System.EventHandler(this.notStimSpikes_Click);
       // 
       // NoStimPanel
       // 
@@ -85,6 +86,7 @@
       this.StimSpikes.Size = new System.Drawing.Size(570, 242);
       this.StimSpikes.TabIndex = 0;
       this.StimSpikes.TabStop = false;
+      this.StimSpikes.Click += new System.EventHandler(this.StimSpikes_Click);
       // 
       // menuStrip1
       // 
@@ -161,8 +163,8 @@
       // 
       // NoStimLabel
       // 
-      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.NoStimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimLabel.AutoSize = true;
       this.NoStimLabel.Location = new System.Drawing.Point(15, 38);
       this.NoStimLabel.Name = "NoStimLabel";
@@ -172,8 +174,8 @@
       // 
       // StimLabel
       // 
-      this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.StimLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.StimLabel.AutoSize = true;
       this.StimLabel.Location = new System.Drawing.Point(15, 405);
       this.StimLabel.Name = "StimLabel";

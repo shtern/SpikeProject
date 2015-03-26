@@ -483,5 +483,27 @@ namespace SpikeProject
         NoStimPanel.Width = this.Width - 50;
     }
 
+    private void notStimSpikes_Click(object sender, EventArgs e)
+    {
+      MouseEventArgs me = (MouseEventArgs)e;
+      Point coordinates = me.Location;
+      int x = coordinates.X / rectwidth;
+      int y = coordinates.Y / rectheight;
+      
+      MessageBox.Show(NoStimList[x][y].Item2+"", "Значение в клетке",
+      MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+
+    }
+
+    private void StimSpikes_Click(object sender, EventArgs e)
+    {
+      MouseEventArgs me = (MouseEventArgs)e;
+      Point coordinates = me.Location;
+      int x = coordinates.X / rectwidth;
+      int y = coordinates.Y / rectheight;
+      MessageBox.Show(StimList[x][y].Item2 + "", "Значение в клетке",
+      MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+    }
+
   }
 }

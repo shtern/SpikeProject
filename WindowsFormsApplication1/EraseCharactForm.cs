@@ -47,12 +47,15 @@ namespace SpikeProject
       MainForm parent = (MainForm)this.Owner;
       if (nostimarr.Count() > 0 && nostimarr[0] >= 0)
         for (int i = 0; i < nostimarr.Count(); i++)
-          parent.NoStimSpikeList.RemoveAt(nostimarr[i]-1-i);
+          if (nostimarr[i]-1-i>=0 && nostimarr[i] - 1 - i < parent.NoStimSpikeList.Count) parent.NoStimSpikeList.RemoveAt(nostimarr[i]-1-i);
+          else MessageBox.Show("Один из индексов неверный", "Редактирование данных о характеристиках",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 
       if (stimarr.Count() > 0 && stimarr[0] >= 0)
         for (int i = 0; i < stimarr.Count(); i++)
-          parent.StimSpikeList.RemoveAt(stimarr[i]-1-i);
-
+          if (stimarr[i] - 1 - i >= 0 && stimarr[i] - 1 - i < parent.StimSpikeList.Count) parent.StimSpikeList.RemoveAt(stimarr[i] - 1 - i);
+          else MessageBox.Show("Один из индексов неверный", "Редактирование данных о характеристиках",
+            MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
       parent.Refresh_Graphs();
       this.Close();
 
