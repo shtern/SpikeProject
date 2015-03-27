@@ -17,6 +17,8 @@ namespace SpikeProject
   public partial class HeatPictureForm : Form
   {
     String CellName = "";
+    PictureBox ScaleBox;
+    bool doScale = false;
     double eps = 1e-20;
     int rectheight = 20;
     int rectwidth = 5;
@@ -48,6 +50,8 @@ namespace SpikeProject
         rectwidth = 25;
         NoStimList = list;
         StimList = stimlist;
+        ScaleBox = new PictureBox();
+        doScale = true;
       }
 
 
@@ -59,7 +63,13 @@ namespace SpikeProject
       NormStimBmp = DrawTask(NormStimList);
       notStimSpikesSetPic();
       StimSpikesSetPic();
-      this.Height = NoStimPanel.Height + StimPanel.Height + 300;
+      if (stimlist.Count > 1)
+        this.Height = NoStimPanel.Height + StimPanel.Height + 300;
+      else
+      {
+        this.Height = NoStimPanel.Height + 100;
+        NoStimLabel.Visible = false;
+      }
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
 
@@ -308,6 +318,7 @@ namespace SpikeProject
           if ( NormNoStimBmp.Width < Screen.FromControl(this).Bounds.Width )
           NoStimPanel.Width = NormNoStimBmp.Width;
           NoStimPanel.Height = NormNoStimBmp.Height + 20;
+
         }
         else notStimSpikes.Visible = false;
       }
@@ -373,7 +384,7 @@ namespace SpikeProject
       if (DrawList.Count <= 0) return null;
       int maxRow = DrawList.Count;
       int maxCol = DrawList.Last().Count;
-      
+      List<SpikeDataPacket> newlist = new List<SpikeDataPacket>();
       for (int i = 0; i < DrawList.Count; i++)
         if (DrawList[i].Count < maxCol && DrawList[i].Count > 1) maxCol = DrawList[i].Count;
       
@@ -388,6 +399,19 @@ namespace SpikeProject
           if (minVal > DrawList[i][j].Item2) minVal = DrawList[i][j].Item2;
           if (maxVal < DrawList[i][j].Item2) maxVal = DrawList[i][j].Item2;
         }
+      if (minVal < 0)
+      {
+        for (int i = 0; i < DrawList.Count; i++)
+        {
+          SpikeDataPacket row = new SpikeDataPacket();
+          for (int j = 0; j < DrawList[i].Count; j++)
+            row.Add(new SpikeData(DrawList[i][j].Item1, DrawList[i][j].Item2 + Math.Abs(minVal)));
+          newlist.Add(row);
+        }
+        maxVal += Math.Abs(minVal);
+        DrawList = newlist;
+
+      }
       List<Color> baseColors = new List<Color>();  // create a color list
       baseColors.Add(Color.RoyalBlue);
       baseColors.Add(Color.LightSkyBlue);
@@ -395,6 +419,7 @@ namespace SpikeProject
       baseColors.Add(Color.Yellow);
       baseColors.Add(Color.Orange);
       baseColors.Add(Color.Red);
+
       Graphics graph = Graphics.FromImage(bmp);
       List<Color> colors = interpolateColors(baseColors, 1000);
       for (int i = 0; i < DrawList.Count; i++)
@@ -489,8 +514,9 @@ namespace SpikeProject
       Point coordinates = me.Location;
       int x = coordinates.X / rectwidth;
       int y = coordinates.Y / rectheight;
-      
-      MessageBox.Show(NoStimList[x][y].Item2+"", "Значение в клетке",
+      if (x<NoStimList.Count && x >= 0)
+        if (y<NoStimList[x].Count && y>=0)
+      MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
       MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
 
     }
@@ -501,7 +527,9 @@ namespace SpikeProject
       Point coordinates = me.Location;
       int x = coordinates.X / rectwidth;
       int y = coordinates.Y / rectheight;
-      MessageBox.Show(StimList[x][y].Item2 + "", "Значение в клетке",
+      if (x < StimList.Count && x >= 0)
+        if (y < StimList[x].Count && y >= 0)
+      MessageBox.Show(StimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
       MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
     }
 

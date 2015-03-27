@@ -43,6 +43,7 @@ namespace SpikeProject
     private List<SpikeDataPacket> MegaMapNoStimMax = new List<SpikeDataPacket>();
     public List<SpikeDataPacket> StimSpikeList { get; set; }
     public List<SpikeDataPacket> NoStimSpikeList { get; set; }
+    public SpikePeakList PeakList { get; set; }
     private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
@@ -50,7 +51,6 @@ namespace SpikeProject
     private List<PointList> AverageDrawPointsNoStim = new List<PointList>();
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
-    private SpikePeakList PeakList = new SpikePeakList();
     private List<int> WidthList = new List<int>();
     #endregion
 
@@ -64,6 +64,7 @@ namespace SpikeProject
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
+      PeakList = new SpikePeakList();
     }
 
     private void loadDialogOpen(int megacheck)
@@ -312,7 +313,8 @@ namespace SpikeProject
 
     private void buildCharactList()
     {
-      
+      PreSpikeList = new List<SpikeDataPacket>();
+      PeakList = new SpikePeakList();
       for (int i = 1; i < GlobalData.Count; i++)
       {
         double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
@@ -373,8 +375,7 @@ namespace SpikeProject
           RemoveCount++;
         }
       }
-      numericNoStim.Maximum = NoStimSpikeList.Count;
-      numericAfterStim.Maximum = StimSpikeList.Count;
+      RecountMaxScroll();
       numericNoStim.Value = NoStimSpikeList.Count;
       numericAfterStim.Value = StimSpikeList.Count;
       KxBottom = countKx();
@@ -742,6 +743,12 @@ namespace SpikeProject
       StimCharacter.Refresh();
     }
 
+    public void RecountMaxScroll()
+    {
+      numericNoStim.Maximum = NoStimSpikeList.Count;
+      numericAfterStim.Maximum = StimSpikeList.Count;
+    }
+
     private void TopScroll_Scroll(object sender, EventArgs e)
     {
       KxTop = 1 + TopScroll.Value / 2;
@@ -1004,10 +1011,10 @@ namespace SpikeProject
 
 
       fullcor = doCorrCompareMax();
-      HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
+      //HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
       HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция");
       newhpf.Show();
-      hpf.Show();
+      //hpf.Show();
 
     }
 
