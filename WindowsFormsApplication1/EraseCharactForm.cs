@@ -57,7 +57,7 @@ namespace SpikeProject
 
       if (stimarr.Count() > 0 && stimarr[0] >= 0)
         for (int i = 0; i < stimarr.Count(); i++)
-          if (stimarr[i] - 1 - i >= 0 && stimarr[i] - 1 - i < parent.StimSpikeList.Count && nostimarr[i] - 1 - i < parent.PeakList.Count)
+          if (stimarr[i] - 1 - i >= 0 && stimarr[i] - 1 - i < parent.StimSpikeList.Count && stimarr[i] - 1 - i + parent.NoStimSpikeList.Count < parent.PeakList.Count)
           {
             parent.StimSpikeList.RemoveAt(stimarr[i] - 1 - i);
             parent.PeakList.RemoveAt(stimarr[i] - 1 - i + parent.NoStimSpikeList.Count);
