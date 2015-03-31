@@ -22,11 +22,15 @@ namespace SpikeProject
     double eps = 1e-20;
     int rectheight = 20;
     int rectwidth = 5;
+    int ValueLabelWidth = 0;
     double checkeps = 1e-4;
     Bitmap NoStimBmp;
     Bitmap NormNoStimBmp;
     Bitmap StimBmp;
     Bitmap NormStimBmp;
+    double Maximum;
+    double Minimum;
+    double OldMinimum=0;
     List<SpikeDataPacket> NoStimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> StimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> NormNoStimList = new List<SpikeDataPacket>();
@@ -71,6 +75,7 @@ namespace SpikeProject
         NoStimLabel.Visible = false;
       }
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
+      if (doScale) this.Width += ScaleBox.Width + ValueLabelWidth + 150;
     }
 
     public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
@@ -332,6 +337,38 @@ namespace SpikeProject
           if (NoStimBmp.Width < Screen.FromControl(this).Bounds.Width)
           NoStimPanel.Width = NoStimBmp.Width;
           NoStimPanel.Height = NoStimBmp.Height + 20;
+          if (doScale)
+          {
+            ScaleBox.Height = NoStimBmp.Height;
+            ScaleBox.Width = rectwidth;
+            int rectcol = ScaleBox.Height / rectheight;
+            double step = Math.Abs(Maximum - Minimum) / rectcol;
+            List<SpikeDataPacket> ScaleList = new List<SpikeDataPacket>();
+            double buildvvalue = Minimum;
+            Point location = NoStimPanel.Location;
+            location.X += notStimSpikes.Width + 100;
+            ScaleBox.Location = location;
+            this.Controls.Add(ScaleBox);
+            for (int i = 0; i < rectcol; i++)
+            {
+              SpikeDataPacket row = new SpikeDataPacket();
+              row.Add(new SpikeData(0, buildvvalue));
+              ScaleList.Add(row);
+              buildvvalue += step;
+              Label valuelbl = new Label();
+              valuelbl.Text = (double)(buildvvalue-Math.Abs(OldMinimum)) + "";
+              Point lbllocation = ScaleBox.Location;
+              lbllocation.X += ScaleBox.Width+4;
+              lbllocation.Y += (rectcol -1 - i) * rectheight + 1 ;
+              valuelbl.Location = lbllocation;
+              ValueLabelWidth = valuelbl.Width;
+              this.Controls.Add(valuelbl);
+            }
+            ScaleList.Reverse();
+            ScaleBox.Image = DrawTask(ScaleList);
+            
+
+          }
         }
         else notStimSpikes.Visible = false;
       };
@@ -349,6 +386,7 @@ namespace SpikeProject
           if (NormStimBmp.Width < Screen.FromControl(this).Bounds.Width)
             StimPanel.Width = NormStimBmp.Width;
           StimPanel.Height = NormStimBmp.Height + 20;
+          
         }
         else
         {
@@ -409,8 +447,15 @@ namespace SpikeProject
           newlist.Add(row);
         }
         maxVal += Math.Abs(minVal);
+        OldMinimum = minVal;
+        minVal = eps;
         DrawList = newlist;
 
+      }
+      if (doScale)
+      {
+        Maximum = maxVal;
+        Minimum = minVal;
       }
       List<Color> baseColors = new List<Color>();  // create a color list
       baseColors.Add(Color.RoyalBlue);
