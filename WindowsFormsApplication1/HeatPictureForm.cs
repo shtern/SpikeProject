@@ -31,6 +31,7 @@ namespace SpikeProject
     double Maximum;
     double Minimum;
     double OldMinimum=0;
+    MainForm parent;
     List<SpikeDataPacket> NoStimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> StimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> NormNoStimList = new List<SpikeDataPacket>();
@@ -58,7 +59,7 @@ namespace SpikeProject
         doScale = true;
       }
 
-
+      parent = (MainForm)this.Owner; 
       CellName = cellname;
       this.Text = cellname;
       NoStimBmp = DrawTask(NoStimList);
@@ -599,9 +600,13 @@ namespace SpikeProject
       int x = coordinates.X / rectwidth;
       int y = coordinates.Y / rectheight;
       if (x<NoStimList.Count && x >= 0)
-        if (y<NoStimList[x].Count && y>=0)
-      MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
-      MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        if (y < NoStimList[x].Count && y >= 0)
+        {
+          MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
+          MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+          y -= 11;
+          //new FCompareForm(parent.NoStimSpikeList[x], parent.NoStimSpikeList[y]).Show();
+        }
 
     }
 

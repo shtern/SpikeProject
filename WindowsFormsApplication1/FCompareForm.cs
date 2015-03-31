@@ -34,6 +34,23 @@ namespace SpikeProject
       Average_pre = average_pre;
     }
 
+    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2)
+    {
+      InitializeComponent();
+      PointList plist1 = new PointList();
+      PointList plist2 = new PointList();
+      foreach (SpikeData data in list1)
+        plist1.Add(new PointF((float)data.Item1, (float)data.Item2));
+
+      foreach (SpikeData data in list2)
+        plist2.Add(new PointF((float)data.Item1, (float)data.Item2));
+      Average_post = plist1;
+      Average_pre = plist2;
+      
+
+
+    }
+
 
     public PointList Normalize(PointList list)
     {

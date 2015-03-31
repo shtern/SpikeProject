@@ -232,7 +232,7 @@ namespace SpikeProject
 
       }
       HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, MegaMapNoStimMax, MegaMapStimMax);
-      hpf.Show();
+      hpf.Show(this);
     }
 
     public double countAverage(SpikeDataPacket packet)
@@ -847,7 +847,7 @@ namespace SpikeProject
       if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
       {
         FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
-        compareForm.Show();
+        compareForm.Show(this);
       }
       else
       {
@@ -869,7 +869,7 @@ namespace SpikeProject
         MapList.AddRange(StimSpikeList);
 
         HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, cellName.Text);
-        hpf.Show();
+        hpf.Show(this);
 
       }
       else
@@ -1013,7 +1013,7 @@ namespace SpikeProject
       fullcor = doCorrCompareMax();
       //HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
       HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция");
-      newhpf.Show();
+      newhpf.Show(this);
       //hpf.Show();
 
     }
