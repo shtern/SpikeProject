@@ -75,7 +75,46 @@ namespace SpikeProject
         NoStimLabel.Visible = false;
       }
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
-      if (doScale) this.Width += ScaleBox.Width + ValueLabelWidth + 150;
+
+      if (NoStimBmp != null || NormNoStimList != null || list.Count > 1)
+      for (int i = 0; i < list.Count; i++)
+      {
+        Label numlabel = new Label();
+        numlabel.Text = (int)(list.Count - i) + "";
+        Point lbllocation = NoStimPanel.Location;
+        lbllocation.X -= 20;
+        lbllocation.Y += (list.Count - 1 - i) * rectheight;
+        numlabel.Location = lbllocation;
+        this.Controls.Add(numlabel);
+      }
+
+      if (StimBmp != null || NormStimList != null || stimlist.Count>1)
+        for (int i = 0; i < stimlist.Count; i++)
+        {
+          Label numlabel = new Label();
+          numlabel.Text = (int)(stimlist.Count - i) + "";
+          Point lbllocation = StimPanel.Location;
+          lbllocation.X -= 20;
+          lbllocation.Y += (stimlist.Count - 1 - i) * rectheight;
+          numlabel.Location = lbllocation;
+          this.Controls.Add(numlabel);
+        }
+
+      if (doScale)
+      {
+        this.Width += ScaleBox.Width + ValueLabelWidth + 150;
+        for (int i = 0; i < list.Count; i++)
+        {
+          Label numlabel = new Label();
+          numlabel.Text = (int)(list.Count - i) + "";
+          Point lbllocation = NoStimPanel.Location;
+          lbllocation.X += (list.Count-1-i)*rectwidth;
+          lbllocation.Y -= 15;
+          numlabel.Location = lbllocation;
+          this.Controls.Add(numlabel);
+        }
+      }
+
     }
 
     public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
