@@ -140,5 +140,7 @@ namespace SpikeProject
       else if (!int.TryParse(e.KeyChar.ToString(), out isNum) && !char.IsControl(e.KeyChar))
         e.Handled = true;
     }
+
+
   }
 }

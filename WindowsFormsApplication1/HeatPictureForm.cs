@@ -23,7 +23,6 @@ namespace SpikeProject
     int rectheight = 20;
     int rectwidth = 5;
     int ValueLabelWidth = 0;
-    double checkeps = 1e-4;
     Bitmap NoStimBmp;
     Bitmap NormNoStimBmp;
     Bitmap StimBmp;
@@ -59,7 +58,7 @@ namespace SpikeProject
         doScale = true;
       }
 
-      parent = (MainForm)this.Owner; 
+      
       CellName = cellname;
       this.Text = cellname;
       NoStimBmp = DrawTask(NoStimList);
@@ -469,13 +468,15 @@ namespace SpikeProject
       if (maxCol == 0) return null;
       Bitmap bmp = new Bitmap(rectwidth * maxCol, rectheight * DrawList.Count);
       double factor = 999;
-      double minVal = 0;
-      double maxVal = 0;
+      double minVal = Double.MaxValue;
+      double maxVal = Double.MinValue;
       for (int i = 0; i < DrawList.Count; i++)
         for (int j = 0; j < DrawList[i].Count; j++)
         {
-          if (minVal > DrawList[i][j].Item2) minVal = DrawList[i][j].Item2;
-          if (maxVal < DrawList[i][j].Item2) maxVal = DrawList[i][j].Item2;
+          if (minVal > DrawList[i][j].Item2) 
+            minVal = DrawList[i][j].Item2;
+          if (maxVal < DrawList[i][j].Item2) 
+            maxVal = DrawList[i][j].Item2;
         }
       if (minVal < 0)
       {
@@ -511,7 +512,7 @@ namespace SpikeProject
       {
         for (int j = 0; j < DrawList[i].Count && j < maxCol; j++)
         {
-          Brush brush = new SolidBrush(colors[Convert.ToInt16(Math.Abs(DrawList[i][j].Item2 / maxVal) * factor)]);
+          Brush brush = new SolidBrush(colors[(System.Int32)(Math.Abs((DrawList[i][j].Item2 - minVal) / (maxVal - minVal)) * factor)]);
           Pen pen = new Pen(brush, 5);
          // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
@@ -604,8 +605,22 @@ namespace SpikeProject
         {
           MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-          y -= 11;
-          //new FCompareForm(parent.NoStimSpikeList[x], parent.NoStimSpikeList[y]).Show();
+          FCompareForm compareForm =null;
+          parent = (MainForm)this.Owner;
+          if (parent != null)
+          {
+            SpikeDataPacket list1, list2;
+            if (x >= parent.NoStimSpikeList.Count)
+              list1 = parent.StimSpikeList[x - parent.NoStimSpikeList.Count];
+            else list1 = parent.NoStimSpikeList[x];
+            if (y >= parent.NoStimSpikeList.Count)
+              list2 = parent.StimSpikeList[y - parent.NoStimSpikeList.Count];
+            else list2 = parent.NoStimSpikeList[y];
+            compareForm = new FCompareForm(list1,list2);
+            if (compareForm != null) compareForm.Show();
+            else MessageBox.Show("Ошибка построения формы сравнения", "Что-то случилось",
+          MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+          }
         }
 
     }

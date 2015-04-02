@@ -231,7 +231,7 @@ namespace SpikeProject
         if (MegaMapStimList[i].Count < 2) MegaMapStimList[i].AddRange(zeropacket);
 
       }
-      HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, MegaMapNoStimMax, MegaMapStimMax);
+      HeatPictureForm hpf = new HeatPictureForm(MegaMapNoStimList, MegaMapStimList, MegaMapNoStimMax, MegaMapStimMax) { Owner = this };
       hpf.Show(this);
     }
 
@@ -435,7 +435,7 @@ namespace SpikeProject
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      packet2 = movePacket(packet1, packet2);
+      //packet2 = movePacket(packet1, packet2);
       double avg1 = countAverage(packet1);
       double avg2 = countAverage(packet2);
       double topsum = 0;
@@ -452,6 +452,29 @@ namespace SpikeProject
         return topsum / Math.Sqrt(sump1 * sump2);
       else return 0;
     }
+
+    public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      //packet2 = movePacket(packet1, packet2);
+      double avg1 = countAverage(packet1);
+      double avg2 = countAverage(packet2);
+      int size = Math.Min(packet1.Count, packet2.Count);
+      double topsum = 0;
+      for (int i = 0; i < size; i++)
+        if (i < size)
+          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
+      double sump1 = 0;
+      double sump2 = 0;
+      for (int i = 0; i < size; i++)
+        sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+      for (int i = 0; i < size; i++)
+        sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
+      if (Math.Sqrt(sump1 * sump2) > eps)
+        return topsum / Math.Sqrt(sump1 * sump2);
+      else return 0;
+    }
+
+
 
     public static int GetMedian(int[] sourceNumbers)
     {
@@ -868,7 +891,7 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, cellName.Text);
+        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, cellName.Text) { Owner = this };
         hpf.Show(this);
 
       }
@@ -1005,14 +1028,15 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
-          row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
+          row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 
 
-      fullcor = doCorrCompareMax();
+      //fullcor = doCorrCompareMax();
+      //fullcor = doCorrCompare();
       //HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
-      HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция");
+      HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция") { Owner = this };
       newhpf.Show(this);
       //hpf.Show();
 
