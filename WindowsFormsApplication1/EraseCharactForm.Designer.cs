@@ -87,6 +87,7 @@
       this.StimDropText.Size = new System.Drawing.Size(229, 20);
       this.StimDropText.TabIndex = 6;
       this.StimDropText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StimDropText_KeyDown);
+      this.StimDropText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.StimDropText_KeyPress);
       // 
       // NoStimDropText
       // 
@@ -96,6 +97,7 @@
       this.NoStimDropText.Size = new System.Drawing.Size(229, 20);
       this.NoStimDropText.TabIndex = 7;
       this.NoStimDropText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NoStimDropText_KeyDown);
+      this.NoStimDropText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NoStimDropText_KeyPress);
       // 
       // erasemainlabel
       // 
@@ -111,7 +113,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(604, 261);
+      this.ClientSize = new System.Drawing.Size(604, 262);
       this.Controls.Add(this.erasemainlabel);
       this.Controls.Add(this.NoStimDropText);
       this.Controls.Add(this.StimDropText);
