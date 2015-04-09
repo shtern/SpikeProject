@@ -90,14 +90,21 @@ namespace SpikeProject
             done = true;
             parent.StimSpikeList.RemoveAt(stimarr[i] - 1 - i);
             parent.PeakList.RemoveAt(stimarr[i] - 1 - i + parent.NoStimSpikeList.Count);
+            
           }
           else MessageBox.Show("Получен и проигнорирован неверный индекс", "Редактирование данных о характеристиках",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
       }
-      parent.Refresh_Graphs();
-      parent.RecountMaxScroll();
+      
       if (done)
-      this.Close();
+      {
+        parent.RecountMaxScroll();
+        parent.buildNoStimAverage();
+        parent.buildStimAverage();
+        parent.Refresh_Graphs();
+        
+        this.Close();
+      }
       else
         MessageBox.Show("Один(или более) из индексов неверный, либо список удаления пуст", "Редактирование данных о характеристиках",
         MessageBoxButtons.OK, MessageBoxIcon.Asterisk);

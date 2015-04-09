@@ -315,6 +315,9 @@ namespace SpikeProject
     {
       PreSpikeList = new List<SpikeDataPacket>();
       PeakList = new SpikePeakList();
+      NoStimSpikeList = new List<SpikeDataPacket>();
+      StimSpikeList = new List<SpikeDataPacket>();
+
       for (int i = 1; i < GlobalData.Count; i++)
       {
         double x = GlobalData[i].Item1, y = GlobalData[i].Item2;
@@ -536,8 +539,10 @@ namespace SpikeProject
       return Kx;
     }
 
-    private void buildNoStimAverage()
+    public void buildNoStimAverage()
     {
+      AveragePointsNoStim = new List<PointList>();
+      AverageDrawPointsNoStim = new List<PointList>();
       double maxLenght = 0;
       double minLength = 0;
       for (int z = 0; z < NoStimSpikeList.Count; z++)
@@ -598,8 +603,10 @@ namespace SpikeProject
 
     }
 
-    private void buildStimAverage()
+    public void buildStimAverage()
     {
+      AveragePointsStim = new List<PointList>();
+      AverageDrawPointsStim = new List<PointList>();
       double maxLenght = 0;
       double minLength = 0;
 
