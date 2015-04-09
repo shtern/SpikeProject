@@ -34,7 +34,7 @@ namespace SpikeProject
       Average_pre = average_pre;
     }
 
-    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2)
+    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, double corr)
     {
       InitializeComponent();
       PointList plist1 = new PointList();
@@ -46,7 +46,12 @@ namespace SpikeProject
         plist2.Add(new PointF((float)data.Item1, (float)data.Item2));
       Average_post = plist1;
       Average_pre = plist2;
-      
+      compareLabel.Text = "Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
+      NormalizedLabel.Text = "Значение корелляции " + corr;
+      Point coordinates = compareLabel.Location;
+      coordinates.X = this.Width - 350;
+      NormalizedLabel.Location = coordinates;
+      this.Text="Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
 
 
     }

@@ -56,8 +56,13 @@ namespace SpikeProject
         StimList = stimlist;
         ScaleBox = new PictureBox();
         doScale = true;
-      }
+        открытьСравнениеХарактеристикToolStripMenuItem.Checked = true;
 
+      }
+      else
+      {
+        действиеПриНажатииToolStripMenuItem.Visible = false;
+      }
       
       CellName = cellname;
       this.Text = cellname;
@@ -603,11 +608,12 @@ namespace SpikeProject
       if (x<NoStimList.Count && x >= 0)
         if (y < NoStimList[x].Count && y >= 0)
         {
+          if (сообщитьЗначениеКорелляцииToolStripMenuItem.Checked==true)
           MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
           FCompareForm compareForm =null;
           parent = (MainForm)this.Owner;
-          if (parent != null)
+          if (parent != null && открытьСравнениеХарактеристикToolStripMenuItem.Checked==true)
           {
             SpikeDataPacket list1, list2;
             if (x >= parent.NoStimSpikeList.Count)
@@ -616,7 +622,7 @@ namespace SpikeProject
             if (y >= parent.NoStimSpikeList.Count)
               list2 = parent.StimSpikeList[y - parent.NoStimSpikeList.Count];
             else list2 = parent.NoStimSpikeList[y];
-            compareForm = new FCompareForm(list1,list2);
+            compareForm = new FCompareForm(list1, list2, x, y, NoStimList[x][y].Item2);
             if (compareForm != null) compareForm.Show();
             else MessageBox.Show("Ошибка построения формы сравнения", "Что-то случилось",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
@@ -631,7 +637,7 @@ namespace SpikeProject
       Point coordinates = me.Location;
       int x = coordinates.X / rectwidth;
       int y = coordinates.Y / rectheight;
-      if (x < StimList.Count && x >= 0)
+      if (x < StimList.Count && x >= 0 && сообщитьЗначениеКорелляцииToolStripMenuItem.Checked==true)
         if (y < StimList[x].Count && y >= 0)
       MessageBox.Show(StimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
       MessageBoxButtons.OK, MessageBoxIcon.Asterisk);

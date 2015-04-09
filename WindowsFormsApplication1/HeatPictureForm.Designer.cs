@@ -43,6 +43,9 @@
       this.doOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.NoStimLabel = new System.Windows.Forms.Label();
       this.StimLabel = new System.Windows.Forms.Label();
+      this.действиеПриНажатииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.открытьСравнениеХарактеристикToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.сообщитьЗначениеКорелляцииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.notStimSpikes)).BeginInit();
       this.NoStimPanel.SuspendLayout();
       this.StimPanel.SuspendLayout();
@@ -130,7 +133,7 @@
       // 
       this.вклToolStripMenuItem.CheckOnClick = true;
       this.вклToolStripMenuItem.Name = "вклToolStripMenuItem";
-      this.вклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.вклToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.вклToolStripMenuItem.Text = "Вкл";
       this.вклToolStripMenuItem.Click += new System.EventHandler(this.вклToolStripMenuItem_Click);
       // 
@@ -140,13 +143,14 @@
       this.выклToolStripMenuItem.CheckOnClick = true;
       this.выклToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.выклToolStripMenuItem.Name = "выклToolStripMenuItem";
-      this.выклToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.выклToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
       this.выклToolStripMenuItem.Text = "Выкл";
       this.выклToolStripMenuItem.Click += new System.EventHandler(this.выклToolStripMenuItem_Click);
       // 
       // настройкиToolStripMenuItem
       // 
       this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.действиеПриНажатииToolStripMenuItem,
             this.doOpenMenuItem});
       this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
       this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
@@ -182,6 +186,29 @@
       this.StimLabel.Size = new System.Drawing.Size(118, 13);
       this.StimLabel.TabIndex = 9;
       this.StimLabel.Text = "Во время стимуляции";
+      // 
+      // действиеПриНажатииToolStripMenuItem
+      // 
+      this.действиеПриНажатииToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.открытьСравнениеХарактеристикToolStripMenuItem,
+            this.сообщитьЗначениеКорелляцииToolStripMenuItem});
+      this.действиеПриНажатииToolStripMenuItem.Name = "действиеПриНажатииToolStripMenuItem";
+      this.действиеПриНажатииToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+      this.действиеПриНажатииToolStripMenuItem.Text = "Действие при нажатии на клетку";
+      // 
+      // открытьСравнениеХарактеристикToolStripMenuItem
+      // 
+      this.открытьСравнениеХарактеристикToolStripMenuItem.CheckOnClick = true;
+      this.открытьСравнениеХарактеристикToolStripMenuItem.Name = "открытьСравнениеХарактеристикToolStripMenuItem";
+      this.открытьСравнениеХарактеристикToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+      this.открытьСравнениеХарактеристикToolStripMenuItem.Text = "Открыть сравнение характеристик";
+      // 
+      // сообщитьЗначениеКорелляцииToolStripMenuItem
+      // 
+      this.сообщитьЗначениеКорелляцииToolStripMenuItem.CheckOnClick = true;
+      this.сообщитьЗначениеКорелляцииToolStripMenuItem.Name = "сообщитьЗначениеКорелляцииToolStripMenuItem";
+      this.сообщитьЗначениеКорелляцииToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+      this.сообщитьЗначениеКорелляцииToolStripMenuItem.Text = "Сообщить значение корелляции";
       // 
       // HeatPictureForm
       // 
@@ -225,5 +252,8 @@
     private System.Windows.Forms.Label StimLabel;
     private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem doOpenMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem действиеПриНажатииToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem открытьСравнениеХарактеристикToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem сообщитьЗначениеКорелляцииToolStripMenuItem;
   }
 }
