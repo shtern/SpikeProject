@@ -52,6 +52,7 @@ namespace SpikeProject
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
     private List<int> WidthList = new List<int>();
+  
     #endregion
 
     public MainForm()
@@ -438,7 +439,7 @@ namespace SpikeProject
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      //packet2 = movePacket(packet1, packet2);
+      packet2 = movePacket(packet1, packet2);
       double avg1 = countAverage(packet1);
       double avg2 = countAverage(packet2);
       double topsum = 0;
@@ -458,23 +459,40 @@ namespace SpikeProject
 
     public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      //packet2 = movePacket(packet1, packet2);
-      double avg1 = countAverage(packet1);
-      double avg2 = countAverage(packet2);
-      int size = Math.Min(packet1.Count, packet2.Count);
+      packet2 = movePacket(packet1, packet2);
+      
+      int minsize = Math.Min(packet1.Count, packet2.Count);
+      int size = (int)Math.Truncate(minsize*0.8);
+ 
+      int diff = minsize - size;
+
       double topsum = 0;
-      for (int i = 0; i < size; i++)
-        if (i < size)
-          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
       double sump1 = 0;
       double sump2 = 0;
-      for (int i = 0; i < size; i++)
-        sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
-      for (int i = 0; i < size; i++)
-        sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
-      if (Math.Sqrt(sump1 * sump2) > eps)
-        return topsum / Math.Sqrt(sump1 * sump2);
-      else return 0;
+      double bestCorr = double.MinValue;
+      double Corr = double.MinValue;
+      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      {
+        Corr = double.MinValue;
+        double avg1 = countAverage(packet1.GetRange(diff,packet1.Count-diff-1));
+        double avg2 = countAverage(packet2.GetRange(diff+m, packet2.Count - m - diff - 1));
+        sump1 = 0;
+        sump2 = 0;
+        topsum = 0;
+        for (int i = diff; i < size - diff - 1; i++)
+          if (i < size)
+            topsum += (packet1[i].Item2 - avg1) * (packet2[i+m].Item2 - avg2);
+        
+        for (int i = diff; i < size-diff-1; i++)
+          sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+
+        for (int i = diff; i < size - diff - 1; i++)
+          sump2 += Math.Pow(packet2[i+m].Item2 - avg2, 2);
+
+        Corr= (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+        bestCorr = (Corr>bestCorr) ? Corr : bestCorr; 
+      }
+      return bestCorr;
     }
 
 
@@ -485,12 +503,10 @@ namespace SpikeProject
       if (sourceNumbers == null || sourceNumbers.Length == 0)
         return 0;
 
-      //make sure the list is sorted, but use a new array
       int[] sortedPNumbers = (int[])sourceNumbers.Clone();
       sourceNumbers.CopyTo(sortedPNumbers, 0);
       Array.Sort(sortedPNumbers);
 
-      //get the median
       int size = sortedPNumbers.Length;
       int mid = size / 2;
       int median = (size % 2 != 0) ? sortedPNumbers[mid] : (sortedPNumbers[mid] + sortedPNumbers[mid - 1]) / 2;
@@ -1010,22 +1026,22 @@ namespace SpikeProject
 
     private void матрицуКорToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      List<SpikeDataPacket> nostimcor = new List<SpikeDataPacket>();
-      for (int i=0; i<NoStimSpikeList.Count; i++)
-      {
-        SpikeDataPacket row = new SpikeDataPacket();
-        for (int j=0; j<NoStimSpikeList.Count;j++)
-          row.Add(new SpikeData(0, countCorr(NoStimSpikeList[i], NoStimSpikeList[j])));
-        nostimcor.Add(row);
-      }
-      List<SpikeDataPacket> stimcor = new List<SpikeDataPacket>();
-      for (int i=0; i<StimSpikeList.Count; i++)
-      {
-        SpikeDataPacket row = new SpikeDataPacket();
-        for (int j=0; j<StimSpikeList.Count;j++)
-          row.Add(new SpikeData(0, countCorr(StimSpikeList[i], StimSpikeList[j])));
-        stimcor.Add(row);
-      }
+      //List<SpikeDataPacket> nostimcor = new List<SpikeDataPacket>();
+      //for (int i=0; i<NoStimSpikeList.Count; i++)
+      //{
+      //  SpikeDataPacket row = new SpikeDataPacket();
+      //  for (int j=0; j<NoStimSpikeList.Count;j++)
+      //    row.Add(new SpikeData(0, countCorr(NoStimSpikeList[i], NoStimSpikeList[j])));
+      //  nostimcor.Add(row);
+      //}
+      //List<SpikeDataPacket> stimcor = new List<SpikeDataPacket>();
+      //for (int i=0; i<StimSpikeList.Count; i++)
+      //{
+      //  SpikeDataPacket row = new SpikeDataPacket();
+      //  for (int j=0; j<StimSpikeList.Count;j++)
+      //    row.Add(new SpikeData(0, countCorr(StimSpikeList[i], StimSpikeList[j])));
+      //  stimcor.Add(row);
+      //}
 
       List<SpikeDataPacket> fullist = new List<SpikeDataPacket>();
       fullist.AddRange(NoStimSpikeList);

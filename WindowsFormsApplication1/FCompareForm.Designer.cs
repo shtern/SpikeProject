@@ -32,8 +32,10 @@
       this.NormalizedGraph = new System.Windows.Forms.PictureBox();
       this.compareLabel = new System.Windows.Forms.Label();
       this.NormalizedLabel = new System.Windows.Forms.Label();
+      this.moveNumeric = new System.Windows.Forms.NumericUpDown();
       ((System.ComponentModel.ISupportInitialize)(this.CompareGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NormalizedGraph)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.moveNumeric)).BeginInit();
       this.SuspendLayout();
       // 
       // CompareGraph
@@ -78,11 +80,21 @@
       this.NormalizedLabel.TabIndex = 3;
       this.NormalizedLabel.Text = "Сравнение средних, нормированных по амплитуде";
       // 
+      // moveNumeric
+      // 
+      this.moveNumeric.Location = new System.Drawing.Point(635, 6);
+      this.moveNumeric.Name = "moveNumeric";
+      this.moveNumeric.Size = new System.Drawing.Size(120, 20);
+      this.moveNumeric.TabIndex = 4;
+      this.moveNumeric.Visible = false;
+      this.moveNumeric.ValueChanged += new System.EventHandler(this.moveNum_ValueChanged);
+      // 
       // FCompareForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(767, 767);
+      this.ClientSize = new System.Drawing.Size(767, 768);
+      this.Controls.Add(this.moveNumeric);
       this.Controls.Add(this.NormalizedLabel);
       this.Controls.Add(this.compareLabel);
       this.Controls.Add(this.NormalizedGraph);
@@ -92,6 +104,7 @@
       this.Text = "Сравнение спайковых характеристик";
       ((System.ComponentModel.ISupportInitialize)(this.CompareGraph)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.NormalizedGraph)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.moveNumeric)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -103,5 +116,6 @@
     private System.Windows.Forms.PictureBox NormalizedGraph;
     private System.Windows.Forms.Label compareLabel;
     private System.Windows.Forms.Label NormalizedLabel;
+    private System.Windows.Forms.NumericUpDown moveNumeric;
   }
 }

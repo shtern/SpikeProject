@@ -24,37 +24,81 @@ namespace SpikeProject
     int Ky = 2000;
     #endregion
 
-    PointList Average_pre;
-    PointList Average_post;
+    SpikeDataPacket List1;
+    SpikeDataPacket List2;
+    PointList PList1;
+    PointList PList2;
+    int Num1, Num2,move=0;
+    double Corr;
 
-    public FCompareForm(PointList average_pre, PointList average_post)
+    public FCompareForm(PointList plist1, PointList plist2)
     {
       InitializeComponent();
-      Average_post = average_post;
-      Average_pre = average_pre;
+      PList1 = plist1;
+      PList2 = plist2;
     }
 
     public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, double corr)
     {
       InitializeComponent();
-      PointList plist1 = new PointList();
-      PointList plist2 = new PointList();
-      foreach (SpikeData data in list1)
-        plist1.Add(new PointF((float)data.Item1, (float)data.Item2));
+      List1 = list1;
+      List2 = list2;
+      Num1 = num1;
+      Num2 = num2;
+      Corr = corr;
 
-      foreach (SpikeData data in list2)
-        plist2.Add(new PointF((float)data.Item1, (float)data.Item2));
-      Average_post = plist1;
-      Average_pre = plist2;
-      compareLabel.Text = "Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
-      NormalizedLabel.Text = "Значение корелляции " + corr;
-      Point coordinates = compareLabel.Location;
-      coordinates.X = this.Width - 350;
-      NormalizedLabel.Location = coordinates;
-      this.Text="Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
+      doCorrTask();
+      //PointList plist1 = new PointList();
+      //PointList plist2 = new PointList();
+      //foreach (SpikeData data in list1)
+      //  plist1.Add(new PointF((float)data.Item1, (float)data.Item2));
+
+      //foreach (SpikeData data in list2)
+      //  plist2.Add(new PointF((float)data.Item1, (float)data.Item2));
+      //PList1 = plist1;
+      //PList2 = plist2;
+      //compareLabel.Text = "Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
+      //NormalizedLabel.Text = "Значение корелляции " + corr;
+      //Point coordinates = compareLabel.Location;
+      //coordinates.X = this.Width - 350;
+      //NormalizedLabel.Location = coordinates;
+      //this.Text="Сравнение характеристики №" + num1 + " с характеристикой №" + num2;
 
 
     }
+
+    public void doCorrTask()
+    {
+      PList1 = new PointList();
+      PList2 = new PointList();
+      foreach (SpikeData data in List1)
+        PList1.Add(new PointF((float)data.Item1, (float)data.Item2));
+
+      foreach (SpikeData data in List2)
+        PList2.Add(new PointF((float)data.Item1, (float)data.Item2));
+
+      compareLabel.Text = "Сравнение характеристики №" + Num1 + " с характеристикой №" + Num2;
+      NormalizedLabel.Text = "Значение корелляции " + Corr;
+      Point coordinates = compareLabel.Location;
+      coordinates.X = this.Width - 350;
+      NormalizedLabel.Location = coordinates;
+      this.Text = "Сравнение характеристики №" + Num1 + " с характеристикой №" + Num2;
+
+    }
+
+    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, int m,double corr)
+    {
+      InitializeComponent();
+      move = m;
+      moveNumeric.Value = move;
+      moveNumeric.Visible = true;
+
+      doCorrTask();
+
+
+    }
+
+ 
 
 
     public PointList Normalize(PointList list)
@@ -83,21 +127,21 @@ namespace SpikeProject
       Pen mainpen;
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 5);
-      if (Average_pre.Count > 0)
+      if (PList1.Count > 0)
       {
         PointList TempList = new PointList();
-        for (int i = 0; i < Average_pre.Count; i++)
-          TempList.Add(new PointF(Average_pre[i].X * Kx, NormalizedGraph.Height - Average_pre[i].Y * Ky));
+        for (int i = 0; i < PList1.Count; i++)
+          TempList.Add(new PointF(PList1[i].X * Kx, NormalizedGraph.Height - PList1[i].Y * Ky));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 5);
-      if (Average_post.Count > 0)
+      if (PList2.Count > 0)
       {
         PointList TempList = new PointList();
-        for (int i = 0; i < Average_post.Count; i++)
-          TempList.Add(new PointF(Average_post[i].X * Kx, NormalizedGraph.Height - Average_post[i].Y * Ky));
+        for (int i = 0; i < PList2.Count; i++)
+          TempList.Add(new PointF(PList2[i].X * Kx, NormalizedGraph.Height - PList2[i].Y * Ky));
         PointF[] AverageList = TempList.ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
@@ -109,18 +153,25 @@ namespace SpikeProject
       Pen mainpen;
       brush = new SolidBrush(Color.Blue);
       mainpen = new Pen(brush, 5);
-      if (Average_pre.Count > 0)
+      if (PList1.Count > 0)
       {
-        PointF[] AverageList = (Normalize(Average_pre)).ToArray();
+        PointF[] AverageList = (Normalize(PList1)).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
       brush = new SolidBrush(Color.Aqua);
       mainpen = new Pen(brush, 5);
-      if (Average_post.Count > 0)
+      if (PList2.Count > 0)
       {
-        PointF[] AverageList = (Normalize(Average_post)).ToArray();
+        PointF[] AverageList = (Normalize(PList2)).ToArray();
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
+    }
+
+    private void moveNum_ValueChanged(object sender, EventArgs e)
+    {
+      move = (int)moveNumeric.Value;
+      
+
     }
 
   }
