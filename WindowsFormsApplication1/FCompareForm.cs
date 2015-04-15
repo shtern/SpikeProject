@@ -22,6 +22,7 @@ namespace SpikeProject
     #region Константы
     int Kx = 300;
     int Ky = 2000;
+    double eps = 1e-20;
     #endregion
 
     SpikeDataPacket List1;
@@ -29,6 +30,7 @@ namespace SpikeProject
     PointList PList1;
     PointList PList2;
     int Num1, Num2,move=0;
+    List<int> moveList;
     double Corr;
 
     public FCompareForm(PointList plist1, PointList plist2)
@@ -86,15 +88,121 @@ namespace SpikeProject
 
     }
 
-    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, int m,double corr)
+    public double countAverage(SpikeDataPacket packet)
+    {
+      if (packet.Count > 0)
+      {
+        double sum = 0;
+        for (int i = 0; i < packet.Count; i++)
+          sum += packet[i].Item2;
+        return sum / packet.Count;
+      }
+      else return 0;
+
+    }
+
+    public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      //packet2 = movePacket(packet1, packet2);
+
+      int minsize = Math.Min(packet1.Count, packet2.Count);
+      int size = (int)Math.Truncate(minsize * 0.8);
+
+      int diff = minsize - size;
+
+      double topsum = 0;
+      double sump1 = 0;
+      double sump2 = 0;
+      double bestCorr = double.MinValue;
+      double Corr = double.MinValue;
+      
+
+      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      {
+
+        Corr = double.MinValue;
+        double avg1 = countAverage(packet1.GetRange(diff, packet1.Count - diff - 1));
+        double avg2 = countAverage(packet2.GetRange(diff + m, packet2.Count - m - diff - 1));
+        sump1 = 0;
+        sump2 = 0;
+        topsum = 0;
+        for (int i = diff; i < size - diff - 1; i++)
+          if (i < size)
+            topsum += (packet1[i].Item2 - avg1) * (packet2[i + m].Item2 - avg2);
+
+        for (int i = diff; i < size - diff - 1; i++)
+          sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+
+        for (int i = diff; i < size - diff - 1; i++)
+          sump2 += Math.Pow(packet2[i + m].Item2 - avg2, 2);
+
+        Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+        bestCorr = (Corr > bestCorr) ? Corr : bestCorr;
+      }
+      return bestCorr;
+    }
+
+    public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, double corr,int PQPQP)
     {
       InitializeComponent();
-      move = m;
-      moveNumeric.Value = move;
+      List1 = list1;
+      List2 = list2;
+      Num1 = num1;
+      Num2 = num2;
+      Corr = corr;
+      moveList = new List<int>();
+      //move = m;
+      //moveNumeric.Value = move;
       moveNumeric.Visible = true;
 
-      doCorrTask();
+      int minsize = Math.Min(List1.Count, List2.Count);
+      int size = (int)Math.Truncate(minsize * 0.8);
 
+      int diff = minsize - size;
+
+      double topsum = 0;
+      double sump1 = 0;
+      double sump2 = 0;
+      double bestCorr = double.MinValue;
+      double tempCorr = double.MinValue;
+
+
+      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      {
+        Corr = double.MinValue;
+        moveList.Add(m);
+        double avg1 = countAverage(List1.GetRange(diff, List1.Count - diff - 1));
+        double avg2 = countAverage(List2.GetRange(diff + m, List2.Count - m - diff - 1));
+        sump1 = 0;
+        sump2 = 0;
+        topsum = 0;
+        for (int i = diff; i < size - diff - 1; i++)
+          if (i < size)
+            topsum += (List1[i].Item2 - avg1) * (List2[i + m].Item2 - avg2);
+
+        for (int i = diff; i < size - diff - 1; i++)
+          sump1 += Math.Pow(List1[i].Item2 - avg1, 2);
+
+        for (int i = diff; i < size - diff - 1; i++)
+          sump2 += Math.Pow(List2[i + m].Item2 - avg2, 2);
+
+        tempCorr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+        if (tempCorr - Corr < eps)
+        {
+          moveNumeric.Value = m;
+          PList1 = new PointList();
+          PList2 = new PointList();
+          SpikeDataPacket templist1 = List1.GetRange(diff, List1.Count - diff - 1), templist2 = List2.GetRange(diff, List1.Count - diff - 1);
+          for (int i = 0; i < templist1.Count; i++)
+          {
+            PList1.Add(new PointF((float)templist1[i].Item1, (float)templist1[i].Item2));
+            PList2.Add(new PointF((float)templist1[i].Item1, (float)templist2[i].Item2));
+
+          }
+          
+          break;
+        }
+      }
 
     }
 

@@ -16,6 +16,7 @@ namespace SpikeProject
       InitializeComponent();
       cellCount.Value = Properties.Settings.Default.cellcount;
       charactCount.Value = Properties.Settings.Default.stimstart;
+      moveCharactCheckbox.Checked = Properties.Settings.Default.movecharact;
     }
 
     private void cancelbutton_Click(object sender, EventArgs e)
@@ -29,8 +30,11 @@ namespace SpikeProject
       MainForm.cellCount = (int)cellCount.Value;
       Properties.Settings.Default.stimstart = (int)charactCount.Value;
       MainForm.nostimcount = (int)charactCount.Value;
+      Properties.Settings.Default.movecharact = moveCharactCheckbox.Checked;
       Properties.Settings.Default.Save();
       this.Close();
     }
+
+
   }
 }

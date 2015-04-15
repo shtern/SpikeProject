@@ -252,31 +252,36 @@ namespace SpikeProject
     public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
       double max1=double.MinValue;
-      double max_x1 = 0;
+      int max_i1 = 0;
       double max2 = double.MinValue;
-      double max_x2 = 0;
-      foreach (SpikeData data in packet1)
+      int max_i2 = 0;
+      for (int i = 0; i<packet1.Count; i++)
       {
-        if (data.Item2 > max1)
+        if (packet1[i].Item2 > max1)
         {
-          max1 = data.Item2;
-          max_x1 = data.Item1;
+          max1 = packet1[i].Item2;
+          max_i1 = i;
         }
       }
 
-      foreach (SpikeData data in packet2)
+      for (int i = 0; i < packet2.Count; i++)
       {
-        if (data.Item2 > max2)
+        if (packet2[i].Item2 > max2)
         {
-          max2 = data.Item2;
-          max_x2 = data.Item1;
+          max2 = packet2[i].Item2;
+          max_i2 = i;
         }
       }
 
-      double diff = max_x1 - max_x2;
+      int diff = max_i2 - max_i1;
       SpikeDataPacket resultpacket = new SpikeDataPacket();
-      foreach (SpikeData data in packet2)
-        resultpacket.Add(new SpikeData(data.Item1+diff, data.Item2));
+      for (int i = 0; i < packet1.Count+diff; i++)
+      {
+        if (resultpacket.Count>packet1.Count) break;
+        if ((i+diff>=0) && (i+diff<packet2.Count) && (i<packet1.Count))
+        resultpacket.Add(new SpikeData(packet1[i].Item1,packet2[i+diff].Item2));
+      }
+      
       return resultpacket;
 
 
@@ -439,7 +444,8 @@ namespace SpikeProject
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      packet2 = movePacket(packet1, packet2);
+      if (Properties.Settings.Default.movecharact)
+        packet2 = movePacket(packet1, packet2);
       double avg1 = countAverage(packet1);
       double avg2 = countAverage(packet2);
       double topsum = 0;
@@ -459,7 +465,8 @@ namespace SpikeProject
 
     public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      packet2 = movePacket(packet1, packet2);
+      if (Properties.Settings.Default.movecharact)
+        packet2 = movePacket(packet1, packet2);
       
       int minsize = Math.Min(packet1.Count, packet2.Count);
       int size = (int)Math.Truncate(minsize*0.8);
@@ -1051,7 +1058,7 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
-          row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+          row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 

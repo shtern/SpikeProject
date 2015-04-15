@@ -35,6 +35,8 @@
       this.charactcountlbl = new System.Windows.Forms.Label();
       this.charactCount = new System.Windows.Forms.NumericUpDown();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.moveCharactLabel = new System.Windows.Forms.Label();
+      this.moveCharactCheckbox = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.cellCount)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.charactCount)).BeginInit();
       this.groupBox1.SuspendLayout();
@@ -114,6 +116,8 @@
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.moveCharactCheckbox);
+      this.groupBox1.Controls.Add(this.moveCharactLabel);
       this.groupBox1.Controls.Add(this.cellCount);
       this.groupBox1.Controls.Add(this.charactCount);
       this.groupBox1.Controls.Add(this.cellcolllbl);
@@ -124,6 +128,24 @@
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Параметры клеток";
+      // 
+      // moveCharactLabel
+      // 
+      this.moveCharactLabel.AutoSize = true;
+      this.moveCharactLabel.Location = new System.Drawing.Point(26, 179);
+      this.moveCharactLabel.Name = "moveCharactLabel";
+      this.moveCharactLabel.Size = new System.Drawing.Size(274, 13);
+      this.moveCharactLabel.TabIndex = 7;
+      this.moveCharactLabel.Text = "Сдвигать характеристики для подсчета  корелляции";
+      // 
+      // moveCharactCheckbox
+      // 
+      this.moveCharactCheckbox.AutoSize = true;
+      this.moveCharactCheckbox.Location = new System.Drawing.Point(362, 178);
+      this.moveCharactCheckbox.Name = "moveCharactCheckbox";
+      this.moveCharactCheckbox.Size = new System.Drawing.Size(15, 14);
+      this.moveCharactCheckbox.TabIndex = 8;
+      this.moveCharactCheckbox.UseVisualStyleBackColor = true;
       // 
       // SettingsForm
       // 
@@ -154,5 +176,7 @@
     private System.Windows.Forms.Label charactcountlbl;
     private System.Windows.Forms.NumericUpDown charactCount;
     private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.CheckBox moveCharactCheckbox;
+    private System.Windows.Forms.Label moveCharactLabel;
   }
 }
