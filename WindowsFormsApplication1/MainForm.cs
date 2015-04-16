@@ -249,6 +249,20 @@ namespace SpikeProject
 
     }
 
+    public int findMax(SpikeDataPacket list)
+    {
+      double max=double.MinValue;
+      int max_i = 0;
+      for (int i = 0; i < list.Count; i++)
+        if (list[i].Item2 > max) 
+        {
+          max = list[i].Item2;
+          max_i = i;
+        }
+      return max_i;
+      
+    }
+
     public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
       double max1=double.MinValue;
@@ -274,47 +288,24 @@ namespace SpikeProject
       }
 
       int diff = max_i2 - max_i1;
-      SpikeDataPacket resultpacket = new SpikeDataPacket();
-      for (int i = 0; i < packet1.Count+diff; i++)
+      if (diff != 0)
       {
-        if (resultpacket.Count>packet1.Count) break;
-        if ((i+diff>=0) && (i+diff<packet2.Count) && (i<packet1.Count))
-        resultpacket.Add(new SpikeData(packet1[i].Item1,packet2[i+diff].Item2));
+        SpikeDataPacket resultpacket = new SpikeDataPacket();
+        for (int i = 0; i < packet1.Count + diff; i++)
+        {
+          if (resultpacket.Count > packet1.Count) break;
+          if ((i + diff >= 0) && (i + diff < packet2.Count) && (i < packet1.Count))
+            resultpacket.Add(new SpikeData(packet1[i].Item1, packet2[i + diff].Item2));
+        }
+
+        return resultpacket;
       }
-      
-      return resultpacket;
+      else return packet2;
 
 
     }
 
-    public double countArea(SpikeData point1, SpikeData point2)
-    {
-      double area = 0;
-      if (point1.Item2 > point2.Item2)
-        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point1.Item2 - point2.Item2));
-      else
-        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point2.Item2 - point1.Item2));
-      return area;
 
-    }
-
-    public double countCorrArr(SpikeDataPacket packet1, SpikeDataPacket packet2)
-    {
-      packet2 = movePacket(packet1, packet2);
-      double area1 = 0;
-      double area2 = 0;
-      for (int i = 1; i < packet1.Count; i++)
-        area1 += countArea(packet1[i - 1], packet1[i]);
-      for (int i = 1; i < packet2.Count; i++)
-        area2 += countArea(packet2[i - 1], packet2[i]);
-      if (area1 > area2)
-        return 2 * (area1 - area2) / (area1 + area2);
-      else return 2 * (area2 - area1) / (area1 + area2);
-
-    }
-
-
- 
 
 
     private void buildCharactList()
@@ -467,40 +458,77 @@ namespace SpikeProject
     {
       if (Properties.Settings.Default.movecharact)
         packet2 = movePacket(packet1, packet2);
-      
-      int minsize = Math.Min(packet1.Count, packet2.Count);
-      int size = (int)Math.Truncate(minsize*0.8);
- 
-      int diff = minsize - size;
 
+      int minsize = Math.Min(packet1.Count, packet2.Count);
+      int size = (int)Math.Truncate(minsize * 0.8);
+      int diff = minsize - size;
+      int max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
+      int center1 = findMax(packet1), left_bord1 = (center1 - LeftMedian  > max_M) ? center1 - LeftMedian : max_M, right_bord1 = (center1 + RightMedian + max_M < packet1.Count) ? center1 + RightMedian  : packet1.Count-max_M;
+      int center2 = findMax(packet2), left_bord2 = (center2 - LeftMedian  > max_M) ? center2 - LeftMedian : max_M, right_bord2 = (center2 + RightMedian + max_M < packet2.Count) ? center2 + RightMedian  : packet2.Count-max_M;
+      int left_bord = Math.Min(left_bord1, left_bord2), right_bord = Math.Min(right_bord1, right_bord2);
+
+      
+ 
+      
       double topsum = 0;
       double sump1 = 0;
       double sump2 = 0;
       double bestCorr = double.MinValue;
       double Corr = double.MinValue;
-      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      for (int m = -max_M; m <= max_M; m++)
       {
         Corr = double.MinValue;
-        double avg1 = countAverage(packet1.GetRange(diff,packet1.Count-diff-1));
-        double avg2 = countAverage(packet2.GetRange(diff+m, packet2.Count - m - diff - 1));
+        double avg1 = countAverage(packet1.GetRange(left_bord,right_bord-left_bord));
+        double avg2 = countAverage(packet2.GetRange(left_bord + m, right_bord -left_bord));
         sump1 = 0;
         sump2 = 0;
         topsum = 0;
-        for (int i = diff; i < size - diff - 1; i++)
-          if (i < size)
+        for (int i = left_bord; i < right_bord; i++)
+         // if (i < size)
             topsum += (packet1[i].Item2 - avg1) * (packet2[i+m].Item2 - avg2);
-        
-        for (int i = diff; i < size-diff-1; i++)
+
+        for (int i = left_bord; i < right_bord; i++)
           sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
 
-        for (int i = diff; i < size - diff - 1; i++)
-          sump2 += Math.Pow(packet2[i+m].Item2 - avg2, 2);
+        for (int i = left_bord + m; i < right_bord + m; i++)
+          sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
 
         Corr= (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
         bestCorr = (Corr>bestCorr) ? Corr : bestCorr; 
       }
       return bestCorr;
     }
+
+
+    #region Корелляция через площадь
+
+    public double countArea(SpikeData point1, SpikeData point2)
+    {
+      double area = 0;
+      if (point1.Item2 > point2.Item2)
+        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point1.Item2 - point2.Item2));
+      else
+        area = (point2.Item1 - point1.Item1) * (point1.Item2 - 1 / 2 * (point2.Item2 - point1.Item2));
+      return area;
+
+    }
+
+    public double countCorrArr(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+      packet2 = movePacket(packet1, packet2);
+      double area1 = 0;
+      double area2 = 0;
+      for (int i = 1; i < packet1.Count; i++)
+        area1 += countArea(packet1[i - 1], packet1[i]);
+      for (int i = 1; i < packet2.Count; i++)
+        area2 += countArea(packet2[i - 1], packet2[i]);
+      if (area1 > area2)
+        return 2 * (area1 - area2) / (area1 + area2);
+      else return 2 * (area2 - area1) / (area1 + area2);
+
+    }
+    #endregion
+
 
 
 
@@ -1033,42 +1061,26 @@ namespace SpikeProject
 
     private void матрицуКорToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      //List<SpikeDataPacket> nostimcor = new List<SpikeDataPacket>();
-      //for (int i=0; i<NoStimSpikeList.Count; i++)
-      //{
-      //  SpikeDataPacket row = new SpikeDataPacket();
-      //  for (int j=0; j<NoStimSpikeList.Count;j++)
-      //    row.Add(new SpikeData(0, countCorr(NoStimSpikeList[i], NoStimSpikeList[j])));
-      //  nostimcor.Add(row);
-      //}
-      //List<SpikeDataPacket> stimcor = new List<SpikeDataPacket>();
-      //for (int i=0; i<StimSpikeList.Count; i++)
-      //{
-      //  SpikeDataPacket row = new SpikeDataPacket();
-      //  for (int j=0; j<StimSpikeList.Count;j++)
-      //    row.Add(new SpikeData(0, countCorr(StimSpikeList[i], StimSpikeList[j])));
-      //  stimcor.Add(row);
-      //}
+
 
       List<SpikeDataPacket> fullist = new List<SpikeDataPacket>();
       fullist.AddRange(NoStimSpikeList);
       fullist.AddRange(StimSpikeList);
       List<SpikeDataPacket> fullcor = new List<SpikeDataPacket>();
+
       for (int i = 0; i < fullist.Count; i++)
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
-          row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
+          row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 
 
-      //fullcor = doCorrCompareMax();
-      //fullcor = doCorrCompare();
-      //HeatPictureForm hpf = new HeatPictureForm(nostimcor,stimcor,"Корреляция");
+
+
       HeatPictureForm newhpf = new HeatPictureForm(fullcor, new List<SpikeDataPacket>(), "Корреляция") { Owner = this };
       newhpf.Show(this);
-      //hpf.Show();
 
     }
 
