@@ -23,8 +23,8 @@ namespace SpikeProject
     private string FilePath = "";
     private int KyTop = 1000;
     private int KyBottom = 1000;
-    private int LeftMedian = 0;
-    private int RightMedian = 0;
+    public static int LeftMedian = 0;
+    public static int RightMedian = 0;
     private int KxTop = 10;
     private int KxBottom = 300;
     double eps = 1e-20;
@@ -287,7 +287,7 @@ namespace SpikeProject
         }
       }
 
-      int diff = max_i2 - max_i1;
+      int diff = max_i1 - max_i2;
       if (diff != 0)
       {
         SpikeDataPacket resultpacket = new SpikeDataPacket();
@@ -297,7 +297,7 @@ namespace SpikeProject
           if ((i + diff >= 0) && (i + diff < packet2.Count) && (i < packet1.Count))
             resultpacket.Add(new SpikeData(packet1[i].Item1, packet2[i + diff].Item2));
         }
-
+        if (resultpacket.Count < packet1.Count / 2) return packet2;
         return resultpacket;
       }
       else return packet2;
@@ -456,16 +456,17 @@ namespace SpikeProject
 
     public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      if (Properties.Settings.Default.movecharact)
-        packet2 = movePacket(packet1, packet2);
+      
+      if (packet1==packet2) return 1;
+      packet2 = movePacket(packet1, packet2);
 
       int minsize = Math.Min(packet1.Count, packet2.Count);
       int size = (int)Math.Truncate(minsize * 0.8);
       int diff = minsize - size;
       int max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
-      int center1 = findMax(packet1), left_bord1 = (center1 - LeftMedian  > max_M) ? center1 - LeftMedian : max_M, right_bord1 = (center1 + RightMedian + max_M < packet1.Count) ? center1 + RightMedian  : packet1.Count-max_M;
+      int center1 = findMax(packet1), left_bord1 = (center1 - LeftMedian  > 0) ? center1 - LeftMedian : 0, right_bord1 = (center1 + RightMedian  < packet1.Count) ? center1 + RightMedian  : packet1.Count;
       int center2 = findMax(packet2), left_bord2 = (center2 - LeftMedian  > max_M) ? center2 - LeftMedian : max_M, right_bord2 = (center2 + RightMedian + max_M < packet2.Count) ? center2 + RightMedian  : packet2.Count-max_M;
-      int left_bord = Math.Min(left_bord1, left_bord2), right_bord = Math.Min(right_bord1, right_bord2);
+      int left_bord = Math.Max(Math.Min(left_bord1, left_bord2),max_M), right_bord = Math.Min(right_bord1, right_bord2);
 
       
  
@@ -1072,7 +1073,9 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
+          if (Properties.Settings.Default.movecharact)
           row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+          else row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 

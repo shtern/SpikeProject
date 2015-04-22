@@ -22,7 +22,7 @@ namespace SpikeProject
     #region Константы
     int Kx = 300;
     int Ky = 2000;
-    double eps = 1e-20;
+    double eps = 1e-10;
     #endregion
 
     SpikeDataPacket List1;
@@ -101,46 +101,63 @@ namespace SpikeProject
 
     }
 
-    public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
+
+    public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      //packet2 = movePacket(packet1, packet2);
-
-      int minsize = Math.Min(packet1.Count, packet2.Count);
-      int size = (int)Math.Truncate(minsize * 0.8);
-
-      int diff = minsize - size;
-
-      double topsum = 0;
-      double sump1 = 0;
-      double sump2 = 0;
-      double bestCorr = double.MinValue;
-      double Corr = double.MinValue;
-      
-
-      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      double max1 = double.MinValue;
+      int max_i1 = 0;
+      double max2 = double.MinValue;
+      int max_i2 = 0;
+      for (int i = 0; i < packet1.Count; i++)
       {
-
-        Corr = double.MinValue;
-        double avg1 = countAverage(packet1.GetRange(diff, packet1.Count - diff - 1));
-        double avg2 = countAverage(packet2.GetRange(diff + m, packet2.Count - m - diff - 1));
-        sump1 = 0;
-        sump2 = 0;
-        topsum = 0;
-        for (int i = diff; i < size - diff - 1; i++)
-          if (i < size)
-            topsum += (packet1[i].Item2 - avg1) * (packet2[i + m].Item2 - avg2);
-
-        for (int i = diff; i < size - diff - 1; i++)
-          sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
-
-        for (int i = diff; i < size - diff - 1; i++)
-          sump2 += Math.Pow(packet2[i + m].Item2 - avg2, 2);
-
-        Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
-        bestCorr = (Corr > bestCorr) ? Corr : bestCorr;
+        if (packet1[i].Item2 > max1)
+        {
+          max1 = packet1[i].Item2;
+          max_i1 = i;
+        }
       }
-      return bestCorr;
+
+      for (int i = 0; i < packet2.Count; i++)
+      {
+        if (packet2[i].Item2 > max2)
+        {
+          max2 = packet2[i].Item2;
+          max_i2 = i;
+        }
+      }
+
+      int diff = max_i2 - max_i1;
+      if (diff != 0)
+      {
+        SpikeDataPacket resultpacket = new SpikeDataPacket();
+        for (int i = 0; i < packet1.Count + diff; i++)
+        {
+          if (resultpacket.Count > packet1.Count) break;
+          if ((i + diff >= 0) && (i + diff < packet2.Count) && (i < packet1.Count))
+            resultpacket.Add(new SpikeData(packet1[i].Item1, packet2[i + diff].Item2));
+        }
+
+        return resultpacket;
+      }
+      else return packet2;
+
     }
+
+
+    public int findMax(SpikeDataPacket list)
+    {
+      double max = double.MinValue;
+      int max_i = 0;
+      for (int i = 0; i < list.Count; i++)
+        if (list[i].Item2 > max)
+        {
+          max = list[i].Item2;
+          max_i = i;
+        }
+      return max_i;
+    }
+
+
 
     public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, double corr,int PQPQP)
     {
@@ -149,60 +166,64 @@ namespace SpikeProject
       List2 = list2;
       Num1 = num1;
       Num2 = num2;
-      Corr = corr;
-      moveList = new List<int>();
+      Corr = double.MinValue;
+      //moveList = new List<int>();
       //move = m;
       //moveNumeric.Value = move;
       moveNumeric.Visible = true;
 
-      int minsize = Math.Min(List1.Count, List2.Count);
-      int size = (int)Math.Truncate(minsize * 0.8);
-
-      int diff = minsize - size;
-
-      double topsum = 0;
-      double sump1 = 0;
-      double sump2 = 0;
-      double bestCorr = double.MinValue;
-      double tempCorr = double.MinValue;
-
-
-      for (int m = -(int)Math.Truncate(diff * 0.5); m <= (int)Math.Truncate(diff * 0.5); m++)
+      if (list1 != list2)
       {
-        Corr = double.MinValue;
-        moveList.Add(m);
-        double avg1 = countAverage(List1.GetRange(diff, List1.Count - diff - 1));
-        double avg2 = countAverage(List2.GetRange(diff + m, List2.Count - m - diff - 1));
-        sump1 = 0;
-        sump2 = 0;
-        topsum = 0;
-        for (int i = diff; i < size - diff - 1; i++)
-          if (i < size)
-            topsum += (List1[i].Item2 - avg1) * (List2[i + m].Item2 - avg2);
 
-        for (int i = diff; i < size - diff - 1; i++)
-          sump1 += Math.Pow(List1[i].Item2 - avg1, 2);
+        SpikeDataPacket packet1 = list1, packet2 = movePacket(list1, list2);
+        int minsize = Math.Min(packet1.Count, packet2.Count);
+        int size = (int)Math.Truncate(minsize * 0.8);
+        int diff = minsize - size;
+        int max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
+        int center1 = findMax(packet1), left_bord1 = (center1 - MainForm.LeftMedian > 0) ? center1 - MainForm.LeftMedian : 0, right_bord1 = (center1 + MainForm.RightMedian < packet1.Count) ? center1 + MainForm.RightMedian : packet1.Count;
+        int center2 = findMax(packet2), left_bord2 = (center2 - MainForm.LeftMedian > max_M) ? center2 - MainForm.LeftMedian : max_M, right_bord2 = (center2 + MainForm.RightMedian + max_M < packet2.Count) ? center2 + MainForm.RightMedian : packet2.Count - max_M;
+        int left_bord = Math.Max(Math.Min(left_bord1, left_bord2), max_M), right_bord = Math.Min(right_bord1, right_bord2);
 
-        for (int i = diff; i < size - diff - 1; i++)
-          sump2 += Math.Pow(List2[i + m].Item2 - avg2, 2);
 
-        tempCorr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
-        if (tempCorr - Corr < eps)
+
+
+        double topsum = 0;
+        double sump1 = 0;
+        double sump2 = 0;
+        for (int m = -max_M; m <= max_M; m++)
         {
-          moveNumeric.Value = m;
-          PList1 = new PointList();
-          PList2 = new PointList();
-          SpikeDataPacket templist1 = List1.GetRange(diff, List1.Count - diff - 1), templist2 = List2.GetRange(diff, List1.Count - diff - 1);
-          for (int i = 0; i < templist1.Count; i++)
+          double avg1 = countAverage(packet1.GetRange(left_bord, right_bord - left_bord));
+          double avg2 = countAverage(packet2.GetRange(left_bord + m, right_bord - left_bord));
+          sump1 = 0;
+          sump2 = 0;
+          topsum = 0;
+          for (int i = left_bord; i < right_bord; i++)
+            // if (i < size)
+            topsum += (packet1[i].Item2 - avg1) * (packet2[i + m].Item2 - avg2);
+
+          for (int i = left_bord; i < right_bord; i++)
+            sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+
+          for (int i = left_bord + m; i < right_bord + m; i++)
+            sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
+
+          Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+          if (Math.Abs(Corr-corr)<eps)
           {
-            PList1.Add(new PointF((float)templist1[i].Item1, (float)templist1[i].Item2));
-            PList2.Add(new PointF((float)templist1[i].Item1, (float)templist2[i].Item2));
+            moveNumeric.Value = m;
+            List1 = packet1.GetRange(left_bord, right_bord - left_bord);
+            List2 = new SpikeDataPacket();
+            for (int i = 0; i < List1.Count; i++)
+              List2.Add(new SpikeData(List1[i].Item1, packet2[left_bord + m + i].Item2));
+            CompareGraph.Refresh();
+            NormalizedGraph.Refresh();
+
 
           }
-          
-          break;
         }
       }
+      doCorrTask();
+
 
     }
 

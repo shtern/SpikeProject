@@ -623,7 +623,7 @@ namespace SpikeProject
               list2 = parent.StimSpikeList[y - parent.NoStimSpikeList.Count];
             else list2 = parent.NoStimSpikeList[y];
             //compareForm = new FCompareForm(list1, list2, x + 1, y + 1, NoStimList[x][y].Item2);
-            compareForm = new FCompareForm(list1, parent.movePacket(list1,list2), x + 1, y + 1, NoStimList[x][y].Item2);
+            compareForm = new FCompareForm(list1, list2, x + 1, y + 1, NoStimList[x][y].Item2,5);
             if (compareForm != null) compareForm.Show();
             else MessageBox.Show("Ошибка построения формы сравнения", "Что-то случилось",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);

@@ -86,9 +86,10 @@
       // 
       // moveNumeric
       // 
-      this.moveNumeric.Location = new System.Drawing.Point(637, 31);
+      this.moveNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.moveNumeric.Location = new System.Drawing.Point(717, 31);
       this.moveNumeric.Name = "moveNumeric";
-      this.moveNumeric.Size = new System.Drawing.Size(120, 20);
+      this.moveNumeric.Size = new System.Drawing.Size(40, 20);
       this.moveNumeric.TabIndex = 4;
       this.moveNumeric.Visible = false;
       this.moveNumeric.ValueChanged += new System.EventHandler(this.moveNum_ValueChanged);
