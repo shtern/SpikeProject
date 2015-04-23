@@ -265,11 +265,11 @@ namespace SpikeProject
 
     public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      double max1=double.MinValue;
+      double max1 = double.MinValue;
       int max_i1 = 0;
       double max2 = double.MinValue;
       int max_i2 = 0;
-      for (int i = 0; i<packet1.Count; i++)
+      for (int i = 0; i < packet1.Count; i++)
       {
         if (packet1[i].Item2 > max1)
         {
@@ -287,7 +287,7 @@ namespace SpikeProject
         }
       }
 
-      int diff = max_i1 - max_i2;
+      int diff = max_i2 - max_i1;
       if (diff != 0)
       {
         SpikeDataPacket resultpacket = new SpikeDataPacket();
@@ -297,11 +297,10 @@ namespace SpikeProject
           if ((i + diff >= 0) && (i + diff < packet2.Count) && (i < packet1.Count))
             resultpacket.Add(new SpikeData(packet1[i].Item1, packet2[i + diff].Item2));
         }
-        if (resultpacket.Count < packet1.Count / 2) return packet2;
+
         return resultpacket;
       }
       else return packet2;
-
 
     }
 

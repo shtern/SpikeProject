@@ -27,11 +27,14 @@ namespace SpikeProject
 
     SpikeDataPacket List1;
     SpikeDataPacket List2;
+    SpikeDataPacket List1Orig;
+    SpikeDataPacket List2Orig;
     PointList PList1;
     PointList PList2;
-    int Num1, Num2,move=0;
-    List<int> moveList;
+    int Num1, Num2;
+    List<double> moveList;
     double Corr;
+    int left_bord=0, right_bord=0, max_M=0;
 
     public FCompareForm(PointList plist1, PointList plist2)
     {
@@ -164,9 +167,11 @@ namespace SpikeProject
       InitializeComponent();
       List1 = list1;
       List2 = list2;
+      List1Orig = list1;
+      List2Orig = movePacket(list1,list2);
       Num1 = num1;
       Num2 = num2;
-      Corr = double.MinValue;
+      Corr = corr;
       //moveList = new List<int>();
       //move = m;
       //moveNumeric.Value = move;
@@ -174,17 +179,21 @@ namespace SpikeProject
 
       if (list1 != list2)
       {
-
-        SpikeDataPacket packet1 = list1, packet2 = movePacket(list1, list2);
+        moveList = new List<double>();
+        Corr = double.MinValue;
+        List2 = movePacket(List1, List2);
+        SpikeDataPacket packet1 = List1, packet2 = List2;
         int minsize = Math.Min(packet1.Count, packet2.Count);
         int size = (int)Math.Truncate(minsize * 0.8);
         int diff = minsize - size;
-        int max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
+        max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
         int center1 = findMax(packet1), left_bord1 = (center1 - MainForm.LeftMedian > 0) ? center1 - MainForm.LeftMedian : 0, right_bord1 = (center1 + MainForm.RightMedian < packet1.Count) ? center1 + MainForm.RightMedian : packet1.Count;
         int center2 = findMax(packet2), left_bord2 = (center2 - MainForm.LeftMedian > max_M) ? center2 - MainForm.LeftMedian : max_M, right_bord2 = (center2 + MainForm.RightMedian + max_M < packet2.Count) ? center2 + MainForm.RightMedian : packet2.Count - max_M;
-        int left_bord = Math.Max(Math.Min(left_bord1, left_bord2), max_M), right_bord = Math.Min(right_bord1, right_bord2);
+        left_bord = Math.Max(Math.Min(left_bord1, left_bord2), max_M);
+        right_bord = Math.Min(right_bord1, right_bord2);
 
-
+        moveNumeric.Minimum = -max_M;
+        moveNumeric.Maximum = max_M;
 
 
         double topsum = 0;
@@ -208,20 +217,25 @@ namespace SpikeProject
             sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
 
           Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
-          if (Math.Abs(Corr-corr)<eps)
+          moveList.Add(Corr);
+          if (Math.Abs(Corr - corr) < eps)
           {
             moveNumeric.Value = m;
-            List1 = packet1.GetRange(left_bord, right_bord - left_bord);
-            List2 = new SpikeDataPacket();
-            for (int i = 0; i < List1.Count; i++)
-              List2.Add(new SpikeData(List1[i].Item1, packet2[left_bord + m + i].Item2));
-            CompareGraph.Refresh();
-            NormalizedGraph.Refresh();
+            //List1 = packet1.GetRange(left_bord, right_bord - left_bord);
+            //List2 = new SpikeDataPacket();
+            //for (int i = 0; i < List1.Count; i++)
+            //  List2.Add(new SpikeData(List1[i].Item1, packet2[left_bord + m + i].Item2));
+            //CompareGraph.Refresh();
+            //NormalizedGraph.Refresh();
 
 
           }
         }
       }
+      else
+        moveNumeric.Visible = false;
+
+     
       doCorrTask();
 
 
@@ -298,7 +312,14 @@ namespace SpikeProject
 
     private void moveNum_ValueChanged(object sender, EventArgs e)
     {
-      move = (int)moveNumeric.Value;
+      List1 = List1Orig.GetRange(left_bord, right_bord - left_bord);
+      List2 = new SpikeDataPacket();
+      for (int i = 0; i < List1.Count; i++)
+        List2.Add(new SpikeData(List1[i].Item1, List2Orig[left_bord + (int)moveNumeric.Value  + i].Item2));
+      Corr = moveList[(int)moveNumeric.Value + max_M];
+      doCorrTask();
+      CompareGraph.Refresh();
+      NormalizedGraph.Refresh();
       
 
     }
