@@ -27,14 +27,16 @@ namespace SpikeProject
     Bitmap NormNoStimBmp;
     Bitmap StimBmp;
     Bitmap NormStimBmp;
-    double Maximum;
-    double Minimum;
-    double OldMinimum=0;
+    double Maximum = double.MinValue;
+    double Minimum = double.MaxValue;
+    double OldMinimum=double.MaxValue;
     MainForm parent;
     List<SpikeDataPacket> NoStimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> StimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> NormNoStimList = new List<SpikeDataPacket>();
     List<SpikeDataPacket> NormStimList = new List<SpikeDataPacket>();
+
+
     public HeatPictureForm(List<SpikeDataPacket> list,List<SpikeDataPacket> stimlist, String cellname)
     {
       InitializeComponent();
@@ -54,6 +56,7 @@ namespace SpikeProject
         rectwidth = 25;
         NoStimList = list;
         StimList = stimlist;
+        нормализацияToolStripMenuItem.Visible = false;
         ScaleBox = new PictureBox();
         doScale = true;
         открытьСравнениеХарактеристикToolStripMenuItem.Checked = true;
@@ -70,6 +73,7 @@ namespace SpikeProject
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
       NormStimBmp = DrawTask(NormStimList);
+
       notStimSpikesSetPic();
       StimSpikesSetPic();
       if (stimlist.Count > 1)
@@ -108,6 +112,38 @@ namespace SpikeProject
       if (doScale)
       {
         this.Width += ScaleBox.Width + ValueLabelWidth + 150;
+        
+        
+          ScaleBox.Height = NoStimBmp.Height;
+          ScaleBox.Width = rectwidth;
+          int rectcol = ScaleBox.Height / rectheight;
+          double step = Math.Abs(Maximum - Minimum) / rectcol;
+          List<SpikeDataPacket> ScaleList = new List<SpikeDataPacket>();
+          double buildvvalue = Minimum;
+          Point location = NoStimPanel.Location;
+          location.X += notStimSpikes.Width + 100;
+          ScaleBox.Location = location;
+          this.Controls.Add(ScaleBox);
+          for (int i = 0; i < rectcol; i++)
+          {
+            SpikeDataPacket row = new SpikeDataPacket();
+            row.Add(new SpikeData(0, buildvvalue));
+            ScaleList.Add(row);
+            buildvvalue += step;
+            Label valuelbl = new Label();
+            valuelbl.Text = (double)(buildvvalue - Math.Abs(OldMinimum)) + "";
+            Point lbllocation = ScaleBox.Location;
+            lbllocation.X += ScaleBox.Width + 4;
+            lbllocation.Y += (rectcol - 1 - i) * rectheight + 1;
+            valuelbl.Location = lbllocation;
+            ValueLabelWidth = valuelbl.Width;
+            this.Controls.Add(valuelbl);
+          }
+          ScaleList.Reverse();
+          ScaleBox.Image = DrawTask(ScaleList);
+
+
+        
         for (int i = 0; i < list.Count; i++)
         {
           Label numlabel = new Label();
@@ -118,9 +154,13 @@ namespace SpikeProject
           numlabel.Location = lbllocation;
           this.Controls.Add(numlabel);
         }
+
       }
 
     }
+
+
+    #region MAX
 
     public HeatPictureForm(List<SpikeDataPacket> list, List<SpikeDataPacket> stimlist, List<SpikeDataPacket> listmax, List<SpikeDataPacket> stimlistmax)
     {
@@ -142,14 +182,126 @@ namespace SpikeProject
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);
-      NormStimBmp = DrawTask(NormStimList);  
+      NormStimBmp = DrawTask(NormStimList);
       notStimSpikesSetPic();
       StimSpikesSetPic();
-      paintMax(buildUniform(list),listmax);
+      paintMax(buildUniform(list), listmax);
       paintMax(buildUniform(stimlist), stimlistmax);
       this.Height = NoStimPanel.Height + StimPanel.Height + 300;
       this.Width = Math.Max(NoStimPanel.Width, StimPanel.Width) + 50;
     }
+
+    private  List<Double> buildMax(List<SpikeDataPacket> listmax)
+    {
+      List<Double> nostimmaxpoints = new List<double>();
+      List<Double> averagelist = new List<double>();
+      double eps = 10;
+
+      //for (int i = 0; i < listmax.Count; i++)
+      //  if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
+      //for (int i=0; i<listmax[0].Count; i++)
+      //{
+      //  averagelist = new List<double>();
+      //  for (int j = 0; j< listmax.Count;j++)
+      //    if (i<listmax[j].Count)
+      //    if (Math.Abs(listmax[j][i].Item1-listmax[0][i].Item1)<eps) averagelist.Add(listmax[j][i].Item1);
+      //  if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
+      //}
+      for (int i = 0; i < listmax[0].Count; i++)
+      {
+        averagelist = new List<double>();
+        for (int j = 1; j < listmax.Count; j++)
+        {
+          double closest = ClosestVal(listmax[j], listmax[0][i].Item1);
+          if (Math.Abs(listmax[0][i].Item1 -closest) < eps) averagelist.Add(closest);
+        }
+        if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
+       }
+
+      if (nostimmaxpoints.Count == listmax[0].Count) return nostimmaxpoints;
+      else
+        return null;
+    }
+
+    private void paintMax(List<SpikeDataPacket> list, List<SpikeDataPacket> listmax)
+    {
+      List<Double> maxpoints = buildMax(listmax);
+      SpikeDataPacket range = new SpikeDataPacket();
+      if (maxpoints == null || maxpoints.Count == 0)
+      {
+        MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
+        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+        return;
+      }
+      foreach (double maxpoint in maxpoints) 
+      {
+        List<SpikeDataPacket> bmplist = new List<SpikeDataPacket>();
+        for (int i = 0; i < list.Count; i++)
+        {
+          int closest = ClosestPos(list[0], maxpoint);
+          if (closest-30>0 && closest+70<list[i].Count)
+             range = list[i].GetRange(closest - 30, 100);
+          bmplist.Add(range);
+          
+        }
+        Bitmap bmp = DrawTask(bmplist);
+        if (bmp == null)
+        {
+          MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
+          MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+          return;
+        }
+        String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
+        if (!System.IO.Directory.Exists(savepath))
+          System.IO.Directory.CreateDirectory(savepath);
+        bmp.Save(savepath + "\\Maximum" + DateTime.Now.ToString("HHmmss") + maxpoint + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      }
+    }
+
+
+    public static int ClosestPos(SpikeDataPacket list, double target)
+    {
+      // NB Method will return int.MaxValue for a sequence containing no elements.
+      // Apply any defensive coding here as necessary.
+      Double closest = Double.MaxValue;
+      Double minDifference = Double.MaxValue;
+      int position = 0;
+
+      for (int i = 0; i<list.Count; i++)
+      {
+        var difference = Math.Abs((long)list[i].Item1 - target);
+        if (minDifference > difference)
+        {
+          minDifference = (int)difference;
+          closest = list[i].Item1;
+          position = i;
+        }
+      }
+
+      return position;
+    }
+
+    public static double ClosestVal(SpikeDataPacket list, double target)
+    {
+      // NB Method will return int.MaxValue for a sequence containing no elements.
+      // Apply any defensive coding here as necessary.
+      Double closest = Double.MaxValue;
+      Double minDifference = Double.MaxValue;
+      if (list.Count == 0) return 0;
+      for (int i = 0; i < list.Count; i++)
+      {
+        var difference = Math.Abs((long)list[i].Item1 - target);
+        if (minDifference > difference)
+        {
+          minDifference = (int)difference;
+          closest = list[i].Item1;
+        }
+      }
+      return closest;
+    }
+
+    #endregion
+
 
     private List<SpikeDataPacket> buildUniform(List<SpikeDataPacket> list)
     {
@@ -220,140 +372,6 @@ namespace SpikeProject
       return resultList;
     }
 
-    List<Color> interpolateColors(List<Color> stopColors, int count)
-    {
-      SortedDictionary<float, Color> gradient = new SortedDictionary<float, Color>();
-      for (int i = 0; i < stopColors.Count; i++)
-        gradient.Add(1f * i / (stopColors.Count - 1), stopColors[i]);
-      List<Color> ColorList = new List<Color>();
-
-      using (Bitmap bmp = new Bitmap(count, 1))
-      using (Graphics G = Graphics.FromImage(bmp))
-      {
-        Rectangle bmpCRect = new Rectangle(Point.Empty, bmp.Size);
-        LinearGradientBrush br = new LinearGradientBrush
-                                (bmpCRect, Color.Empty, Color.Empty, 0, false);
-        ColorBlend cb = new ColorBlend();
-        cb.Positions = new float[gradient.Count];
-        for (int i = 0; i < gradient.Count; i++)
-          cb.Positions[i] = gradient.ElementAt(i).Key;
-        cb.Colors = gradient.Values.ToArray();
-        br.InterpolationColors = cb;
-        G.FillRectangle(br, bmpCRect);
-        for (int i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
-        br.Dispose();
-      }
-      return ColorList;
-    }
-
-    private  List<Double> buildMax(List<SpikeDataPacket> listmax)
-    {
-      List<Double> nostimmaxpoints = new List<double>();
-      List<Double> averagelist = new List<double>();
-      double eps = 10;
-
-      //for (int i = 0; i < listmax.Count; i++)
-      //  if (listmax[i].Count > maxcount) maxcount = listmax[i].Count;
-      //for (int i=0; i<listmax[0].Count; i++)
-      //{
-      //  averagelist = new List<double>();
-      //  for (int j = 0; j< listmax.Count;j++)
-      //    if (i<listmax[j].Count)
-      //    if (Math.Abs(listmax[j][i].Item1-listmax[0][i].Item1)<eps) averagelist.Add(listmax[j][i].Item1);
-      //  if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
-      //}
-      for (int i = 0; i < listmax[0].Count; i++)
-      {
-        averagelist = new List<double>();
-        for (int j = 1; j < listmax.Count; j++)
-        {
-          double closest = ClosestVal(listmax[j], listmax[0][i].Item1);
-          if (Math.Abs(listmax[0][i].Item1 -closest) < eps) averagelist.Add(closest);
-        }
-        if (averagelist.Count > listmax.Count / 2) nostimmaxpoints.Add(averagelist.Average());
-       }
-
-      if (nostimmaxpoints.Count == listmax[0].Count) return nostimmaxpoints;
-      else
-        return null;
-    }
-
-    private void paintMax(List<SpikeDataPacket> list, List<SpikeDataPacket> listmax)
-    {
-      List<Double> maxpoints = buildMax(listmax);
-      SpikeDataPacket range = new SpikeDataPacket();
-      if (maxpoints == null || maxpoints.Count == 0)
-      {
-        MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
-        MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-        return;
-      }
-      foreach (double maxpoint in maxpoints) 
-      {
-        List<SpikeDataPacket> bmplist = new List<SpikeDataPacket>();
-        for (int i = 0; i < list.Count; i++)
-        {
-          int closest = ClosestPos(list[0], maxpoint);
-          if (closest-30>0 && closest+70<list[i].Count)
-             range = list[i].GetRange(closest - 30, 100);
-          bmplist.Add(range);
-          
-        }
-        Bitmap bmp = DrawTask(bmplist);
-        if (bmp == null)
-        {
-          MessageBox.Show("Не удалось выделить характеристики", "Мегакарта",
-          MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-          return;
-        }
-        String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
-        if (!System.IO.Directory.Exists(savepath))
-          System.IO.Directory.CreateDirectory(savepath);
-        bmp.Save(savepath + "\\Maximum" + DateTime.Now.ToString("HHmmss") + maxpoint + ".bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      }
-    }
-
-    public static int ClosestPos(SpikeDataPacket list, double target)
-    {
-      // NB Method will return int.MaxValue for a sequence containing no elements.
-      // Apply any defensive coding here as necessary.
-      Double closest = Double.MaxValue;
-      Double minDifference = Double.MaxValue;
-      int position = 0;
-
-      for (int i = 0; i<list.Count; i++)
-      {
-        var difference = Math.Abs((long)list[i].Item1 - target);
-        if (minDifference > difference)
-        {
-          minDifference = (int)difference;
-          closest = list[i].Item1;
-          position = i;
-        }
-      }
-
-      return position;
-    }
-
-    public static double ClosestVal(SpikeDataPacket list, double target)
-    {
-      // NB Method will return int.MaxValue for a sequence containing no elements.
-      // Apply any defensive coding here as necessary.
-      Double closest = Double.MaxValue;
-      Double minDifference = Double.MaxValue;
-      if (list.Count == 0) return 0;
-      for (int i = 0; i < list.Count; i++)
-      {
-        var difference = Math.Abs((long)list[i].Item1 - target);
-        if (minDifference > difference)
-        {
-          minDifference = (int)difference;
-          closest = list[i].Item1;
-        }
-      }
-      return closest;
-    }
-
     private void notStimSpikesSetPic()
     {
 
@@ -381,38 +399,7 @@ namespace SpikeProject
           if (NoStimBmp.Width < Screen.FromControl(this).Bounds.Width)
           NoStimPanel.Width = NoStimBmp.Width;
           NoStimPanel.Height = NoStimBmp.Height + 20;
-          if (doScale)
-          {
-            ScaleBox.Height = NoStimBmp.Height;
-            ScaleBox.Width = rectwidth;
-            int rectcol = ScaleBox.Height / rectheight;
-            double step = Math.Abs(Maximum - Minimum) / rectcol;
-            List<SpikeDataPacket> ScaleList = new List<SpikeDataPacket>();
-            double buildvvalue = Minimum;
-            Point location = NoStimPanel.Location;
-            location.X += notStimSpikes.Width + 100;
-            ScaleBox.Location = location;
-            this.Controls.Add(ScaleBox);
-            for (int i = 0; i < rectcol; i++)
-            {
-              SpikeDataPacket row = new SpikeDataPacket();
-              row.Add(new SpikeData(0, buildvvalue));
-              ScaleList.Add(row);
-              buildvvalue += step;
-              Label valuelbl = new Label();
-              valuelbl.Text = (double)(buildvvalue-Math.Abs(OldMinimum)) + "";
-              Point lbllocation = ScaleBox.Location;
-              lbllocation.X += ScaleBox.Width+4;
-              lbllocation.Y += (rectcol -1 - i) * rectheight + 1 ;
-              valuelbl.Location = lbllocation;
-              ValueLabelWidth = valuelbl.Width;
-              this.Controls.Add(valuelbl);
-            }
-            ScaleList.Reverse();
-            ScaleBox.Image = DrawTask(ScaleList);
-            
-
-          }
+         
         }
         else notStimSpikes.Visible = false;
       };
@@ -461,6 +448,35 @@ namespace SpikeProject
     }
 
 
+
+    List<Color> interpolateColors(List<Color> stopColors, int count)
+    {
+      SortedDictionary<float, Color> gradient = new SortedDictionary<float, Color>();
+      for (int i = 0; i < stopColors.Count; i++)
+        gradient.Add(1f * i / (stopColors.Count - 1), stopColors[i]);
+      List<Color> ColorList = new List<Color>();
+
+      using (Bitmap bmp = new Bitmap(count, 1))
+      using (Graphics G = Graphics.FromImage(bmp))
+      {
+        Rectangle bmpCRect = new Rectangle(Point.Empty, bmp.Size);
+        LinearGradientBrush br = new LinearGradientBrush
+                                (bmpCRect, Color.Empty, Color.Empty, 0, false);
+        ColorBlend cb = new ColorBlend();
+        cb.Positions = new float[gradient.Count];
+        for (int i = 0; i < gradient.Count; i++)
+          cb.Positions[i] = gradient.ElementAt(i).Key;
+        cb.Colors = gradient.Values.ToArray();
+        br.InterpolationColors = cb;
+        G.FillRectangle(br, bmpCRect);
+        for (int i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
+        br.Dispose();
+      }
+      return ColorList;
+    }
+
+
+
     private Bitmap DrawTask(List<SpikeDataPacket> DrawList)
     {
       if (DrawList.Count <= 0) return null;
@@ -478,11 +494,13 @@ namespace SpikeProject
       for (int i = 0; i < DrawList.Count; i++)
         for (int j = 0; j < DrawList[i].Count; j++)
         {
-          if (minVal > DrawList[i][j].Item2) 
+          if (DrawList[i][j].Item2 < minVal) 
             minVal = DrawList[i][j].Item2;
-          if (maxVal < DrawList[i][j].Item2) 
+          if (DrawList[i][j].Item2 > maxVal) 
             maxVal = DrawList[i][j].Item2;
         }
+
+      OldMinimum = minVal;
       if (minVal < 0)
       {
         for (int i = 0; i < DrawList.Count; i++)
@@ -493,8 +511,8 @@ namespace SpikeProject
           newlist.Add(row);
         }
         maxVal += Math.Abs(minVal);
-        OldMinimum = minVal;
-        minVal = eps;
+        
+        minVal = 0;
         DrawList = newlist;
 
       }
@@ -517,7 +535,9 @@ namespace SpikeProject
       {
         for (int j = 0; j < DrawList[i].Count && j < maxCol; j++)
         {
-          Brush brush = new SolidBrush(colors[(System.Int32)(Math.Abs((DrawList[i][j].Item2 - minVal) / (maxVal - minVal)) * factor)]);
+          int br_num = (int)(Math.Abs((DrawList[i][j].Item2 - minVal) / (maxVal - minVal)) * factor);
+          Brush brush = new SolidBrush(colors[br_num]);
+          //Brush brush = new SolidBrush(colors[(System.Int32)(Math.Abs((DrawList[i][j].Item2 ) / (maxVal )) * factor)]);
           Pen pen = new Pen(brush, 5);
          // e.Graphics.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
           graph.FillRectangle(brush, j * rectwidth, i * rectheight, rectwidth, rectheight);
@@ -609,7 +629,7 @@ namespace SpikeProject
         if (y < NoStimList[x].Count && y >= 0)
         {
           if (сообщитьЗначениеКорелляцииToolStripMenuItem.Checked==true)
-          MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(x + 1) + " Y:" + (int)(y + 1), "Значение в клетке",
+          MessageBox.Show(NoStimList[x][y].Item2 + "\nX:" + (int)(y + 1) + " Y:" + (int)(x + 1), "Значение в клетке",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
           FCompareForm compareForm =null;
           parent = (MainForm)this.Owner;
@@ -623,7 +643,7 @@ namespace SpikeProject
               list2 = parent.StimSpikeList[y - parent.NoStimSpikeList.Count];
             else list2 = parent.NoStimSpikeList[y];
             //compareForm = new FCompareForm(list1, list2, x + 1, y + 1, NoStimList[x][y].Item2);
-            compareForm = new FCompareForm(list1, list2, x + 1, y + 1, NoStimList[x][y].Item2,5);
+            compareForm = new FCompareForm(list1, list2, y + 1, x + 1, NoStimList[y][x].Item2,5);
             if (compareForm != null) compareForm.Show();
             else MessageBox.Show("Ошибка построения формы сравнения", "Что-то случилось",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);

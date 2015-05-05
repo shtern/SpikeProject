@@ -29,6 +29,7 @@ namespace SpikeProject
     SpikeDataPacket List2;
     SpikeDataPacket List1Orig;
     SpikeDataPacket List2Orig;
+    double CorrOrig;
     PointList PList1;
     PointList PList2;
     int Num1, Num2;
@@ -83,7 +84,7 @@ namespace SpikeProject
         PList2.Add(new PointF((float)data.Item1, (float)data.Item2));
 
       compareLabel.Text = "Сравнение характеристики №" + Num1 + " с характеристикой №" + Num2;
-      NormalizedLabel.Text = "Значение корелляции " + Corr;
+      NormalizedLabel.Text = "Значение корелляции " + CorrOrig;
       Point coordinates = compareLabel.Location;
       coordinates.X = this.Width - 350;
       NormalizedLabel.Location = coordinates;
@@ -167,6 +168,7 @@ namespace SpikeProject
       InitializeComponent();
       List1 = list1;
       List2 = list2;
+      CorrOrig = corr;
       List1Orig = list1;
       List2Orig = movePacket(list1,list2);
       Num1 = num1;
@@ -318,6 +320,7 @@ namespace SpikeProject
         List2.Add(new SpikeData(List1[i].Item1, List2Orig[left_bord + (int)moveNumeric.Value  + i].Item2));
       Corr = moveList[(int)moveNumeric.Value + max_M];
       doCorrTask();
+      NormalizedLabel.Text = "Значение корелляции " + Corr;
       CompareGraph.Refresh();
       NormalizedGraph.Refresh();
       

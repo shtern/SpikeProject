@@ -494,7 +494,8 @@ namespace SpikeProject
           sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
 
         Corr= (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
-        bestCorr = (Corr>bestCorr) ? Corr : bestCorr; 
+        if (Corr > bestCorr)
+          bestCorr = Corr;
       }
       return bestCorr;
     }
@@ -1074,7 +1075,8 @@ namespace SpikeProject
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
           row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
-          else row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
+          else 
+            row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
       }
 
