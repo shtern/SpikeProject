@@ -220,9 +220,10 @@ namespace SpikeProject
 
           Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
           moveList.Add(Corr);
-          if (Math.Abs(Corr - corr) < eps)
+          if (Math.Abs(Corr - CorrOrig) < eps)
           {
             moveNumeric.Value = m;
+
             //List1 = packet1.GetRange(left_bord, right_bord - left_bord);
             //List2 = new SpikeDataPacket();
             //for (int i = 0; i < List1.Count; i++)

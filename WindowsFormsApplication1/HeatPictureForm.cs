@@ -116,10 +116,10 @@ namespace SpikeProject
         
           ScaleBox.Height = NoStimBmp.Height;
           ScaleBox.Width = rectwidth;
-          int rectcol = ScaleBox.Height / rectheight;
-          double step = Math.Abs(Maximum - Minimum) / rectcol;
+          int rectcol = (ScaleBox.Height / rectheight) ;
+          double step = Math.Abs(Maximum - Minimum) / (rectcol-1);
           List<SpikeDataPacket> ScaleList = new List<SpikeDataPacket>();
-          double buildvvalue = Minimum;
+          double buildvvalue = OldMinimum;
           Point location = NoStimPanel.Location;
           location.X += notStimSpikes.Width + 100;
           ScaleBox.Location = location;
@@ -129,15 +129,16 @@ namespace SpikeProject
             SpikeDataPacket row = new SpikeDataPacket();
             row.Add(new SpikeData(0, buildvvalue));
             ScaleList.Add(row);
-            buildvvalue += step;
+            
             Label valuelbl = new Label();
-            valuelbl.Text = (double)(buildvvalue - Math.Abs(OldMinimum)) + "";
+            valuelbl.Text = (double)(buildvvalue) + "";
             Point lbllocation = ScaleBox.Location;
             lbllocation.X += ScaleBox.Width + 4;
             lbllocation.Y += (rectcol - 1 - i) * rectheight + 1;
             valuelbl.Location = lbllocation;
             ValueLabelWidth = valuelbl.Width;
             this.Controls.Add(valuelbl);
+            buildvvalue += step;
           }
           ScaleList.Reverse();
           ScaleBox.Image = DrawTask(ScaleList);
@@ -643,7 +644,7 @@ namespace SpikeProject
               list2 = parent.StimSpikeList[y - parent.NoStimSpikeList.Count];
             else list2 = parent.NoStimSpikeList[y];
             //compareForm = new FCompareForm(list1, list2, x + 1, y + 1, NoStimList[x][y].Item2);
-            compareForm = new FCompareForm(list1, list2, y + 1, x + 1, NoStimList[y][x].Item2,5);
+            compareForm = new FCompareForm(list2, list1, y + 1, x + 1, NoStimList[y][x].Item2,5);
             if (compareForm != null) compareForm.Show();
             else MessageBox.Show("Ошибка построения формы сравнения", "Что-то случилось",
           MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
