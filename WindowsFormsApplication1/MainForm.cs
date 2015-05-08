@@ -500,10 +500,17 @@ namespace SpikeProject
       return bestCorr;
     }
 
-    public double CountCorrv3(SpikeDataPacket signal1, SpikeDataPacket signal2)
+    public double countCorrv3(SpikeDataPacket signal1, SpikeDataPacket signal2)
 
     {
       int m = signal1.Count, n=signal2.Count;
+      //double max1 = double.MinValue;
+      //for (int i = 0; i < m; i++)
+      //  if (signal1[i].Item2 > max1) max1 = signal1[i].Item2;
+      //double max2 = double.MinValue;
+      //for (int i = 0; i < n; i++)
+      //  if (signal2[i].Item2 > max2) max2 = signal2[i].Item2;
+
       
       alglib.complex[] signal1comp = new alglib.complex[m];
       alglib.complex[] signal2comp = new alglib.complex[n];
@@ -1098,7 +1105,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, CountCorrv3(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
