@@ -500,6 +500,30 @@ namespace SpikeProject
       return bestCorr;
     }
 
+    public double CountCorrv3(SpikeDataPacket signal1, SpikeDataPacket signal2)
+
+    {
+      int m = signal1.Count, n=signal2.Count;
+      
+      alglib.complex[] signal1comp = new alglib.complex[m];
+      alglib.complex[] signal2comp = new alglib.complex[n];
+      for (int i = 0; i < m; i++)
+        signal1comp[i] = new alglib.complex(signal1[i].Item2);
+
+      for (int i = 0; i < n; i++)
+        signal2comp[i] = new alglib.complex(signal2[i].Item2);
+
+
+      alglib.complex[] outarr  = new alglib.complex[Math.Max(m,n)];
+      alglib.corrc1d(signal1comp, m, signal2comp, n, out outarr);
+      double result = double.MinValue;
+      for (int i = 0; i < outarr.Count(); i++)
+        if (outarr[i].x > result)
+          result = outarr[i].x;
+      return result;
+      
+    }
+
 
     #region Корелляция через площадь
 
@@ -1074,7 +1098,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-          row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, CountCorrv3(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
