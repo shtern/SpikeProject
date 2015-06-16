@@ -188,7 +188,7 @@ namespace SpikeProject
         int minsize = Math.Min(packet1.Count, packet2.Count);
         int size = (int)Math.Truncate(minsize * 0.8);
         int diff = minsize - size;
-        max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
+        max_M = Math.Abs((int)Math.Truncate(diff * 0.7));
         int center1 = findMax(packet1), left_bord1 = (center1 - MainForm.LeftMedian > 0) ? center1 - MainForm.LeftMedian : 0, right_bord1 = (center1 + MainForm.RightMedian < packet1.Count) ? center1 + MainForm.RightMedian : packet1.Count;
         int center2 = findMax(packet2), left_bord2 = (center2 - MainForm.LeftMedian > max_M) ? center2 - MainForm.LeftMedian : max_M, right_bord2 = (center2 + MainForm.RightMedian + max_M < packet2.Count) ? center2 + MainForm.RightMedian : packet2.Count - max_M;
         left_bord = Math.Max(Math.Min(left_bord1, left_bord2), max_M);

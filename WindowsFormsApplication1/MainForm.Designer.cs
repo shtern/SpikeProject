@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
       this.SpikeGraph = new System.Windows.Forms.PictureBox();
       this.NoStimCharacter = new System.Windows.Forms.PictureBox();
@@ -53,6 +54,8 @@
       this.загрузитьДанныеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.загрузитьТеплокартуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.экспортВBMPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.правкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.убратьХарактеристикуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.построитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.сравнениеСреднихToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.тепловыеКартыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,8 +64,8 @@
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.общиеНастройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.правкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.убратьХарактеристикуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.savaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.TopScroll)).BeginInit();
@@ -74,6 +77,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericAfterStim)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericNoStim)).BeginInit();
       this.menuStrip1.SuspendLayout();
+      this.contextMenuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // SpikeGraph
@@ -92,6 +96,7 @@
       // 
       this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
       this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+      this.NoStimCharacter.ContextMenuStrip = this.contextMenuStrip1;
       this.NoStimCharacter.Location = new System.Drawing.Point(10, 274);
       this.NoStimCharacter.Name = "NoStimCharacter";
       this.NoStimCharacter.Size = new System.Drawing.Size(1200, 320);
@@ -357,6 +362,21 @@
       this.экспортВBMPToolStripMenuItem.Text = "Экспорт в BMP";
       this.экспортВBMPToolStripMenuItem.Click += new System.EventHandler(this.экспортВBMPToolStripMenuItem_Click);
       // 
+      // правкаToolStripMenuItem
+      // 
+      this.правкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.убратьХарактеристикуToolStripMenuItem});
+      this.правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
+      this.правкаToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+      this.правкаToolStripMenuItem.Text = "Правка";
+      // 
+      // убратьХарактеристикуToolStripMenuItem
+      // 
+      this.убратьХарактеристикуToolStripMenuItem.Name = "убратьХарактеристикуToolStripMenuItem";
+      this.убратьХарактеристикуToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+      this.убратьХарактеристикуToolStripMenuItem.Text = "Убрать характеристику";
+      this.убратьХарактеристикуToolStripMenuItem.Click += new System.EventHandler(this.убратьХарактеристикуToolStripMenuItem_Click);
+      // 
       // построитьToolStripMenuItem
       // 
       this.построитьToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -424,20 +444,18 @@
       this.общиеНастройкиToolStripMenuItem.Text = "Общие настройки";
       this.общиеНастройкиToolStripMenuItem.Click += new System.EventHandler(this.общиеНастройкиToolStripMenuItem_Click);
       // 
-      // правкаToolStripMenuItem
+      // contextMenuStrip1
       // 
-      this.правкаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.убратьХарактеристикуToolStripMenuItem});
-      this.правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
-      this.правкаToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
-      this.правкаToolStripMenuItem.Text = "Правка";
+      this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.savaToolStripMenuItem});
+      this.contextMenuStrip1.Name = "contextMenuStrip1";
+      this.contextMenuStrip1.Size = new System.Drawing.Size(140, 26);
       // 
-      // убратьХарактеристикуToolStripMenuItem
+      // savaToolStripMenuItem
       // 
-      this.убратьХарактеристикуToolStripMenuItem.Name = "убратьХарактеристикуToolStripMenuItem";
-      this.убратьХарактеристикуToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-      this.убратьХарактеристикуToolStripMenuItem.Text = "Убрать характеристику";
-      this.убратьХарактеристикуToolStripMenuItem.Click += new System.EventHandler(this.убратьХарактеристикуToolStripMenuItem_Click);
+      this.savaToolStripMenuItem.Name = "savaToolStripMenuItem";
+      this.savaToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
+      this.savaToolStripMenuItem.Text = "save as bmp";
       // 
       // MainForm
       // 
@@ -473,6 +491,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.numericNoStim)).EndInit();
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
+      this.contextMenuStrip1.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -514,6 +533,8 @@
     private System.Windows.Forms.ToolStripMenuItem матрицуКорToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem правкаToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem убратьХарактеристикуToolStripMenuItem;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem savaToolStripMenuItem;
   }
 }
 

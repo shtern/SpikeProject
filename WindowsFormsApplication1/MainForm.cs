@@ -462,7 +462,7 @@ namespace SpikeProject
       int minsize = Math.Min(packet1.Count, packet2.Count);
       int size = (int)Math.Truncate(minsize * 0.8);
       int diff = minsize - size;
-      int max_M = Math.Abs((int)Math.Truncate(diff * 0.5));
+      int max_M = Math.Abs((int)Math.Truncate(diff * 0.7));
       int center1 = findMax(packet1), left_bord1 = (center1 - LeftMedian  > 0) ? center1 - LeftMedian : 0, right_bord1 = (center1 + RightMedian  < packet1.Count) ? center1 + RightMedian  : packet1.Count;
       int center2 = findMax(packet2), left_bord2 = (center2 - LeftMedian  > max_M) ? center2 - LeftMedian : max_M, right_bord2 = (center2 + RightMedian + max_M < packet2.Count) ? center2 + RightMedian  : packet2.Count-max_M;
       int left_bord = Math.Max(Math.Min(left_bord1, left_bord2),max_M), right_bord = Math.Min(right_bord1, right_bord2);
@@ -774,15 +774,16 @@ namespace SpikeProject
 
     private void StimCharacter_Paint(object sender, PaintEventArgs e)
     {
-      Brush brush = new SolidBrush(Color.Black);
-      Pen mainpen = new Pen(brush);
+      Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
+      Pen mainpen = new Pen(brush, 2);
       for (int SpikeIdx = 0; SpikeIdx < StimSpikeList.Count && SpikeIdx < numericAfterStim.Value; SpikeIdx++)
       {
         for (int i = 1; i < StimSpikeList[SpikeIdx].Count; i++)
         {
-          int Ciferka = 9;
-          brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
-          mainpen = new Pen(brush, 2);
+          //int Ciferka = 9;
+         // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
+         // mainpen = new Pen(brush, 2);
+          e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
           e.Graphics.DrawLine(mainpen,
             (float)StimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
@@ -804,15 +805,16 @@ namespace SpikeProject
 
     private void NoStimCharacter_Paint(object sender, PaintEventArgs e)
     {
-      Brush brush = new SolidBrush(Color.Black);
-      Pen mainpen = new Pen(brush);
+      Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
+      Pen mainpen = new Pen(brush,2);
       for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < nostimcount; SpikeIdx++)
       {
         for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
         {
-          int Ciferka = 9;
-          brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
-          mainpen = new Pen(brush, 2);
+         // int Ciferka = 9;
+         // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
+         // mainpen = new Pen(brush, 4);
+          e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
           e.Graphics.DrawLine(mainpen,
             (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
             (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
@@ -1105,7 +1107,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
