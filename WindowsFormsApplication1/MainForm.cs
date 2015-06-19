@@ -521,13 +521,31 @@ namespace SpikeProject
         signal2comp[i] = new alglib.complex(signal2[i].Item2);
 
 
-      alglib.complex[] outarr  = new alglib.complex[Math.Max(m,n)];
+      alglib.complex[] outarr = new alglib.complex[Math.Max(m, n)];
+      alglib.complex[] selfarr1 = new alglib.complex[m];
+      alglib.complex[] selfarr2 = new alglib.complex[m];
+      alglib.corrc1d(signal1comp, m, signal1comp, m, out selfarr1);
+      alglib.corrc1d(signal2comp, n, signal2comp, n, out selfarr2);
+
+      double self1 = double.MinValue;
+      double self2 = double.MinValue;
+
+      for (int i = 0; i < selfarr1.Count(); i++)
+        if (selfarr1[i].x > self1)
+          self1 = selfarr1[i].x;
+      for (int i = 0; i < selfarr2.Count(); i++)
+        if (selfarr2[i].x > self2)
+          self2 = selfarr2[i].x;
+
       alglib.corrc1d(signal1comp, m, signal2comp, n, out outarr);
+
+    
+
       double result = double.MinValue;
       for (int i = 0; i < outarr.Count(); i++)
         if (outarr[i].x > result)
           result = outarr[i].x;
-      return result;
+      return result/Math.Max(self1,self2);
       
     }
 
@@ -1107,7 +1125,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
