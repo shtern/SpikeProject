@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using System.IO;
+using ZedGraph;
 
 namespace SpikeProject
 {
@@ -44,6 +45,9 @@ namespace SpikeProject
     public List<SpikeDataPacket> StimSpikeList { get; set; }
     public List<SpikeDataPacket> NoStimSpikeList { get; set; }
     public SpikePeakList PeakList { get; set; }
+    private GraphPane pane_common;
+    private GraphPane pane_nostim;
+    private GraphPane pane_stim;
     private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
@@ -66,6 +70,27 @@ namespace SpikeProject
       NoStimSpikeList = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
       PeakList = new SpikePeakList();
+
+      pane_nostim = NoStimZedGraph.GraphPane;
+      pane_stim = StimZedGraph.GraphPane;
+      pane_common = CommonZedGraph.GraphPane;
+
+      pane_common.Title.Text = "Спайковые характеристики";
+      pane_common.XAxis.Title.Text = "Время, с";
+      pane_common.YAxis.Title.Text = "Интенсивность свечения, ед";
+      pane_common.CurveList.Clear();
+
+      pane_nostim.Title.Text = "До стимуляции";
+      pane_nostim.XAxis.Title.Text = "Время, с";
+      pane_nostim.YAxis.Title.Text = "Интенсивность свечения, ед";
+      pane_nostim.CurveList.Clear();
+
+      
+      pane_stim.Title.Text = "Во время стимуляции";
+      pane_stim.XAxis.Title.Text = "Время, с";
+      pane_stim.YAxis.Title.Text = "Интенсивность свечения, ед";
+      pane_stim.CurveList.Clear();
+
     }
 
     private void loadDialogOpen(int megacheck)
@@ -176,6 +201,7 @@ namespace SpikeProject
         buildStimAverage();
         SpikeGraph.Refresh();
         Refresh_Graphs();
+        DrawGraph();
       }
     }
 
@@ -431,11 +457,57 @@ namespace SpikeProject
       return fullcor;
     }
 
+    private void DrawGraph()
+    {
+      
+      
+        PointPairList list = new PointPairList();
+        for (int i = 0; i < GlobalData.Count; i++)
+        {
+          // добавим в список точку
+          list.Add(GlobalData[i].Item1, GlobalData[i].Item2);
+        }
+
+        pane_common.AddCurve("Спаковые характеристики", list, Color.Blue, SymbolType.None);
+      
+      CommonZedGraph.AxisChange();
+      CommonZedGraph.Invalidate();
+
+      for (int i = 0; i < NoStimSpikeList.Count; i++)
+      {
+        list = new PointPairList();
+        for (int j = 0; j < NoStimSpikeList[i].Count;j++ )
+        {
+          // добавим в список точку
+          list.Add(NoStimSpikeList[i][j].Item1, NoStimSpikeList[i][j].Item2);
+        }
+
+        pane_nostim.AddCurve("До стимуляции", list, Color.Blue, SymbolType.None);
+      }
+      NoStimZedGraph.AxisChange();
+      NoStimZedGraph.Invalidate();
+
+     
+
+      for (int i = 0; i < StimSpikeList.Count; i++)
+      {
+        list = new PointPairList();
+        for (int j = 0; j < StimSpikeList[i].Count; j++)
+        {
+          // добавим в список точку
+          list.Add(StimSpikeList[i][j].Item1, StimSpikeList[i][j].Item2);
+        }
+        pane_stim.AddCurve("После стимуляции", list, Color.Blue, SymbolType.None);
+      }
+      StimZedGraph.AxisChange();
+      StimZedGraph.Invalidate();
+
+    }
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
-      if (Properties.Settings.Default.movecharact)
-        packet2 = movePacket(packet1, packet2);
+      //if (Properties.Settings.Default.movecharact)
+       // packet2 = movePacket(packet1, packet2);
       double avg1 = countAverage(packet1);
       double avg2 = countAverage(packet2);
       double topsum = 0;
@@ -888,11 +960,11 @@ namespace SpikeProject
       SpikeGraph.Refresh();
     }
 
-    private void BottomScroll_Scroll(object sender, EventArgs e)
-    {
-      KxBottom = 50 + BottomScroll.Value * 10;
-      Refresh_Graphs();
-    }
+    //private void BottomScroll_Scroll(object sender, EventArgs e)
+    //{
+    //  KxBottom = 50 + BottomScroll.Value * 10;
+    //  Refresh_Graphs();
+    //}
 
     private void numericNo_ValueChanged(object sender, EventArgs e)
     {
@@ -1125,7 +1197,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
