@@ -114,7 +114,7 @@ namespace SpikeProject
             foreach (String path in dialog.FileNames)
             {
               FilePath = path;
-              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+              controlGroupBox.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
               loadData(FilePath,megacheck);
             }
             break;
@@ -201,7 +201,9 @@ namespace SpikeProject
         buildStimAverage();
         SpikeGraph.Refresh();
         Refresh_Graphs();
-        DrawGraph();
+        DrawCommonZedGraph();
+        DrawNoStimZedGraph();
+        DrawStimZedGraph();
       }
     }
 
@@ -457,52 +459,86 @@ namespace SpikeProject
       return fullcor;
     }
 
-    private void DrawGraph()
+    private void DrawCommonZedGraph()
     {
+      pane_common.CurveList.Clear();
+      pane_common.GraphObjList.Clear();
+      pane_common.Legend.IsVisible = false;
+      LineObj threshHoldLine = new LineObj(Color.Red,pane_common.XAxis.Scale.Min,threshold,pane_common.XAxis.Scale.Max,threshold);
+      pane_common.GraphObjList.Add(threshHoldLine);
+      PointPairList list = new PointPairList();
+      for (int i = 0; i < GlobalData.Count; i++)
+        list.Add(GlobalData[i].Item1, GlobalData[i].Item2);
       
-      
-        PointPairList list = new PointPairList();
-        for (int i = 0; i < GlobalData.Count; i++)
-        {
-          // добавим в список точку
-          list.Add(GlobalData[i].Item1, GlobalData[i].Item2);
-        }
 
-        pane_common.AddCurve("Спаковые характеристики", list, Color.Blue, SymbolType.None);
-      
+      pane_common.AddCurve(null, list, Color.Black, SymbolType.None);
+
       CommonZedGraph.AxisChange();
       CommonZedGraph.Invalidate();
 
-      for (int i = 0; i < NoStimSpikeList.Count; i++)
+    }
+
+    private void DrawNoStimZedGraph()
+    {
+      pane_nostim.CurveList.Clear();
+      PointPairList list = new PointPairList();
+      for (int i = 0; i < NoStimSpikeList.Count && i < numericNoStim.Value; i++)
       {
         list = new PointPairList();
-        for (int j = 0; j < NoStimSpikeList[i].Count;j++ )
-        {
-          // добавим в список точку
+        for (int j = 0; j < NoStimSpikeList[i].Count; j++)
           list.Add(NoStimSpikeList[i][j].Item1, NoStimSpikeList[i][j].Item2);
-        }
 
-        pane_nostim.AddCurve("До стимуляции", list, Color.Blue, SymbolType.None);
+
+        LineItem curve = pane_nostim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+        curve.Line.Width = 2;
+        curve.Line.IsSmooth = true;
+
+      }
+
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgToolStripMenuItem.Checked == true)
+      {
+        list = new PointPairList();
+        for (int j = 0; j < AveragePointsNoStim[(int)numericNoStim.Value - 1].Count; j++)
+          list.Add(AveragePointsNoStim[(int)numericNoStim.Value - 1][j].X, AveragePointsNoStim[(int)numericNoStim.Value - 1][j].Y);
+        LineItem curve = pane_nostim.AddCurve(null, list, Color.Blue, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
       }
       NoStimZedGraph.AxisChange();
       NoStimZedGraph.Invalidate();
 
-     
+    }
 
-      for (int i = 0; i < StimSpikeList.Count; i++)
+    private void DrawStimZedGraph()
+    {
+      pane_stim.CurveList.Clear();
+      PointPairList list = new PointPairList();
+      for (int i = 0; i < StimSpikeList.Count && i < numericAfterStim.Value; i++)
       {
         list = new PointPairList();
-        for (int j = 0; j < StimSpikeList[i].Count; j++)
-        {
-          // добавим в список точку
+        for (int j = 0; j < StimSpikeList[i].Count; j++)      
           list.Add(StimSpikeList[i][j].Item1, StimSpikeList[i][j].Item2);
-        }
-        pane_stim.AddCurve("После стимуляции", list, Color.Blue, SymbolType.None);
+
+        LineItem curve = pane_stim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+        curve.Line.Width = 2;
+        curve.Line.IsSmooth = true;
+      }
+
+      if (AveragePointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AveragePointsStim.Count && AvgToolStripMenuItem.Checked == true)
+      {
+        list = new PointPairList();
+        for (int j = 0; j < AveragePointsStim[(int)numericAfterStim.Value - 1].Count; j++)
+          list.Add(AveragePointsStim[(int)numericAfterStim.Value - 1][j].X, AveragePointsStim[(int)numericAfterStim.Value - 1][j].Y);
+        LineItem curve = pane_stim.AddCurve(null, list, Color.Violet, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
       }
       StimZedGraph.AxisChange();
       StimZedGraph.Invalidate();
 
     }
+
+
 
     public double countCorr(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
@@ -946,6 +982,9 @@ namespace SpikeProject
     {
       NoStimCharacter.Refresh();
       StimCharacter.Refresh();
+      DrawCommonZedGraph();
+      DrawNoStimZedGraph();
+      DrawStimZedGraph();
     }
 
     public void RecountMaxScroll()
@@ -954,11 +993,11 @@ namespace SpikeProject
       numericAfterStim.Maximum = StimSpikeList.Count;
     }
 
-    private void TopScroll_Scroll(object sender, EventArgs e)
-    {
-      KxTop = 1 + TopScroll.Value / 2;
-      SpikeGraph.Refresh();
-    }
+    //private void TopScroll_Scroll(object sender, EventArgs e)
+    //{
+    //  KxTop = 1 + TopScroll.Value / 2;
+    //  SpikeGraph.Refresh();
+    //}
 
     //private void BottomScroll_Scroll(object sender, EventArgs e)
     //{
@@ -969,11 +1008,13 @@ namespace SpikeProject
     private void numericNo_ValueChanged(object sender, EventArgs e)
     {
       NoStimCharacter.Refresh();
+      DrawNoStimZedGraph();
     }
 
     private void numericAfterStim_ValueChanged(object sender, EventArgs e)
     {
       StimCharacter.Refresh();
+      DrawStimZedGraph();
     }
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)
@@ -1073,7 +1114,7 @@ namespace SpikeProject
         MapList.Add(separator);
         MapList.AddRange(StimSpikeList);
 
-        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, cellName.Text) { Owner = this };
+        HeatPictureForm hpf = new HeatPictureForm(NoStimSpikeList, StimSpikeList, controlGroupBox.Text) { Owner = this };
         hpf.Show(this);
 
       }
@@ -1098,13 +1139,13 @@ namespace SpikeProject
         System.Diagnostics.Process.Start(@savepath);
       Bitmap bmp = new Bitmap(NoStimCharacter.Width, NoStimCharacter.Height);
       NoStimCharacter.DrawToBitmap(bmp, NoStimCharacter.ClientRectangle);
-      bmp.Save(savepath + "\\" + cellName.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      bmp.Save(savepath + "\\" + controlGroupBox.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
       bmp = new Bitmap(StimCharacter.Width, StimCharacter.Height);
       StimCharacter.DrawToBitmap(bmp, StimCharacter.ClientRectangle);
-      bmp.Save(savepath + "\\" + cellName.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      bmp.Save(savepath + "\\" + controlGroupBox.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
       bmp = new Bitmap(SpikeGraph.Width, SpikeGraph.Height);
       SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
-      bmp.Save(savepath + "\\" + cellName.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      bmp.Save(savepath + "\\" + controlGroupBox.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
 
     }
 
@@ -1142,7 +1183,7 @@ namespace SpikeProject
             foreach (String path in dialog.FileNames)
             {
               FilePath = path;
-              cellName.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
+              controlGroupBox.Text = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName);
               loadData(FilePath,1);
 
             }
@@ -1197,7 +1238,7 @@ namespace SpikeProject
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
           if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
           else 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
         fullcor.Add(row);
