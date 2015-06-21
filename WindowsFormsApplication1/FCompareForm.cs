@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using ZedGraph;
 
 namespace SpikeProject
 {
@@ -36,12 +37,26 @@ namespace SpikeProject
     List<double> moveList;
     double Corr;
     int left_bord=0, right_bord=0, max_M=0;
+    GraphPane compare_pane;
+    GraphPane normalized_compare_pane;
+    
 
     public FCompareForm(PointList plist1, PointList plist2)
     {
       InitializeComponent();
       PList1 = plist1;
       PList2 = plist2;
+      compare_pane = compareZedGraph.GraphPane;
+      compare_pane.Title.Text = "Сравнение средних до и во время стимуляции";
+      compare_pane.XAxis.Title.Text = "Время, с";
+      compare_pane.YAxis.Title.Text = "Интенсивность свечения, ед";
+
+      normalized_compare_pane = normalizedCompareZedGraph.GraphPane;
+      normalized_compare_pane.Title.Text = "Сравнение средних, нормированных по амплитуде";
+      normalized_compare_pane.XAxis.Title.Text = "Время, с";
+      normalized_compare_pane.YAxis.Title.Text = "Интенсивность свечения, ед";
+      Draw_Compare();
+      Draw_Compare_Normalized();
     }
 
     public FCompareForm(SpikeDataPacket list1, SpikeDataPacket list2, int num1, int num2, double corr)
@@ -82,6 +97,18 @@ namespace SpikeProject
 
       foreach (SpikeData data in List2)
         PList2.Add(new PointF((float)data.Item1, (float)data.Item2));
+
+      compare_pane = compareZedGraph.GraphPane;
+      compare_pane.Title.Text = "Сравнение средних до и во время стимуляции";
+      compare_pane.XAxis.Title.Text = "Время, с";
+      compare_pane.YAxis.Title.Text = "Интенсивность свечения, ед";
+
+      normalized_compare_pane = normalizedCompareZedGraph.GraphPane;
+      normalized_compare_pane.Title.Text = "Сравнение средних, нормированных по амплитуде";
+      normalized_compare_pane.XAxis.Title.Text = "Время, с";
+      normalized_compare_pane.YAxis.Title.Text = "Интенсивность свечения, ед";
+      Draw_Compare();
+      Draw_Compare_Normalized();
 
       compareLabel.Text = "Сравнение характеристики №" + Num1 + " с характеристикой №" + Num2;
       NormalizedLabel.Text = "Значение корелляции " + CorrOrig;
@@ -259,7 +286,8 @@ namespace SpikeProject
       PointList Normalized_list = new PointList();
       for (int i = 0; i < list.Count; i++)
       {
-        PointF point = new PointF(list[i].X*Kx, NormalizedGraph.Height - ((list[i].Y)/ymax) * 200 );
+        //PointF point = new PointF(list[i].X*Kx, NormalizedGraph.Height - ((list[i].Y)/ymax) * 200 );
+        PointF point = new PointF(list[i].X, list[i].Y/ ymax);
         Normalized_list.Add(point);
       }
 
@@ -267,6 +295,69 @@ namespace SpikeProject
       return Normalized_list;
     }
 
+    private void Draw_Compare()
+    {
+      compare_pane.CurveList.Clear();
+      PointPairList list = new PointPairList();
+      for (int i = 0; i < PList1.Count; i++)
+      {
+
+        list.Add(PList1[i].X, PList1[i].Y);
+
+
+        LineItem curve = compare_pane.AddCurve(null, list, Color.Blue, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+      }
+
+      list = new PointPairList();
+      for (int i = 0; i < PList2.Count; i++)
+      {
+
+        list.Add(PList2[i].X, PList2[i].Y);
+
+
+        LineItem curve = compare_pane.AddCurve(null, list, Color.Violet, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+      }
+      compareZedGraph.AxisChange();
+      compareZedGraph.Invalidate();
+
+    }
+
+    private void Draw_Compare_Normalized()
+    {
+      normalized_compare_pane.CurveList.Clear();
+      PointPairList list = new PointPairList();
+      PointList plist = Normalize(PList1);
+      for (int i = 0; i < plist.Count; i++)
+      {
+
+        list.Add(plist[i].X, plist[i].Y);
+
+
+        LineItem curve = normalized_compare_pane.AddCurve(null, list, Color.Blue, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+      }
+
+      list = new PointPairList();
+      plist = Normalize(PList2);
+      for (int i = 0; i < plist.Count; i++)
+      {
+
+        list.Add(plist[i].X, plist[i].Y);
+
+
+        LineItem curve = normalized_compare_pane.AddCurve(null, list, Color.Violet, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+      }
+      normalizedCompareZedGraph.AxisChange();
+      normalizedCompareZedGraph.Invalidate();
+
+    }
     private void CompareGraph_Paint(object sender, PaintEventArgs e)
     {
       Brush brush;
@@ -292,6 +383,9 @@ namespace SpikeProject
         if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
       }
     }
+
+
+
 
     private void NormalizedGraph_Paint(object sender, PaintEventArgs e)
     {
