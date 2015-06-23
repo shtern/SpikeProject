@@ -66,9 +66,25 @@ namespace SpikeProject
       {
         действиеПриНажатииToolStripMenuItem.Visible = false;
       }
-      
-      CellName = cellname;
+
       this.Text = cellname;
+      CellName = cellname;
+      if (CellName=="Корреляция")
+        switch (Properties.Settings.Default.methodtype)
+        {
+          case 0:
+            this.Text = "Коэффициент Пирсона";
+            break;
+
+          case 1:
+            this.Text = "Коэффициент Пирсона со сдвигом";
+            break;
+          case 2:
+            this.Text = "Кросс-корреляция";
+            break;
+        }
+
+      
       NoStimBmp = DrawTask(NoStimList);
       StimBmp = DrawTask(StimList);
       NormNoStimBmp = DrawTask(NormNoStimList);

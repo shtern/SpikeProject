@@ -21,8 +21,8 @@ namespace SpikeProject
   public partial class FCompareForm : Form
   {
     #region Константы
-    int Kx = 300;
-    int Ky = 2000;
+    //int Kx = 300;
+    //int Ky = 2000;
     double eps = 1e-10;
     #endregion
 

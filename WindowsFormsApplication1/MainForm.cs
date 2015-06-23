@@ -48,6 +48,7 @@ namespace SpikeProject
     private GraphPane pane_common;
     private GraphPane pane_nostim;
     private GraphPane pane_stim;
+    public SpikeDataPacket approxlist = new SpikeDataPacket();
     private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
@@ -70,6 +71,7 @@ namespace SpikeProject
       NoStimSpikeList = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
       PeakList = new SpikePeakList();
+
 
       pane_nostim = NoStimZedGraph.GraphPane;
       pane_stim = StimZedGraph.GraphPane;
@@ -186,6 +188,24 @@ namespace SpikeProject
       threshold = countThreshold();
       prev_threshold = threshold;
       initthreshold = threshold;
+      buildApproxList();
+      List<double> xapprox = new List<double>(); 
+      List<double> yapprox = new List<double>();
+      foreach (SpikeData approx in approxlist)
+      {
+        xapprox.Add(approx.Item1);
+        yapprox.Add(approx.Item2);
+      }
+      double[] xapproxarr = xapprox.ToArray();
+      double[] yapproxarr = yapprox.ToArray();
+
+      for (int i = 0; i < GlobalData.Count; i++) {
+        double diff = NaturalCubicSpline(xapproxarr, yapproxarr, GlobalData[i].Item1);
+        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2-diff);
+      }
+
+      
+
       if (megacheck == 1)
       {
         MegaMapList.Add((GlobalData));
@@ -407,6 +427,103 @@ namespace SpikeProject
       numericAfterStim.Value = StimSpikeList.Count;
       KxBottom = countKx();
       
+    }
+
+    private void buildApproxList()
+    {
+      approxlist = new SpikeDataPacket();
+
+      int windowsize =(int)Math.Truncate((double)GlobalData.Count / 20);
+      int i = 0;
+      while (i+windowsize < GlobalData.Count)
+      {
+        double x_min = 0;
+        double y_min = double.MaxValue;
+        SpikeDataPacket list = GlobalData.GetRange(i, windowsize);
+        foreach (SpikeData data in list)
+          if (data.Item2 < y_min)
+          {
+            y_min = data.Item2;
+            x_min = data.Item1;
+          }
+        approxlist.Add(new SpikeData(x_min,y_min));
+        i+=windowsize;
+
+      }
+    }
+
+    public static double NewtonDividedDifferenceInterpolation(double[] x,double[] y, double xval)
+    {
+      double yval;
+      int size = x.Length;
+      double[] tarray = new double[size];
+      for (int i = 0; i < size; i++)
+      {
+        tarray[i] = y[i];
+      }
+      for (int i = 0; i < size - 1; i++)
+      {
+        for (int j = size - 1; j > i; j--)
+        {
+          tarray[j] = (tarray[j - 1] - tarray[j]) / (x[j - 1 - i] - x[j]);
+        }
+      }
+      yval = tarray[size - 1];
+      for (int i = size - 2; i >= 0; i--)
+      {
+        yval = tarray[i] + (xval - x[i]) * yval;
+      }
+      return yval;
+    }
+
+    public double NaturalCubicSpline(double[] x, double[] y, double xvalue)
+    {
+      int i, j, m;
+      double S = 0.0;
+      double delta = 0.0;
+      int n = 4; //max number of coefficients: A,B,C,D for cubic spline
+      double[] A = new double[n + 1];
+      double[] B = new double[n + 1];
+      double[] C = new double[n + 1];
+      double[] D = new double[n + 1];
+      double[] H = new double[n + 1];
+      double[] XA = new double[n + 1];
+      double[] XL = new double[n + 1];
+      double[] XU = new double[n + 1];
+      double[] XZ = new double[n + 1];
+      for (i = 0; i < n; i++) A[i] = y[i];
+      m = n - 1;
+      for (i = 0; i <= m; i++)
+        H[i] = x[i + 1] - x[i];
+      for (i = 1; i <= m; i++)
+        XA[i] = 3 * (A[i + 1] * H[i - 1] - A[i] * (x[i + 1] - x[i - 1]) +
+        A[i - 1] * H[i]) / (H[i] * H[i - 1]);
+      XL[0] = 1; XU[0] = 0; XZ[0] = 0;
+      for (i = 1; i <= m; i++)
+      {
+        XL[i] = 2 * (x[i + 1] - x[i - 1]) - H[i - 1] * XU[i - 1];
+        XU[i] = H[i] / XL[i];
+        XZ[i] = (XA[i] - H[i - 1] * XZ[i - 1]) / XL[i];
+      }
+      XL[n] = 1; XZ[n] = 0; C[n] = 0;
+      for (i = 0; i <= m; i++)
+      {
+        j = m - i;
+        C[j] = XZ[j] - XU[j] * C[j + 1];
+        B[j] = (A[j + 1] - A[j]) / H[j] - H[j] * (C[j + 1] + 2 * C[j]) / 3;
+        D[j] = (C[j + 1] - C[j]) / (3 * H[j]);
+      }
+
+     
+      for (i = 0; i <= m; i++)
+      {
+        if (xvalue >= x[i] && xvalue < x[i + 1])
+        {
+          delta = xvalue - x[i];
+          S = A[i] + B[i] * delta + C[i] * delta * delta + D[i] * delta * delta * delta;
+        }
+      }
+      return S;
     }
 
 
