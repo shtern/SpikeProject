@@ -187,8 +187,10 @@ namespace SpikeProject
       threshold = countThreshold();
       prev_threshold = threshold;
       initthreshold = threshold;
+
+
       SpikeDataPacket approxlist = buildApproxList(GlobalData);
-      List<double> xapprox = new List<double>(); 
+      List<double> xapprox = new List<double>();
       List<double> yapprox = new List<double>();
       foreach (SpikeData approx in approxlist)
       {
@@ -198,12 +200,12 @@ namespace SpikeProject
       double[] xapproxarr = xapprox.ToArray();
       double[] yapproxarr = yapprox.ToArray();
 
-      for (int i = 0; i < GlobalData.Count; i++) {
+      for (int i = 0; i < GlobalData.Count; i++)
+      {
         double diff = NaturalCubicSpline(xapproxarr, yapproxarr, GlobalData[i].Item1);
-        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2-diff);
+        GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - diff);
       }
 
-      
 
       if (megacheck == 1)
       {
@@ -428,27 +430,28 @@ namespace SpikeProject
       
     }
 
+    private SpikeData findMin(SpikeDataPacket list)
+    {
+      double x_min = 0;
+      double y_min = double.MaxValue;
+      foreach (SpikeData data in list)
+        if (data.Item2 < y_min)
+        {
+          y_min = data.Item2;
+          x_min = data.Item1;
+        }
+      return new SpikeData(x_min, y_min);
+    }
+
     private SpikeDataPacket buildApproxList(SpikeDataPacket inlist)
     {
       SpikeDataPacket approxlist = new SpikeDataPacket();
+      approxlist.Add(findMin(GlobalData.GetRange(0,70)));
 
       int windowsize = (int)Math.Truncate((double)inlist.Count / 7);
-      int i = 0;
-      while (i + windowsize < inlist.Count)
-      {
-        double x_min = 0;
-        double y_min = double.MaxValue;
-        SpikeDataPacket list = inlist.GetRange(i, windowsize);
-        foreach (SpikeData data in list)
-          if (data.Item2 < y_min)
-          {
-            y_min = data.Item2;
-            x_min = data.Item1;
-          }
-        approxlist.Add(new SpikeData(x_min,y_min));
-        i+=windowsize;
-
-      }
+      for (int i = 0; i + windowsize < inlist.Count; i += windowsize)
+        approxlist.Add(findMin(inlist.GetRange(i, windowsize)));
+      approxlist.Add(findMin(GlobalData.GetRange(GlobalData.Count-101, 100)));
       return approxlist;
     }
 
@@ -473,6 +476,26 @@ namespace SpikeProject
       {
         yval = tarray[i] + (xval - x[i]) * yval;
       }
+      return yval;
+    }
+
+    public static double LagrangeInterpolation(double[] x, double[] y,double xval)
+    {
+      double yval = 0.0;
+      double Products = y[0];
+      for (int i = 0; i < x.Length; i++)
+      {
+        Products = y[i];
+        for (int j = 0; j < x.Length; j++)
+        {
+          if (i != j)
+          {
+            Products *= (xval - x[j]) / (x[i] - x[j]);
+          }
+        }
+        yval += Products;
+      }
+      if (double.IsNaN(yval)) return 0;
       return yval;
     }
 
@@ -523,6 +546,7 @@ namespace SpikeProject
           S = A[i] + B[i] * delta + C[i] * delta * delta + D[i] * delta * delta * delta;
         }
       }
+      if (double.IsNaN(S)) return 0;
       return S;
     }
 
@@ -590,6 +614,27 @@ namespace SpikeProject
       
 
       pane_common.AddCurve(null, list, Color.Black, SymbolType.None);
+
+      //list = new PointPairList();
+
+      //SpikeDataPacket approxlist = buildApproxList(GlobalData);
+      //List<double> xapprox = new List<double>();
+      //List<double> yapprox = new List<double>();
+      //foreach (SpikeData approx in approxlist)
+      //{
+      //  xapprox.Add(approx.Item1);
+      //  yapprox.Add(approx.Item2);
+      //}
+      //double[] xapproxarr = xapprox.ToArray();
+      //double[] yapproxarr = yapprox.ToArray();
+
+      //for (int i = 0; i < GlobalData.Count; i++)
+      //{
+      //  double diff = NaturalCubicSpline(xapproxarr, yapproxarr, GlobalData[i].Item1);
+      //  list.Add(GlobalData[i].Item1, diff);
+      //}
+
+      //pane_common.AddCurve(null, list, Color.Orange, SymbolType.None);
 
       CommonZedGraph.AxisChange();
       CommonZedGraph.Invalidate();
