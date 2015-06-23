@@ -48,7 +48,6 @@ namespace SpikeProject
     private GraphPane pane_common;
     private GraphPane pane_nostim;
     private GraphPane pane_stim;
-    public SpikeDataPacket approxlist = new SpikeDataPacket();
     private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
@@ -188,7 +187,7 @@ namespace SpikeProject
       threshold = countThreshold();
       prev_threshold = threshold;
       initthreshold = threshold;
-      buildApproxList();
+      SpikeDataPacket approxlist = buildApproxList(GlobalData);
       List<double> xapprox = new List<double>(); 
       List<double> yapprox = new List<double>();
       foreach (SpikeData approx in approxlist)
@@ -429,17 +428,17 @@ namespace SpikeProject
       
     }
 
-    private void buildApproxList()
+    private SpikeDataPacket buildApproxList(SpikeDataPacket inlist)
     {
-      approxlist = new SpikeDataPacket();
+      SpikeDataPacket approxlist = new SpikeDataPacket();
 
-      int windowsize =(int)Math.Truncate((double)GlobalData.Count / 20);
+      int windowsize = (int)Math.Truncate((double)inlist.Count / 7);
       int i = 0;
-      while (i+windowsize < GlobalData.Count)
+      while (i + windowsize < inlist.Count)
       {
         double x_min = 0;
         double y_min = double.MaxValue;
-        SpikeDataPacket list = GlobalData.GetRange(i, windowsize);
+        SpikeDataPacket list = inlist.GetRange(i, windowsize);
         foreach (SpikeData data in list)
           if (data.Item2 < y_min)
           {
@@ -450,6 +449,7 @@ namespace SpikeProject
         i+=windowsize;
 
       }
+      return approxlist;
     }
 
     public static double NewtonDividedDifferenceInterpolation(double[] x,double[] y, double xval)
@@ -481,7 +481,7 @@ namespace SpikeProject
       int i, j, m;
       double S = 0.0;
       double delta = 0.0;
-      int n = 4; //max number of coefficients: A,B,C,D for cubic spline
+      int n = 5; //max number of coefficients: A,B,C,D for cubic spline
       double[] A = new double[n + 1];
       double[] B = new double[n + 1];
       double[] C = new double[n + 1];
@@ -525,6 +525,7 @@ namespace SpikeProject
       }
       return S;
     }
+
 
 
     public List<SpikeDataPacket> doCorrCompare()
