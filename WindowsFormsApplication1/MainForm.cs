@@ -199,11 +199,11 @@ namespace SpikeProject
         buildCharactList();
         buildNoStimAverage();
         buildStimAverage();
-        SpikeGraph.Refresh();
+        //SpikeGraph.Refresh();
         Refresh_Graphs();
-        DrawCommonZedGraph();
-        DrawNoStimZedGraph();
-        DrawStimZedGraph();
+        //DrawCommonZedGraph();
+        //DrawNoStimZedGraph();
+        //DrawStimZedGraph();
       }
     }
 
@@ -894,7 +894,7 @@ namespace SpikeProject
 
     private void Form1_SizeChanged(object sender, EventArgs e)
     {
-      SpikeGraph.Refresh();
+      //SpikeGraph.Refresh();
       Refresh_Graphs();
     }
 
@@ -980,8 +980,8 @@ namespace SpikeProject
 
     public void Refresh_Graphs()
     {
-      NoStimCharacter.Refresh();
-      StimCharacter.Refresh();
+      //NoStimCharacter.Refresh();
+      //StimCharacter.Refresh();
       DrawCommonZedGraph();
       DrawNoStimZedGraph();
       DrawStimZedGraph();
@@ -1007,13 +1007,13 @@ namespace SpikeProject
 
     private void numericNo_ValueChanged(object sender, EventArgs e)
     {
-      NoStimCharacter.Refresh();
+      //NoStimCharacter.Refresh();
       DrawNoStimZedGraph();
     }
 
     private void numericAfterStim_ValueChanged(object sender, EventArgs e)
     {
-      StimCharacter.Refresh();
+      //StimCharacter.Refresh();
       DrawStimZedGraph();
     }
 
@@ -1029,7 +1029,7 @@ namespace SpikeProject
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;
-        SpikeGraph.Refresh();
+        //SpikeGraph.Refresh();
         Refresh_Graphs();
       }
 
@@ -1047,14 +1047,14 @@ namespace SpikeProject
         buildCharactList();
         buildNoStimAverage();
         buildStimAverage();
-        SpikeGraph.Refresh();
+        //SpikeGraph.Refresh();
         Refresh_Graphs();
       }
       if (NoStimSpikeList.Count > 0)
       {
         numericAfterStim.Value = numericAfterStim.Maximum;
         numericNoStim.Value = numericNoStim.Maximum;
-        SpikeGraph.Refresh();
+        //SpikeGraph.Refresh();
         Refresh_Graphs();
       }
 
@@ -1092,7 +1092,15 @@ namespace SpikeProject
     {
       if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
       {
-        FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
+        SpikeDataPacket avglist1 = new SpikeDataPacket();
+        SpikeDataPacket avglist2 = new SpikeDataPacket();
+        foreach (PointF point in AveragePointsNoStim[(int)numericNoStim.Value - 1])
+          avglist1.Add(new SpikeData(point.X, point.Y));
+
+        foreach (PointF point in AveragePointsStim[(int)numericAfterStim.Value - 1])
+          avglist2.Add(new SpikeData(point.X, point.Y));
+        //FCompareForm compareForm = new FCompareForm(AveragePointsNoStim[(int)numericNoStim.Value - 1], AveragePointsStim[(int)numericAfterStim.Value - 1]);
+        FCompareForm compareForm = new FCompareForm(avglist1, avglist2);
         compareForm.Show(this);
       }
       else
@@ -1237,10 +1245,23 @@ namespace SpikeProject
       {
         SpikeDataPacket row = new SpikeDataPacket();
         for (int j = 0; j < fullist.Count; j++)
-          if (Properties.Settings.Default.movecharact)
-            row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
-          else 
+        
+           switch (Properties.Settings.Default.methodtype){
+            case 2: 
+              row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
+              Properties.Settings.Default.moveforcorr = false;
+              break;
+
+            case 1:
+              row.Add(new SpikeData(0, countCorrv2(fullist[i], fullist[j])));
+              Properties.Settings.Default.moveforcorr = true;
+              break;
+
+            case 0: 
             row.Add(new SpikeData(0, countCorr(fullist[i], fullist[j])));
+            Properties.Settings.Default.moveforcorr = false;
+              break;
+        }
         fullcor.Add(row);
       }
 

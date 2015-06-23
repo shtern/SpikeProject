@@ -49,13 +49,25 @@ namespace SpikeProject.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool movecharact {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int methodtype {
             get {
-                return ((bool)(this["movecharact"]));
+                return ((int)(this["methodtype"]));
             }
             set {
-                this["movecharact"] = value;
+                this["methodtype"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool moveforcorr {
+            get {
+                return ((bool)(this["moveforcorr"]));
+            }
+            set {
+                this["moveforcorr"] = value;
             }
         }
     }

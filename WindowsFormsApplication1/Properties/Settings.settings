@@ -8,8 +8,11 @@
     <Setting Name="stimstart" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">11</Value>
     </Setting>
-    <Setting Name="movecharact" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="methodtype" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="moveforcorr" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

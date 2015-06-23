@@ -29,47 +29,17 @@
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.CompareGraph = new System.Windows.Forms.PictureBox();
-      this.NormalizedGraph = new System.Windows.Forms.PictureBox();
       this.compareLabel = new System.Windows.Forms.Label();
-      this.NormalizedLabel = new System.Windows.Forms.Label();
       this.moveNumeric = new System.Windows.Forms.NumericUpDown();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.отображатьСоСдвигомToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.compareZedGraph = new ZedGraph.ZedGraphControl();
       this.normalizedCompareZedGraph = new ZedGraph.ZedGraphControl();
-      ((System.ComponentModel.ISupportInitialize)(this.CompareGraph)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.NormalizedGraph)).BeginInit();
+      this.CorrValueText = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.moveNumeric)).BeginInit();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // CompareGraph
-      // 
-      this.CompareGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.CompareGraph.BackColor = System.Drawing.Color.White;
-      this.CompareGraph.Location = new System.Drawing.Point(12, 57);
-      this.CompareGraph.Name = "CompareGraph";
-      this.CompareGraph.Size = new System.Drawing.Size(745, 342);
-      this.CompareGraph.TabIndex = 0;
-      this.CompareGraph.TabStop = false;
-      this.CompareGraph.Visible = false;
-      this.CompareGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.CompareGraph_Paint);
-      // 
-      // NormalizedGraph
-      // 
-      this.NormalizedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.NormalizedGraph.BackColor = System.Drawing.Color.White;
-      this.NormalizedGraph.Location = new System.Drawing.Point(12, 442);
-      this.NormalizedGraph.Name = "NormalizedGraph";
-      this.NormalizedGraph.Size = new System.Drawing.Size(745, 342);
-      this.NormalizedGraph.TabIndex = 1;
-      this.NormalizedGraph.TabStop = false;
-      this.NormalizedGraph.Visible = false;
-      this.NormalizedGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.NormalizedGraph_Paint);
       // 
       // compareLabel
       // 
@@ -79,15 +49,7 @@
       this.compareLabel.Size = new System.Drawing.Size(306, 13);
       this.compareLabel.TabIndex = 2;
       this.compareLabel.Text = "Сравнение средних до стимуляции и во время стимуляции";
-      // 
-      // NormalizedLabel
-      // 
-      this.NormalizedLabel.AutoSize = true;
-      this.NormalizedLabel.Location = new System.Drawing.Point(13, 417);
-      this.NormalizedLabel.Name = "NormalizedLabel";
-      this.NormalizedLabel.Size = new System.Drawing.Size(265, 13);
-      this.NormalizedLabel.TabIndex = 3;
-      this.NormalizedLabel.Text = "Сравнение средних, нормированных по амплитуде";
+      this.compareLabel.Visible = false;
       // 
       // moveNumeric
       // 
@@ -120,17 +82,16 @@
       // 
       // отображатьСоСдвигомToolStripMenuItem
       // 
-      this.отображатьСоСдвигомToolStripMenuItem.Checked = true;
-      this.отображатьСоСдвигомToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
       this.отображатьСоСдвигомToolStripMenuItem.Name = "отображатьСоСдвигомToolStripMenuItem";
       this.отображатьСоСдвигомToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-      this.отображатьСоСдвигомToolStripMenuItem.Text = "Отображать со сдвигом";
+      this.отображатьСоСдвигомToolStripMenuItem.Text = "Двигать характеристики";
+      this.отображатьСоСдвигомToolStripMenuItem.Click += new System.EventHandler(this.отображатьСоСдвигомToolStripMenuItem_Click);
       // 
       // compareZedGraph
       // 
       this.compareZedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.compareZedGraph.Location = new System.Drawing.Point(12, 57);
+      this.compareZedGraph.Location = new System.Drawing.Point(9, 58);
       this.compareZedGraph.Name = "compareZedGraph";
       this.compareZedGraph.ScrollGrace = 0D;
       this.compareZedGraph.ScrollMaxX = 0D;
@@ -139,14 +100,14 @@
       this.compareZedGraph.ScrollMinX = 0D;
       this.compareZedGraph.ScrollMinY = 0D;
       this.compareZedGraph.ScrollMinY2 = 0D;
-      this.compareZedGraph.Size = new System.Drawing.Size(745, 342);
+      this.compareZedGraph.Size = new System.Drawing.Size(750, 360);
       this.compareZedGraph.TabIndex = 6;
       // 
       // normalizedCompareZedGraph
       // 
       this.normalizedCompareZedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.normalizedCompareZedGraph.Location = new System.Drawing.Point(12, 442);
+      this.normalizedCompareZedGraph.Location = new System.Drawing.Point(9, 424);
       this.normalizedCompareZedGraph.Name = "normalizedCompareZedGraph";
       this.normalizedCompareZedGraph.ScrollGrace = 0D;
       this.normalizedCompareZedGraph.ScrollMaxX = 0D;
@@ -155,8 +116,18 @@
       this.normalizedCompareZedGraph.ScrollMinX = 0D;
       this.normalizedCompareZedGraph.ScrollMinY = 0D;
       this.normalizedCompareZedGraph.ScrollMinY2 = 0D;
-      this.normalizedCompareZedGraph.Size = new System.Drawing.Size(745, 342);
+      this.normalizedCompareZedGraph.Size = new System.Drawing.Size(750, 360);
       this.normalizedCompareZedGraph.TabIndex = 7;
+      // 
+      // CorrValueText
+      // 
+      this.CorrValueText.AutoSize = true;
+      this.CorrValueText.Location = new System.Drawing.Point(580, 33);
+      this.CorrValueText.Name = "CorrValueText";
+      this.CorrValueText.Size = new System.Drawing.Size(118, 13);
+      this.CorrValueText.TabIndex = 3;
+      this.CorrValueText.Text = "Значение корелляции";
+      this.CorrValueText.Visible = false;
       // 
       // FCompareForm
       // 
@@ -166,17 +137,13 @@
       this.Controls.Add(this.normalizedCompareZedGraph);
       this.Controls.Add(this.compareZedGraph);
       this.Controls.Add(this.moveNumeric);
-      this.Controls.Add(this.NormalizedLabel);
+      this.Controls.Add(this.CorrValueText);
       this.Controls.Add(this.compareLabel);
-      this.Controls.Add(this.NormalizedGraph);
-      this.Controls.Add(this.CompareGraph);
       this.Controls.Add(this.menuStrip1);
       this.MainMenuStrip = this.menuStrip1;
       this.MinimumSize = new System.Drawing.Size(783, 806);
       this.Name = "FCompareForm";
       this.Text = "Сравнение спайковых характеристик";
-      ((System.ComponentModel.ISupportInitialize)(this.CompareGraph)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.NormalizedGraph)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.moveNumeric)).EndInit();
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
@@ -187,15 +154,13 @@
 
     #endregion
 
-    private System.Windows.Forms.PictureBox CompareGraph;
-    private System.Windows.Forms.PictureBox NormalizedGraph;
     private System.Windows.Forms.Label compareLabel;
-    private System.Windows.Forms.Label NormalizedLabel;
     private System.Windows.Forms.NumericUpDown moveNumeric;
     private System.Windows.Forms.MenuStrip menuStrip1;
     private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem отображатьСоСдвигомToolStripMenuItem;
     private ZedGraph.ZedGraphControl compareZedGraph;
     private ZedGraph.ZedGraphControl normalizedCompareZedGraph;
+    private System.Windows.Forms.Label CorrValueText;
   }
 }
