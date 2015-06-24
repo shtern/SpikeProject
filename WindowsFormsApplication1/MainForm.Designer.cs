@@ -54,6 +54,11 @@
       this.сравнениеСреднихToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.тепловыеКартыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.матрицуКорToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.обработкаСигналаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.скользящееСреднееToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.параметрToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.MAParamTB = new System.Windows.Forms.ToolStripTextBox();
+      this.нормированиеПоОсиYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.AvgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.openDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -243,6 +248,7 @@
             this.файлToolStripMenuItem,
             this.правкаToolStripMenuItem,
             this.построитьToolStripMenuItem,
+            this.обработкаСигналаToolStripMenuItem,
             this.настройкиToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
@@ -326,6 +332,48 @@
       this.матрицуКорToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
       this.матрицуКорToolStripMenuItem.Text = "Матрицу корреляции";
       this.матрицуКорToolStripMenuItem.Click += new System.EventHandler(this.матрицуКорToolStripMenuItem_Click);
+      // 
+      // обработкаСигналаToolStripMenuItem
+      // 
+      this.обработкаСигналаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.скользящееСреднееToolStripMenuItem,
+            this.нормированиеПоОсиYToolStripMenuItem});
+      this.обработкаСигналаToolStripMenuItem.Name = "обработкаСигналаToolStripMenuItem";
+      this.обработкаСигналаToolStripMenuItem.Size = new System.Drawing.Size(126, 20);
+      this.обработкаСигналаToolStripMenuItem.Text = "Обработка сигнала";
+      // 
+      // скользящееСреднееToolStripMenuItem
+      // 
+      this.скользящееСреднееToolStripMenuItem.Checked = true;
+      this.скользящееСреднееToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.скользящееСреднееToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.параметрToolStripMenuItem,
+            this.MAParamTB});
+      this.скользящееСреднееToolStripMenuItem.Name = "скользящееСреднееToolStripMenuItem";
+      this.скользящееСреднееToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+      this.скользящееСреднееToolStripMenuItem.Text = "Скользящее среднее";
+      this.скользящееСреднееToolStripMenuItem.Click += new System.EventHandler(this.скользящееСреднееToolStripMenuItem_Click);
+      // 
+      // параметрToolStripMenuItem
+      // 
+      this.параметрToolStripMenuItem.Name = "параметрToolStripMenuItem";
+      this.параметрToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+      this.параметрToolStripMenuItem.Text = "Параметр";
+      // 
+      // MAParamTB
+      // 
+      this.MAParamTB.Name = "MAParamTB";
+      this.MAParamTB.Size = new System.Drawing.Size(100, 23);
+      this.MAParamTB.Text = "7";
+      // 
+      // нормированиеПоОсиYToolStripMenuItem
+      // 
+      this.нормированиеПоОсиYToolStripMenuItem.Checked = true;
+      this.нормированиеПоОсиYToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.нормированиеПоОсиYToolStripMenuItem.Name = "нормированиеПоОсиYToolStripMenuItem";
+      this.нормированиеПоОсиYToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+      this.нормированиеПоОсиYToolStripMenuItem.Text = "Нормирование по оси Y";
+      this.нормированиеПоОсиYToolStripMenuItem.Click += new System.EventHandler(this.нормированиеПоОсиYToolStripMenuItem_Click);
       // 
       // настройкиToolStripMenuItem
       // 
@@ -479,6 +527,11 @@
     private ZedGraph.ZedGraphControl NoStimZedGraph;
     private ZedGraph.ZedGraphControl StimZedGraph;
     private ZedGraph.ZedGraphControl CommonZedGraph;
+    private System.Windows.Forms.ToolStripMenuItem обработкаСигналаToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem скользящееСреднееToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem нормированиеПоОсиYToolStripMenuItem;
+    private System.Windows.Forms.ToolStripTextBox MAParamTB;
+    private System.Windows.Forms.ToolStripMenuItem параметрToolStripMenuItem;
   }
 }
 

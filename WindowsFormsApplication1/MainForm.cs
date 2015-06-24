@@ -37,6 +37,7 @@ namespace SpikeProject
 
     #region Данные класса
     private SpikeDataPacket GlobalData;
+    private SpikeDataPacket GlobalDataOrig;
     private List<SpikeDataPacket> MegaMapList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapStimList = new List<SpikeDataPacket>();
     private List<SpikeDataPacket> MegaMapNoStimList = new List<SpikeDataPacket>();
@@ -65,7 +66,8 @@ namespace SpikeProject
       cellCount = Properties.Settings.Default.cellcount;
       nostimcount = Properties.Settings.Default.stimstart;
       KeyPreview = true;
-      GlobalData = new List<Tuple<double, double>>();
+      GlobalData = new SpikeDataPacket();
+      GlobalDataOrig = new SpikeDataPacket();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
@@ -134,9 +136,10 @@ namespace SpikeProject
       GlobalData = new List<Tuple<double, double>>();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
-      PreSpikeList = new List<SpikeDataPacket>();
       AverageDrawPointsStim = new List<PointList>();
       AverageDrawPointsNoStim = new List<PointList>();
+      AveragePointsStim = new List<PointList>();
+      AveragePointsNoStim = new List<PointList>();
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -172,8 +175,28 @@ namespace SpikeProject
 
       }
 
-      if (zerocount < 0.3 * GlobalData.Count) GlobalData.RemoveAll(s => s.Item2 <= 0);  
+      if (zerocount < 0.3 * GlobalData.Count) GlobalData.RemoveAll(s => s.Item2 <= 0);
+      GlobalDataOrig.AddRange(GlobalData);
 
+      if (megacheck == 1)
+      {
+        MegaMapList.Add((GlobalData));
+        if (MegaMapList.Count == cellCount)
+        {
+          buildMegaLists();
+        }
+      }
+      else
+      proceedData();
+
+
+      
+    }
+
+    private void proceedData()
+    {
+      //numericNoStim.Value = 1;
+      //numericAfterStim.Value = 1;
       foreach (SpikeData data in GlobalData)
       {
         if (data.Item2 > GlobalMax) GlobalMax = data.Item2;
@@ -189,6 +212,19 @@ namespace SpikeProject
       initthreshold = threshold;
 
 
+      if (нормированиеПоОсиYToolStripMenuItem.Checked) doApprox();
+      if (скользящееСреднееToolStripMenuItem.Checked) doMA();
+
+
+      buildCharactList();
+      buildNoStimAverage();
+      buildStimAverage();
+      RecountMaxScroll();
+      Refresh_Graphs();
+    }
+
+    private void doApprox()
+    {
       SpikeDataPacket approxlist = buildApproxList(GlobalData);
       List<double> xapprox = new List<double>();
       List<double> yapprox = new List<double>();
@@ -206,28 +242,22 @@ namespace SpikeProject
         GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - diff);
       }
 
-
-      if (megacheck == 1)
-      {
-        MegaMapList.Add((GlobalData));
-        if (MegaMapList.Count == cellCount)
-        {
-          buildMegaLists();
-        }
-      }
-      else
-      {
-        buildCharactList();
-        buildNoStimAverage();
-        buildStimAverage();
-        //SpikeGraph.Refresh();
-        Refresh_Graphs();
-        //DrawCommonZedGraph();
-        //DrawNoStimZedGraph();
-        //DrawStimZedGraph();
-      }
     }
 
+    private void doMA()
+    {
+      double[] yma = new double[GlobalData.Count];
+      int param = Convert.ToInt32(MAParamTB.Text);
+      for (int i = 0; i < GlobalData.Count; i++)
+        yma[i] = GlobalData[i].Item2;
+
+      yma = MovingAverage(yma, param);
+      for (int i = 0; i < GlobalData.Count; i++)
+      {
+        GlobalData[i] = new SpikeData(GlobalData[i].Item1, yma[i]);
+      }
+
+    }
 
     private void buildMegaLists()
     {
@@ -312,6 +342,46 @@ namespace SpikeProject
       
     }
 
+
+
+    public static int FirstIndex(int i, int width)
+    {
+      if (i >= width / 2)
+        return (i - width / 2);
+      else
+        return 0;
+    }
+
+    public static int LastIndex(int i, int width, int size)
+    {
+      if (i + width / 2 < size)
+        return (i + width / 2);
+      else
+        return (size - 1);
+    }
+
+
+    public static double[] MovingAverage(double[] RoughData, int width)
+    {
+      double[] y = new double[RoughData.Length];
+      if (width % 2 == 0)
+      
+        return y;
+      
+      for (int i = 0; i < RoughData.Length; i++)
+      {
+        y[i] = 0.0;
+        int start = FirstIndex(i, width);
+        int stop = LastIndex(i, width, RoughData.Length);
+        for (int j = start; j <= stop; j++)
+        {
+          y[i] = y[i] + RoughData[j];
+        }
+        y[i] = y[i] / (stop - start + 1);
+      }
+      return y;
+    }
+
     public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
       double max1 = double.MinValue;
@@ -388,7 +458,7 @@ namespace SpikeProject
               i_max = i-istart;
             }
             SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
-            if (y - threshold > eps)
+            if (y - threshold > eps && x- ZeroPositionX >eps)
               currentSpike.Add(Spikedata);
             i++;
           }
@@ -658,7 +728,7 @@ namespace SpikeProject
 
       }
 
-      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgToolStripMenuItem.Checked == true)
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true)
       {
         list = new PointPairList();
         for (int j = 0; j < AveragePointsNoStim[(int)numericNoStim.Value - 1].Count; j++)
@@ -687,7 +757,7 @@ namespace SpikeProject
         curve.Line.IsSmooth = true;
       }
 
-      if (AveragePointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AveragePointsStim.Count && AvgToolStripMenuItem.Checked == true)
+      if (AveragePointsStim.Count > 0 && numericAfterStim.Value > 0 && numericAfterStim.Value <= AveragePointsStim.Count && AvgToolStripMenuItem.Checked == true)
       {
         list = new PointPairList();
         for (int j = 0; j < AveragePointsStim[(int)numericAfterStim.Value - 1].Count; j++)
@@ -1442,6 +1512,59 @@ namespace SpikeProject
         MessageBox.Show("Не загружены данные", "Редактирование данных о характеристиках",
         MessageBoxButtons.OK, MessageBoxIcon.Asterisk); else
       new EraseCharactForm().Show(this);
+    }
+
+    private void скользящееСреднееToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
+      {
+        GlobalData = new SpikeDataPacket();
+        GlobalData.AddRange(GlobalDataOrig);
+        if (скользящееСреднееToolStripMenuItem.Checked == true)
+        {
+          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
+            doApprox();
+          параметрToolStripMenuItem.Enabled = false;
+          MAParamTB.Enabled = false;
+          скользящееСреднееToolStripMenuItem.Checked = false;
+        }
+        else
+        {
+          doMA();
+          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
+            doApprox();
+          параметрToolStripMenuItem.Enabled = true;
+          MAParamTB.Enabled = true;
+          скользящееСреднееToolStripMenuItem.Checked = true;
+        }
+        proceedData();
+      }
+      else скользящееСреднееToolStripMenuItem.Checked=false; 
+      
+    }
+
+    private void нормированиеПоОсиYToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      if (GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
+      {
+        GlobalData = new SpikeDataPacket();
+        GlobalData.AddRange(GlobalDataOrig);
+        if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
+        {
+          if (скользящееСреднееToolStripMenuItem.Checked == true)
+            doMA();
+          нормированиеПоОсиYToolStripMenuItem.Checked = false;
+        }
+        else
+        {
+          doApprox();
+          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
+            doMA();
+          нормированиеПоОсиYToolStripMenuItem.Checked = true;
+        }
+        proceedData();
+      }
+      else нормированиеПоОсиYToolStripMenuItem.Checked = false; 
     }
 
 
