@@ -131,15 +131,9 @@ namespace SpikeProject
     private void loadData(string FilePath, int megacheck)
     {
       int zerocount = 0;
-      GlobalMin = Double.MaxValue;
-      GlobalMax = Double.MinValue;
+
       GlobalData = new List<Tuple<double, double>>();
-      StimSpikeList = new List<SpikeDataPacket>();
-      NoStimSpikeList = new List<SpikeDataPacket>();
-      AverageDrawPointsStim = new List<PointList>();
-      AverageDrawPointsNoStim = new List<PointList>();
-      AveragePointsStim = new List<PointList>();
-      AveragePointsNoStim = new List<PointList>();
+
       using (StreamReader sr = new StreamReader(FilePath))
       {
         while (sr.Peek() >= 0)
@@ -195,6 +189,14 @@ namespace SpikeProject
 
     private void proceedData()
     {
+      StimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeList = new List<SpikeDataPacket>();
+      AverageDrawPointsStim = new List<PointList>();
+      AverageDrawPointsNoStim = new List<PointList>();
+      AveragePointsStim = new List<PointList>();
+      AveragePointsNoStim = new List<PointList>();
+      GlobalMin = Double.MaxValue;
+      GlobalMax = Double.MinValue;
       //numericNoStim.Value = 1;
       //numericAfterStim.Value = 1;
       foreach (SpikeData data in GlobalData)
@@ -211,9 +213,9 @@ namespace SpikeProject
       prev_threshold = threshold;
       initthreshold = threshold;
 
-
-      if (нормированиеПоОсиYToolStripMenuItem.Checked) doApprox();
       if (скользящееСреднееToolStripMenuItem.Checked) doMA();
+      if (нормированиеПоОсиYToolStripMenuItem.Checked) doApprox();
+      
 
 
       buildCharactList();
@@ -516,12 +518,12 @@ namespace SpikeProject
     private SpikeDataPacket buildApproxList(SpikeDataPacket inlist)
     {
       SpikeDataPacket approxlist = new SpikeDataPacket();
-      approxlist.Add(findMin(GlobalData.GetRange(0,70)));
+      approxlist.Add(findMin(inlist.GetRange(0, 70)));
 
       int windowsize = (int)Math.Truncate((double)inlist.Count / 7);
       for (int i = 0; i + windowsize < inlist.Count; i += windowsize)
         approxlist.Add(findMin(inlist.GetRange(i, windowsize)));
-      approxlist.Add(findMin(GlobalData.GetRange(GlobalData.Count-101, 100)));
+      approxlist.Add(findMin(inlist.GetRange(inlist.Count - 101, 100)));
       return approxlist;
     }
 
@@ -728,7 +730,7 @@ namespace SpikeProject
 
       }
 
-      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true)
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true && (int)numericNoStim.Value - 1<AverageDrawPointsNoStim.Count)
       {
         list = new PointPairList();
         for (int j = 0; j < AveragePointsNoStim[(int)numericNoStim.Value - 1].Count; j++)
@@ -1522,17 +1524,12 @@ namespace SpikeProject
         GlobalData.AddRange(GlobalDataOrig);
         if (скользящееСреднееToolStripMenuItem.Checked == true)
         {
-          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
-            doApprox();
           параметрToolStripMenuItem.Enabled = false;
           MAParamTB.Enabled = false;
           скользящееСреднееToolStripMenuItem.Checked = false;
         }
         else
         {
-          doMA();
-          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
-            doApprox();
           параметрToolStripMenuItem.Enabled = true;
           MAParamTB.Enabled = true;
           скользящееСреднееToolStripMenuItem.Checked = true;
@@ -1550,18 +1547,11 @@ namespace SpikeProject
         GlobalData = new SpikeDataPacket();
         GlobalData.AddRange(GlobalDataOrig);
         if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
-        {
-          if (скользящееСреднееToolStripMenuItem.Checked == true)
-            doMA();
           нормированиеПоОсиYToolStripMenuItem.Checked = false;
-        }
+        
         else
-        {
-          doApprox();
-          if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
-            doMA();
           нормированиеПоОсиYToolStripMenuItem.Checked = true;
-        }
+        
         proceedData();
       }
       else нормированиеПоОсиYToolStripMenuItem.Checked = false; 
