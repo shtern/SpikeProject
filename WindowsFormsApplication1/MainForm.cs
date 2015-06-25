@@ -718,19 +718,30 @@ namespace SpikeProject
     {
       pane_nostim.CurveList.Clear();
       PointPairList list = new PointPairList();
-      for (int i = 0; i < NoStimSpikeList.Count && i < numericNoStim.Value; i++)
+      if (togetherButton.Checked)
+        for (int i = 0; i < NoStimSpikeList.Count && i < numericNoStim.Value; i++)
+        {
+          list = new PointPairList();
+          for (int j = 0; j < NoStimSpikeList[i].Count; j++)
+            list.Add(NoStimSpikeList[i][j].Item1, NoStimSpikeList[i][j].Item2);
+
+
+          LineItem curve = pane_nostim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+          curve.Line.Width = 2;
+          curve.Line.IsSmooth = true;
+
+        }
+      else
       {
-        list = new PointPairList();
-        for (int j = 0; j < NoStimSpikeList[i].Count; j++)
-          list.Add(NoStimSpikeList[i][j].Item1, NoStimSpikeList[i][j].Item2);
-
-
+        if ((int)numericNoStim.Value - 1 < NoStimSpikeList.Count)
+          for (int i = 0; i < NoStimSpikeList[(int)numericNoStim.Value - 1].Count; i++)
+            list.Add(NoStimSpikeList[(int)numericNoStim.Value - 1][i].Item1, NoStimSpikeList[(int)numericNoStim.Value - 1][i].Item2);
         LineItem curve = pane_nostim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
         curve.Line.Width = 2;
         curve.Line.IsSmooth = true;
-
       }
 
+      if (togetherButton.Checked)
       if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true && (int)numericNoStim.Value - 1 < AverageDrawPointsNoStim.Count)
       {
         list = new PointPairList();
@@ -749,6 +760,7 @@ namespace SpikeProject
     {
       pane_stim.CurveList.Clear();
       PointPairList list = new PointPairList();
+      if (togetherButton.Checked)
       for (int i = 0; i < StimSpikeList.Count && i < numericAfterStim.Value; i++)
       {
         list = new PointPairList();
@@ -759,7 +771,17 @@ namespace SpikeProject
         curve.Line.Width = 2;
         curve.Line.IsSmooth = true;
       }
+      else
+      {
+        if ((int)numericAfterStim.Value - 1 < StimSpikeList.Count)
+          for (int i = 0; i < StimSpikeList[(int)numericAfterStim.Value - 1].Count; i++)
+            list.Add(StimSpikeList[(int)numericAfterStim.Value - 1][i].Item1, StimSpikeList[(int)numericAfterStim.Value - 1][i].Item2);
+        LineItem curve = pane_stim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+        curve.Line.Width = 2;
+        curve.Line.IsSmooth = true;
+      }
 
+      if (togetherButton.Checked)
       if (AveragePointsStim.Count > 0 && numericAfterStim.Value > 0 && numericAfterStim.Value <= AveragePointsStim.Count && AvgToolStripMenuItem.Checked == true)
       {
         list = new PointPairList();
@@ -1590,6 +1612,18 @@ namespace SpikeProject
     private void обработкаСигналаToolStripMenuItem_DropDownClosed(object sender, EventArgs e)
     {
       checkParam();
+    }
+
+    private void togetherButton_CheckedChanged(object sender, EventArgs e)
+    {
+      DrawNoStimZedGraph();
+      DrawStimZedGraph();
+    }
+
+    private void separateButton_CheckedChanged(object sender, EventArgs e)
+    {
+      DrawNoStimZedGraph();
+      DrawStimZedGraph();
     }
   }
 }

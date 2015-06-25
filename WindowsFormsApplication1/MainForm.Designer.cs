@@ -37,10 +37,10 @@
       this.Threshold_Scroll = new System.Windows.Forms.TrackBar();
       this.StimCharacter = new System.Windows.Forms.PictureBox();
       this.label8 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
+      this.colSpikeLabel = new System.Windows.Forms.Label();
       this.controlGroupBox = new System.Windows.Forms.GroupBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.afterStimLabel = new System.Windows.Forms.Label();
+      this.beforeStimLabel = new System.Windows.Forms.Label();
       this.numericAfterStim = new System.Windows.Forms.NumericUpDown();
       this.numericNoStim = new System.Windows.Forms.NumericUpDown();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -66,6 +66,9 @@
       this.NoStimZedGraph = new ZedGraph.ZedGraphControl();
       this.StimZedGraph = new ZedGraph.ZedGraphControl();
       this.CommonZedGraph = new ZedGraph.ZedGraphControl();
+      this.togetherButton = new System.Windows.Forms.RadioButton();
+      this.separateButton = new System.Windows.Forms.RadioButton();
+      this.spikeViewTypeLabel = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       this.contextMenuStrip1.SuspendLayout();
@@ -84,7 +87,7 @@
       this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
       this.SpikeGraph.Name = "SpikeGraph";
-      this.SpikeGraph.Size = new System.Drawing.Size(615, 194);
+      this.SpikeGraph.Size = new System.Drawing.Size(879, 194);
       this.SpikeGraph.TabIndex = 0;
       this.SpikeGraph.TabStop = false;
       this.SpikeGraph.Visible = false;
@@ -97,7 +100,7 @@
       this.NoStimCharacter.ContextMenuStrip = this.contextMenuStrip1;
       this.NoStimCharacter.Location = new System.Drawing.Point(1143, 311);
       this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(67, 283);
+      this.NoStimCharacter.Size = new System.Drawing.Size(331, 283);
       this.NoStimCharacter.TabIndex = 7;
       this.NoStimCharacter.TabStop = false;
       this.NoStimCharacter.Visible = false;
@@ -120,11 +123,11 @@
       // 
       this.Threshold_Scroll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.Threshold_Scroll.AutoSize = false;
-      this.Threshold_Scroll.Location = new System.Drawing.Point(5, 55);
+      this.Threshold_Scroll.Location = new System.Drawing.Point(26, 42);
       this.Threshold_Scroll.Maximum = 500;
       this.Threshold_Scroll.Minimum = 1;
       this.Threshold_Scroll.Name = "Threshold_Scroll";
-      this.Threshold_Scroll.Size = new System.Drawing.Size(149, 24);
+      this.Threshold_Scroll.Size = new System.Drawing.Size(239, 24);
       this.Threshold_Scroll.TabIndex = 9;
       this.Threshold_Scroll.TickStyle = System.Windows.Forms.TickStyle.None;
       this.Threshold_Scroll.Value = 100;
@@ -137,7 +140,7 @@
       this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
       this.StimCharacter.Location = new System.Drawing.Point(1143, 645);
       this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(67, 312);
+      this.StimCharacter.Size = new System.Drawing.Size(331, 312);
       this.StimCharacter.TabIndex = 10;
       this.StimCharacter.TabStop = false;
       this.StimCharacter.Visible = false;
@@ -146,58 +149,61 @@
       // label8
       // 
       this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(58, 32);
+      this.label8.Location = new System.Drawing.Point(127, 16);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(38, 13);
       this.label8.TabIndex = 12;
       this.label8.Text = "Порог";
       // 
-      // label7
+      // colSpikeLabel
       // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(10, 118);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(140, 26);
-      this.label7.TabIndex = 11;
-      this.label7.Text = "Количество\r\nспайковых характеристик";
+      this.colSpikeLabel.AutoSize = true;
+      this.colSpikeLabel.Location = new System.Drawing.Point(39, 95);
+      this.colSpikeLabel.Name = "colSpikeLabel";
+      this.colSpikeLabel.Size = new System.Drawing.Size(202, 13);
+      this.colSpikeLabel.TabIndex = 11;
+      this.colSpikeLabel.Text = "Количество спайковых характеристик";
       // 
       // controlGroupBox
       // 
       this.controlGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.controlGroupBox.Controls.Add(this.label5);
+      this.controlGroupBox.Controls.Add(this.spikeViewTypeLabel);
+      this.controlGroupBox.Controls.Add(this.separateButton);
+      this.controlGroupBox.Controls.Add(this.togetherButton);
+      this.controlGroupBox.Controls.Add(this.afterStimLabel);
       this.controlGroupBox.Controls.Add(this.label8);
-      this.controlGroupBox.Controls.Add(this.label2);
+      this.controlGroupBox.Controls.Add(this.beforeStimLabel);
       this.controlGroupBox.Controls.Add(this.numericAfterStim);
       this.controlGroupBox.Controls.Add(this.numericNoStim);
       this.controlGroupBox.Controls.Add(this.Threshold_Scroll);
-      this.controlGroupBox.Controls.Add(this.label7);
-      this.controlGroupBox.Location = new System.Drawing.Point(1054, 27);
+      this.controlGroupBox.Controls.Add(this.colSpikeLabel);
+      this.controlGroupBox.Location = new System.Drawing.Point(1207, 27);
       this.controlGroupBox.Name = "controlGroupBox";
-      this.controlGroupBox.Size = new System.Drawing.Size(156, 268);
+      this.controlGroupBox.Size = new System.Drawing.Size(267, 268);
       this.controlGroupBox.TabIndex = 14;
       this.controlGroupBox.TabStop = false;
       // 
-      // label5
+      // afterStimLabel
       // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(18, 217);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(102, 13);
-      this.label5.TabIndex = 18;
-      this.label5.Text = "После стимуляции";
+      this.afterStimLabel.AutoSize = true;
+      this.afterStimLabel.Location = new System.Drawing.Point(158, 121);
+      this.afterStimLabel.Name = "afterStimLabel";
+      this.afterStimLabel.Size = new System.Drawing.Size(102, 13);
+      this.afterStimLabel.TabIndex = 18;
+      this.afterStimLabel.Text = "После стимуляции";
       // 
-      // label2
+      // beforeStimLabel
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(35, 162);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(85, 13);
-      this.label2.TabIndex = 17;
-      this.label2.Text = "До стимуляции";
+      this.beforeStimLabel.AutoSize = true;
+      this.beforeStimLabel.Location = new System.Drawing.Point(23, 121);
+      this.beforeStimLabel.Name = "beforeStimLabel";
+      this.beforeStimLabel.Size = new System.Drawing.Size(85, 13);
+      this.beforeStimLabel.TabIndex = 17;
+      this.beforeStimLabel.Text = "До стимуляции";
       // 
       // numericAfterStim
       // 
-      this.numericAfterStim.Location = new System.Drawing.Point(46, 234);
+      this.numericAfterStim.Location = new System.Drawing.Point(186, 138);
       this.numericAfterStim.Maximum = new decimal(new int[] {
             50,
             0,
@@ -220,7 +226,7 @@
       // 
       // numericNoStim
       // 
-      this.numericNoStim.Location = new System.Drawing.Point(46, 180);
+      this.numericNoStim.Location = new System.Drawing.Point(34, 139);
       this.numericNoStim.Maximum = new decimal(new int[] {
             50,
             0,
@@ -252,7 +258,7 @@
             this.настройкиToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(1220, 24);
+      this.menuStrip1.Size = new System.Drawing.Size(1484, 24);
       this.menuStrip1.TabIndex = 21;
       this.menuStrip1.Text = "menuStrip1";
       // 
@@ -426,7 +432,7 @@
       this.NoStimZedGraph.ScrollMinX = 0D;
       this.NoStimZedGraph.ScrollMinY = 0D;
       this.NoStimZedGraph.ScrollMinY2 = 0D;
-      this.NoStimZedGraph.Size = new System.Drawing.Size(1200, 320);
+      this.NoStimZedGraph.Size = new System.Drawing.Size(1464, 320);
       this.NoStimZedGraph.TabIndex = 22;
       // 
       // StimZedGraph
@@ -442,7 +448,7 @@
       this.StimZedGraph.ScrollMinX = 0D;
       this.StimZedGraph.ScrollMinY = 0D;
       this.StimZedGraph.ScrollMinY2 = 0D;
-      this.StimZedGraph.Size = new System.Drawing.Size(1194, 320);
+      this.StimZedGraph.Size = new System.Drawing.Size(1458, 320);
       this.StimZedGraph.TabIndex = 23;
       // 
       // CommonZedGraph
@@ -458,14 +464,47 @@
       this.CommonZedGraph.ScrollMinX = 0D;
       this.CommonZedGraph.ScrollMinY = 0D;
       this.CommonZedGraph.ScrollMinY2 = 0D;
-      this.CommonZedGraph.Size = new System.Drawing.Size(1038, 268);
+      this.CommonZedGraph.Size = new System.Drawing.Size(1191, 268);
       this.CommonZedGraph.TabIndex = 24;
+      // 
+      // togetherButton
+      // 
+      this.togetherButton.AutoSize = true;
+      this.togetherButton.Checked = true;
+      this.togetherButton.Location = new System.Drawing.Point(34, 219);
+      this.togetherButton.Name = "togetherButton";
+      this.togetherButton.Size = new System.Drawing.Size(63, 17);
+      this.togetherButton.TabIndex = 19;
+      this.togetherButton.TabStop = true;
+      this.togetherButton.Text = "Вместе";
+      this.togetherButton.UseVisualStyleBackColor = true;
+      this.togetherButton.CheckedChanged += new System.EventHandler(this.togetherButton_CheckedChanged);
+      // 
+      // separateButton
+      // 
+      this.separateButton.AutoSize = true;
+      this.separateButton.Location = new System.Drawing.Point(180, 219);
+      this.separateButton.Name = "separateButton";
+      this.separateButton.Size = new System.Drawing.Size(80, 17);
+      this.separateButton.TabIndex = 20;
+      this.separateButton.Text = "Раздельно";
+      this.separateButton.UseVisualStyleBackColor = true;
+      this.separateButton.CheckedChanged += new System.EventHandler(this.separateButton_CheckedChanged);
+      // 
+      // spikeViewTypeLabel
+      // 
+      this.spikeViewTypeLabel.AutoSize = true;
+      this.spikeViewTypeLabel.Location = new System.Drawing.Point(57, 189);
+      this.spikeViewTypeLabel.Name = "spikeViewTypeLabel";
+      this.spikeViewTypeLabel.Size = new System.Drawing.Size(162, 13);
+      this.spikeViewTypeLabel.TabIndex = 21;
+      this.spikeViewTypeLabel.Text = "Тип просмотра характеристик";
       // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1220, 972);
+      this.ClientSize = new System.Drawing.Size(1484, 972);
       this.Controls.Add(this.CommonZedGraph);
       this.Controls.Add(this.StimZedGraph);
       this.Controls.Add(this.NoStimZedGraph);
@@ -504,12 +543,12 @@
     private System.Windows.Forms.TrackBar Threshold_Scroll;
     private System.Windows.Forms.PictureBox StimCharacter;
     private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.Label colSpikeLabel;
     private System.Windows.Forms.GroupBox controlGroupBox;
     private System.Windows.Forms.NumericUpDown numericNoStim;
     private System.Windows.Forms.NumericUpDown numericAfterStim;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label afterStimLabel;
+    private System.Windows.Forms.Label beforeStimLabel;
     private System.Windows.Forms.MenuStrip menuStrip1;
     private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem загрузитьДанныеToolStripMenuItem;
@@ -535,6 +574,9 @@
     private System.Windows.Forms.ToolStripMenuItem нормированиеПоОсиYToolStripMenuItem;
     private System.Windows.Forms.ToolStripTextBox MAParamTB;
     private System.Windows.Forms.ToolStripMenuItem параметрToolStripMenuItem;
+    private System.Windows.Forms.RadioButton separateButton;
+    private System.Windows.Forms.RadioButton togetherButton;
+    private System.Windows.Forms.Label spikeViewTypeLabel;
   }
 }
 
