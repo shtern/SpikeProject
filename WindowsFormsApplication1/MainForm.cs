@@ -45,11 +45,14 @@ namespace SpikeProject
     private List<SpikeDataPacket> MegaMapNoStimMax = new List<SpikeDataPacket>();
     public List<SpikeDataPacket> StimSpikeList { get; set; }
     public List<SpikeDataPacket> NoStimSpikeList { get; set; }
+    public List<SpikeDataPacket> StimSpikeListNoThresh { get; set; }
+    public List<SpikeDataPacket> NoStimSpikeListNoThresh { get; set; }
     public SpikePeakList PeakList { get; set; }
     private GraphPane pane_common;
     private GraphPane pane_nostim;
     private GraphPane pane_stim;
     private List<SpikeDataPacket> PreSpikeList = new List<SpikeDataPacket>();
+    private List<SpikeDataPacket> PreSpikeListNoThresh = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
     private List<PointList> AverageDrawPointsStim = new List<PointList>();
@@ -70,6 +73,8 @@ namespace SpikeProject
       GlobalDataOrig = new SpikeDataPacket();
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      StimSpikeListNoThresh = new List<SpikeDataPacket>();
+      NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
       PeakList = new SpikePeakList();
 
@@ -192,6 +197,8 @@ namespace SpikeProject
     {
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      StimSpikeListNoThresh = new List<SpikeDataPacket>();
+      NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
       AverageDrawPointsStim = new List<PointList>();
       AverageDrawPointsNoStim = new List<PointList>();
       AveragePointsStim = new List<PointList>();
@@ -432,9 +439,12 @@ namespace SpikeProject
     private void buildCharactList()
     {
       PreSpikeList = new List<SpikeDataPacket>();
+      PreSpikeListNoThresh = new List<SpikeDataPacket>();
       PeakList = new SpikePeakList();
       NoStimSpikeList = new List<SpikeDataPacket>();
       StimSpikeList = new List<SpikeDataPacket>();
+      StimSpikeListNoThresh = new List<SpikeDataPacket>();
+      NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
 
       for (int i = 1; i < GlobalData.Count; i++)
       {
@@ -445,7 +455,7 @@ namespace SpikeProject
         {
           int istart = i;
           SpikeDataPacket currentSpike = new SpikeDataPacket();
-
+          SpikeDataPacket currentSpikeNoThresh = new SpikeDataPacket();
           double ZeroPositionX = ApproxX(GlobalData[i - 1].Item1, GlobalData[i - 1].Item2, x, y);
           if (Math.Abs(ZeroPositionX) > double.MaxValue) ZeroPositionX = x;
           currentSpike.Add(new SpikeData(0, 0));
@@ -461,11 +471,14 @@ namespace SpikeProject
               i_max = i - istart;
             }
             SpikeData Spikedata = new SpikeData(x - ZeroPositionX, y - threshold);
+            SpikeData noThresh = new SpikeData(x, y);
             if (y - threshold > eps && x - ZeroPositionX > eps)
               currentSpike.Add(Spikedata);
+            currentSpikeNoThresh.Add(noThresh);
             i++;
           }
           PreSpikeList.Add(currentSpike);
+          PreSpikeListNoThresh.Add(currentSpikeNoThresh);
           PeakList.Add(new Tuple<int, int, double, double>(i_max, i, x_max, y_max));
           WidthList.Add(currentSpike.Count);
 
@@ -486,8 +499,16 @@ namespace SpikeProject
       {
         if (PreSpikeList[i].Count > 0.75 * RightMedian)
 
-          if (NoStimSpikeList.Count < nostimcount) NoStimSpikeList.Add(PreSpikeList[i]);
-          else StimSpikeList.Add(PreSpikeList[i]);
+          if (NoStimSpikeList.Count < nostimcount)
+          {
+            NoStimSpikeList.Add(PreSpikeList[i]);
+            NoStimSpikeListNoThresh.Add(PreSpikeListNoThresh[i]);
+          }
+          else
+          {
+            StimSpikeList.Add(PreSpikeList[i]);
+            StimSpikeListNoThresh.Add(PreSpikeListNoThresh[i]);
+          }
 
         else
         {
@@ -688,6 +709,26 @@ namespace SpikeProject
 
       pane_common.AddCurve(null, list, Color.Black, SymbolType.None);
 
+      if (separateButton.Checked)
+      {
+        PointPairList selected_charact = new PointPairList();
+        for (int i = 0; i < NoStimSpikeListNoThresh[(int)numericNoStim.Value - 1].Count; i++)
+          selected_charact.Add(NoStimSpikeListNoThresh[(int)numericNoStim.Value - 1][i].Item1, NoStimSpikeListNoThresh[(int)numericNoStim.Value - 1][i].Item2);
+
+        LineItem curve = pane_common.AddCurve(null, selected_charact, Color.Violet, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+
+        selected_charact = new PointPairList();
+        for (int i = 0; i < StimSpikeListNoThresh[(int)numericAfterStim.Value-1].Count; i++)
+          selected_charact.Add(StimSpikeListNoThresh[(int)numericAfterStim.Value-1][i].Item1, StimSpikeListNoThresh[(int)numericAfterStim.Value-1][i].Item2);
+
+        curve =  pane_common.AddCurve(null, selected_charact, Color.Brown, SymbolType.None);
+        curve.Line.Width = 5;
+        curve.Line.IsSmooth = true;
+
+      }
+
       //list = new PointPairList();
 
       //SpikeDataPacket approxlist = buildApproxList(GlobalData);
@@ -717,6 +758,7 @@ namespace SpikeProject
     private void DrawNoStimZedGraph()
     {
       pane_nostim.CurveList.Clear();
+      if (NoStimSpikeList.Count == 0) return;
       PointPairList list = new PointPairList();
       if (togetherButton.Checked)
         for (int i = 0; i < NoStimSpikeList.Count && i < numericNoStim.Value; i++)
@@ -733,10 +775,10 @@ namespace SpikeProject
         }
       else
       {
-        if ((int)numericNoStim.Value - 1 < NoStimSpikeList.Count)
+        if ((int)numericNoStim.Value - 1 < NoStimSpikeList.Count && (int)numericNoStim.Value>0)
           for (int i = 0; i < NoStimSpikeList[(int)numericNoStim.Value - 1].Count; i++)
             list.Add(NoStimSpikeList[(int)numericNoStim.Value - 1][i].Item1, NoStimSpikeList[(int)numericNoStim.Value - 1][i].Item2);
-        LineItem curve = pane_nostim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+        LineItem curve = pane_nostim.AddCurve(null, list, Color.Violet, SymbolType.None);
         curve.Line.Width = 2;
         curve.Line.IsSmooth = true;
       }
@@ -759,6 +801,7 @@ namespace SpikeProject
     private void DrawStimZedGraph()
     {
       pane_stim.CurveList.Clear();
+      if (StimSpikeList.Count == 0) return;
       PointPairList list = new PointPairList();
       if (togetherButton.Checked)
       for (int i = 0; i < StimSpikeList.Count && i < numericAfterStim.Value; i++)
@@ -773,10 +816,10 @@ namespace SpikeProject
       }
       else
       {
-        if ((int)numericAfterStim.Value - 1 < StimSpikeList.Count)
+        if ((int)numericAfterStim.Value - 1 < StimSpikeList.Count && (int)numericAfterStim.Value >0)
           for (int i = 0; i < StimSpikeList[(int)numericAfterStim.Value - 1].Count; i++)
             list.Add(StimSpikeList[(int)numericAfterStim.Value - 1][i].Item1, StimSpikeList[(int)numericAfterStim.Value - 1][i].Item2);
-        LineItem curve = pane_stim.AddCurve(null, list, Color.FromArgb(100, 50, 50, 50), SymbolType.None);
+        LineItem curve = pane_stim.AddCurve(null, list, Color.Brown, SymbolType.None);
         curve.Line.Width = 2;
         curve.Line.IsSmooth = true;
       }
@@ -1266,12 +1309,14 @@ namespace SpikeProject
     {
       //NoStimCharacter.Refresh();
       DrawNoStimZedGraph();
+      DrawCommonZedGraph();
     }
 
     private void numericAfterStim_ValueChanged(object sender, EventArgs e)
     {
       //StimCharacter.Refresh();
       DrawStimZedGraph();
+      DrawCommonZedGraph();
     }
 
     private void Threshold_Scroll_ValueChanged(object sender, EventArgs e)
@@ -1320,8 +1365,11 @@ namespace SpikeProject
     private void freeVariables()
     {
       StimSpikeList = new List<SpikeDataPacket>();
+      StimSpikeListNoThresh = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
+      NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
+      PreSpikeListNoThresh = new List<SpikeDataPacket>();
       AverageDrawPointsStim = new List<PointList>();
       AverageDrawPointsNoStim = new List<PointList>();
       AveragePointsStim = new List<PointList>();
@@ -1616,14 +1664,12 @@ namespace SpikeProject
 
     private void togetherButton_CheckedChanged(object sender, EventArgs e)
     {
-      DrawNoStimZedGraph();
-      DrawStimZedGraph();
+      Refresh_Graphs();
     }
 
     private void separateButton_CheckedChanged(object sender, EventArgs e)
     {
-      DrawNoStimZedGraph();
-      DrawStimZedGraph();
+      Refresh_Graphs();
     }
   }
 }
