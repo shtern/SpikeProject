@@ -74,6 +74,7 @@ namespace SpikeProject
           {
             done = true;
             parent.NoStimSpikeList.RemoveAt(nostimarr[i] - 1 - i);
+            parent.NoStimSpikeListNoThresh.RemoveAt(nostimarr[i] - 1 - i);
             parent.PeakList.RemoveAt(nostimarr[i] - 1 - i);
           }
           else MessageBox.Show("Получен и проигнорирован неверный индекс", "Редактирование данных о характеристиках",
@@ -89,6 +90,7 @@ namespace SpikeProject
           {
             done = true;
             parent.StimSpikeList.RemoveAt(stimarr[i] - 1 - i);
+            parent.StimSpikeListNoThresh.RemoveAt(stimarr[i] - 1 - i);
             parent.PeakList.RemoveAt(stimarr[i] - 1 - i + parent.NoStimSpikeList.Count);
             
           }
