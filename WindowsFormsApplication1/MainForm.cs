@@ -22,12 +22,12 @@ namespace SpikeProject
     private double initthreshold = 0;
     private double prev_threshold = 0.02;
     private string FilePath = "";
-    private int KyTop = 1000;
-    private int KyBottom = 1000;
+    //private int KyTop = 1000;
+    //private int KyBottom = 1000;
     public static int LeftMedian = 0;
     public static int RightMedian = 0;
-    private int KxTop = 10;
-    private int KxBottom = 300;
+    //private int KxTop = 10;
+    //private int KxBottom = 300;
     double eps = 1e-20;
     double GlobalMin = Double.MaxValue;
     double GlobalMax = Double.MinValue;
@@ -520,7 +520,7 @@ namespace SpikeProject
       RecountMaxScroll();
       numericNoStim.Value = NoStimSpikeList.Count;
       numericAfterStim.Value = StimSpikeList.Count;
-      KxBottom = countKx();
+      //KxBottom = countKx();
 
     }
 
@@ -540,9 +540,9 @@ namespace SpikeProject
     private SpikeDataPacket buildApproxList(SpikeDataPacket inlist)
     {
       SpikeDataPacket approxlist = new SpikeDataPacket();
-      approxlist.Add(findMin(inlist.GetRange(0, 70)));
+      approxlist.Add(findMin(inlist.GetRange(0, 100)));
 
-      int windowsize = (int)Math.Truncate((double)inlist.Count / 7);
+      int windowsize = (int)Math.Truncate((double)inlist.Count / 5);
       for (int i = 0; i + windowsize < inlist.Count; i += windowsize)
         approxlist.Add(findMin(inlist.GetRange(i, windowsize)));
       approxlist.Add(findMin(inlist.GetRange(inlist.Count - 101, 100)));
@@ -1027,8 +1027,8 @@ namespace SpikeProject
       if (count <= 0)
         thd = GlobalMax;
       else thd = avg / (3 * count);
-      KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / GlobalMax);
-      KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / GlobalMax);
+      //KyTop = Convert.ToInt32((SpikeGraph.Height - 20) / GlobalMax);
+      //KyBottom = Convert.ToInt32((StimCharacter.Height - 20) / GlobalMax);
       return thd;
     }
 
@@ -1044,7 +1044,7 @@ namespace SpikeProject
       {
         if (data.Last().Item1 > x_max) x_max = data.Last().Item1;
       }
-      Kx = Convert.ToInt32(NoStimCharacter.Width / x_max);
+      //Kx = Convert.ToInt32(NoStimCharacter.Width / x_max);
       return Kx;
     }
 
@@ -1103,7 +1103,7 @@ namespace SpikeProject
           {
             Average /= count;
             PointsList.Add(new PointF((float)x, (float)Average));
-            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(NoStimCharacter.Height - Average * KyBottom)));
+            //DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(NoStimCharacter.Height - Average * KyBottom)));
           }
         }
         AveragePointsNoStim.Add(PointsList);
@@ -1170,7 +1170,7 @@ namespace SpikeProject
           {
             Average /= count;
             PointsList.Add(new PointF((float)x, (float)Average));
-            DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * KyBottom)));
+            //DrawPointsList.Add(new PointF((float)x * KxBottom, (float)(StimCharacter.Height - Average * KyBottom)));
           }
         }
         AveragePointsStim.Add(PointsList);
@@ -1196,86 +1196,6 @@ namespace SpikeProject
     {
       //SpikeGraph.Refresh();
       Refresh_Graphs();
-    }
-
-    private void StimCharacter_Paint(object sender, PaintEventArgs e)
-    {
-      Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
-      Pen mainpen = new Pen(brush, 2);
-      for (int SpikeIdx = 0; SpikeIdx < StimSpikeList.Count && SpikeIdx < numericAfterStim.Value; SpikeIdx++)
-      {
-        for (int i = 1; i < StimSpikeList[SpikeIdx].Count; i++)
-        {
-          //int Ciferka = 9;
-          // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
-          // mainpen = new Pen(brush, 2);
-          e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-          e.Graphics.DrawLine(mainpen,
-            (float)StimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
-            (float)StimSpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i].Item2 * KyBottom));
-        }
-      }
-
-
-      brush = new SolidBrush(Color.Aqua);
-      mainpen = new Pen(brush, 5);
-      if (AverageDrawPointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AverageDrawPointsStim.Count && AvgToolStripMenuItem.Checked == true)
-      {
-        PointF[] AverageList = (AverageDrawPointsStim[(int)numericAfterStim.Value - 1]).ToArray();
-        if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
-      }
-
-    }
-
-    private void NoStimCharacter_Paint(object sender, PaintEventArgs e)
-    {
-      Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
-      Pen mainpen = new Pen(brush, 2);
-      for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < nostimcount; SpikeIdx++)
-      {
-        for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
-        {
-          // int Ciferka = 9;
-          // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
-          // mainpen = new Pen(brush, 4);
-          e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-          e.Graphics.DrawLine(mainpen,
-            (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
-            (float)NoStimSpikeList[SpikeIdx][i].Item1 * KxBottom,
-            (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i].Item2 * KyBottom));
-        }
-      }
-
-      brush = new SolidBrush(Color.Blue);
-      mainpen = new Pen(brush, 5);
-      if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgToolStripMenuItem.Checked == true)
-      {
-        PointF[] AverageList = (AverageDrawPointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
-
-        if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
-      }
-
-    }
-
-    private void SpikeGraph_Paint(object sender, PaintEventArgs e)
-    {
-      Brush brush = new SolidBrush(Color.Black);
-      Pen mainpen = new Pen(brush);
-      for (int i = 1; i < GlobalData.Count; i++)
-      {
-
-        e.Graphics.DrawLine(mainpen,
-          (float)GlobalData[i - 1].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - GlobalData[i - 1].Item2 * KyTop),
-          (float)GlobalData[i].Item1 * KxTop,
-          (float)(e.ClipRectangle.Height - GlobalData[i].Item2 * KyTop));
-      }
-      Brush threshholdbrush = new SolidBrush(Color.Red);
-      Pen thresholdpen = new Pen(threshholdbrush);
-      e.Graphics.DrawLine(thresholdpen, (float)0, (float)(e.ClipRectangle.Height - threshold * KyTop), (float)e.ClipRectangle.Width, (float)(e.ClipRectangle.Height - threshold * KyTop));
     }
 
     public void Refresh_Graphs()
@@ -1445,20 +1365,20 @@ namespace SpikeProject
 
     private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
-      if (!System.IO.Directory.Exists(savepath))
-        System.IO.Directory.CreateDirectory(savepath);
-      if (openDirToolStripMenuItem.Checked == true)
-        System.Diagnostics.Process.Start(@savepath);
-      Bitmap bmp = new Bitmap(NoStimCharacter.Width, NoStimCharacter.Height);
-      NoStimCharacter.DrawToBitmap(bmp, NoStimCharacter.ClientRectangle);
-      bmp.Save(savepath + "\\" + controlGroupBox.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      bmp = new Bitmap(StimCharacter.Width, StimCharacter.Height);
-      StimCharacter.DrawToBitmap(bmp, StimCharacter.ClientRectangle);
-      bmp.Save(savepath + "\\" + controlGroupBox.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      bmp = new Bitmap(SpikeGraph.Width, SpikeGraph.Height);
-      SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
-      bmp.Save(savepath + "\\" + controlGroupBox.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      //String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
+      //if (!System.IO.Directory.Exists(savepath))
+      //  System.IO.Directory.CreateDirectory(savepath);
+      //if (openDirToolStripMenuItem.Checked == true)
+      //  System.Diagnostics.Process.Start(@savepath);
+      //Bitmap bmp = new Bitmap(NoStimCharacter.Width, NoStimCharacter.Height);
+      //NoStimCharacter.DrawToBitmap(bmp, NoStimCharacter.ClientRectangle);
+      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      //bmp = new Bitmap(StimCharacter.Width, StimCharacter.Height);
+      //StimCharacter.DrawToBitmap(bmp, StimCharacter.ClientRectangle);
+      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+      //bmp = new Bitmap(SpikeGraph.Width, SpikeGraph.Height);
+      //SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
+      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
 
     }
 
@@ -1671,5 +1591,89 @@ namespace SpikeProject
     {
       Refresh_Graphs();
     }
+
+    #region Старое рисование
+
+    //private void StimCharacter_Paint(object sender, PaintEventArgs e)
+    //{
+    //  Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
+    //  Pen mainpen = new Pen(brush, 2);
+    //  for (int SpikeIdx = 0; SpikeIdx < StimSpikeList.Count && SpikeIdx < numericAfterStim.Value; SpikeIdx++)
+    //  {
+    //    for (int i = 1; i < StimSpikeList[SpikeIdx].Count; i++)
+    //    {
+    //      //int Ciferka = 9;
+    //      // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
+    //      // mainpen = new Pen(brush, 2);
+    //      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+    //      e.Graphics.DrawLine(mainpen,
+    //        (float)StimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
+    //        (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
+    //        (float)StimSpikeList[SpikeIdx][i].Item1 * KxBottom,
+    //        (float)(e.ClipRectangle.Height - StimSpikeList[SpikeIdx][i].Item2 * KyBottom));
+    //    }
+    //  }
+
+
+    //  brush = new SolidBrush(Color.Aqua);
+    //  mainpen = new Pen(brush, 5);
+    //  if (AverageDrawPointsStim.Count > 0 && numericAfterStim.Value >= 0 && numericAfterStim.Value <= AverageDrawPointsStim.Count && AvgToolStripMenuItem.Checked == true)
+    //  {
+    //    PointF[] AverageList = (AverageDrawPointsStim[(int)numericAfterStim.Value - 1]).ToArray();
+    //    if (AverageList.Count() > 1) e.Graphics.DrawLines(mainpen, AverageList);
+    //  }
+
+    //}
+
+    //private void NoStimCharacter_Paint(object sender, PaintEventArgs e)
+    //{
+    //  Brush brush = new SolidBrush(Color.FromArgb(100, 50, 50, 50));
+    //  Pen mainpen = new Pen(brush, 2);
+    //  for (int SpikeIdx = 0; SpikeIdx < NoStimSpikeList.Count && SpikeIdx < numericNoStim.Value && SpikeIdx < nostimcount; SpikeIdx++)
+    //  {
+    //    for (int i = 1; i < NoStimSpikeList[SpikeIdx].Count; i++)
+    //    {
+    //      // int Ciferka = 9;
+    //      // brush = new SolidBrush((Color.FromArgb((byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)), (byte)(200 - Ciferka * (StimSpikeList.Count - SpikeIdx)))));
+    //      // mainpen = new Pen(brush, 4);
+    //      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+    //      e.Graphics.DrawLine(mainpen,
+    //        (float)NoStimSpikeList[SpikeIdx][i - 1].Item1 * KxBottom,
+    //        (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i - 1].Item2 * KyBottom),
+    //        (float)NoStimSpikeList[SpikeIdx][i].Item1 * KxBottom,
+    //        (float)(e.ClipRectangle.Height - NoStimSpikeList[SpikeIdx][i].Item2 * KyBottom));
+    //    }
+    //  }
+
+    //  brush = new SolidBrush(Color.Blue);
+    //  mainpen = new Pen(brush, 5);
+    //  if (AverageDrawPointsNoStim.Count > 0 && numericNoStim.Value >= 0 && AvgToolStripMenuItem.Checked == true)
+    //  {
+    //    PointF[] AverageList = (AverageDrawPointsNoStim[(int)numericNoStim.Value - 1]).ToArray();
+
+    //    if (AverageList.Count() > 0) e.Graphics.DrawLines(mainpen, AverageList);
+    //  }
+
+    //}
+
+    //private void SpikeGraph_Paint(object sender, PaintEventArgs e)
+    //{
+    //  Brush brush = new SolidBrush(Color.Black);
+    //  Pen mainpen = new Pen(brush);
+    //  for (int i = 1; i < GlobalData.Count; i++)
+    //  {
+
+    //    e.Graphics.DrawLine(mainpen,
+    //      (float)GlobalData[i - 1].Item1 * KxTop,
+    //      (float)(e.ClipRectangle.Height - GlobalData[i - 1].Item2 * KyTop),
+    //      (float)GlobalData[i].Item1 * KxTop,
+    //      (float)(e.ClipRectangle.Height - GlobalData[i].Item2 * KyTop));
+    //  }
+    //  Brush threshholdbrush = new SolidBrush(Color.Red);
+    //  Pen thresholdpen = new Pen(threshholdbrush);
+    //  e.Graphics.DrawLine(thresholdpen, (float)0, (float)(e.ClipRectangle.Height - threshold * KyTop), (float)e.ClipRectangle.Width, (float)(e.ClipRectangle.Height - threshold * KyTop));
+    //}
+
+    #endregion
   }
 }

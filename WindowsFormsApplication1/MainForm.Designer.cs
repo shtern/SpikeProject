@@ -30,15 +30,15 @@
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-      this.SpikeGraph = new System.Windows.Forms.PictureBox();
-      this.NoStimCharacter = new System.Windows.Forms.PictureBox();
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.savaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.Threshold_Scroll = new System.Windows.Forms.TrackBar();
-      this.StimCharacter = new System.Windows.Forms.PictureBox();
       this.label8 = new System.Windows.Forms.Label();
       this.colSpikeLabel = new System.Windows.Forms.Label();
       this.controlGroupBox = new System.Windows.Forms.GroupBox();
+      this.spikeViewTypeLabel = new System.Windows.Forms.Label();
+      this.separateButton = new System.Windows.Forms.RadioButton();
+      this.togetherButton = new System.Windows.Forms.RadioButton();
       this.afterStimLabel = new System.Windows.Forms.Label();
       this.beforeStimLabel = new System.Windows.Forms.Label();
       this.numericAfterStim = new System.Windows.Forms.NumericUpDown();
@@ -66,45 +66,13 @@
       this.NoStimZedGraph = new ZedGraph.ZedGraphControl();
       this.StimZedGraph = new ZedGraph.ZedGraphControl();
       this.CommonZedGraph = new ZedGraph.ZedGraphControl();
-      this.togetherButton = new System.Windows.Forms.RadioButton();
-      this.separateButton = new System.Windows.Forms.RadioButton();
-      this.spikeViewTypeLabel = new System.Windows.Forms.Label();
-      ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).BeginInit();
       this.contextMenuStrip1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.Threshold_Scroll)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.StimCharacter)).BeginInit();
       this.controlGroupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericAfterStim)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericNoStim)).BeginInit();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // SpikeGraph
-      // 
-      this.SpikeGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.SpikeGraph.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.SpikeGraph.Location = new System.Drawing.Point(10, 43);
-      this.SpikeGraph.Name = "SpikeGraph";
-      this.SpikeGraph.Size = new System.Drawing.Size(879, 194);
-      this.SpikeGraph.TabIndex = 0;
-      this.SpikeGraph.TabStop = false;
-      this.SpikeGraph.Visible = false;
-      this.SpikeGraph.Paint += new System.Windows.Forms.PaintEventHandler(this.SpikeGraph_Paint);
-      // 
-      // NoStimCharacter
-      // 
-      this.NoStimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-      this.NoStimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.NoStimCharacter.ContextMenuStrip = this.contextMenuStrip1;
-      this.NoStimCharacter.Location = new System.Drawing.Point(1143, 311);
-      this.NoStimCharacter.Name = "NoStimCharacter";
-      this.NoStimCharacter.Size = new System.Drawing.Size(331, 283);
-      this.NoStimCharacter.TabIndex = 7;
-      this.NoStimCharacter.TabStop = false;
-      this.NoStimCharacter.Visible = false;
-      this.NoStimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.NoStimCharacter_Paint);
       // 
       // contextMenuStrip1
       // 
@@ -132,19 +100,6 @@
       this.Threshold_Scroll.TickStyle = System.Windows.Forms.TickStyle.None;
       this.Threshold_Scroll.Value = 100;
       this.Threshold_Scroll.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Threshold_Scroll_MouseUp);
-      // 
-      // StimCharacter
-      // 
-      this.StimCharacter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.StimCharacter.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-      this.StimCharacter.Location = new System.Drawing.Point(1143, 645);
-      this.StimCharacter.Name = "StimCharacter";
-      this.StimCharacter.Size = new System.Drawing.Size(331, 312);
-      this.StimCharacter.TabIndex = 10;
-      this.StimCharacter.TabStop = false;
-      this.StimCharacter.Visible = false;
-      this.StimCharacter.Paint += new System.Windows.Forms.PaintEventHandler(this.StimCharacter_Paint);
       // 
       // label8
       // 
@@ -182,6 +137,39 @@
       this.controlGroupBox.Size = new System.Drawing.Size(267, 268);
       this.controlGroupBox.TabIndex = 14;
       this.controlGroupBox.TabStop = false;
+      // 
+      // spikeViewTypeLabel
+      // 
+      this.spikeViewTypeLabel.AutoSize = true;
+      this.spikeViewTypeLabel.Location = new System.Drawing.Point(57, 189);
+      this.spikeViewTypeLabel.Name = "spikeViewTypeLabel";
+      this.spikeViewTypeLabel.Size = new System.Drawing.Size(162, 13);
+      this.spikeViewTypeLabel.TabIndex = 21;
+      this.spikeViewTypeLabel.Text = "Тип просмотра характеристик";
+      // 
+      // separateButton
+      // 
+      this.separateButton.AutoSize = true;
+      this.separateButton.Location = new System.Drawing.Point(180, 219);
+      this.separateButton.Name = "separateButton";
+      this.separateButton.Size = new System.Drawing.Size(80, 17);
+      this.separateButton.TabIndex = 20;
+      this.separateButton.Text = "Раздельно";
+      this.separateButton.UseVisualStyleBackColor = true;
+      this.separateButton.CheckedChanged += new System.EventHandler(this.separateButton_CheckedChanged);
+      // 
+      // togetherButton
+      // 
+      this.togetherButton.AutoSize = true;
+      this.togetherButton.Checked = true;
+      this.togetherButton.Location = new System.Drawing.Point(34, 219);
+      this.togetherButton.Name = "togetherButton";
+      this.togetherButton.Size = new System.Drawing.Size(63, 17);
+      this.togetherButton.TabIndex = 19;
+      this.togetherButton.TabStop = true;
+      this.togetherButton.Text = "Вместе";
+      this.togetherButton.UseVisualStyleBackColor = true;
+      this.togetherButton.CheckedChanged += new System.EventHandler(this.togetherButton_CheckedChanged);
       // 
       // afterStimLabel
       // 
@@ -455,7 +443,7 @@
       // 
       this.CommonZedGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.CommonZedGraph.Location = new System.Drawing.Point(10, 27);
+      this.CommonZedGraph.Location = new System.Drawing.Point(12, 27);
       this.CommonZedGraph.Name = "CommonZedGraph";
       this.CommonZedGraph.ScrollGrace = 0D;
       this.CommonZedGraph.ScrollMaxX = 0D;
@@ -464,41 +452,8 @@
       this.CommonZedGraph.ScrollMinX = 0D;
       this.CommonZedGraph.ScrollMinY = 0D;
       this.CommonZedGraph.ScrollMinY2 = 0D;
-      this.CommonZedGraph.Size = new System.Drawing.Size(1191, 268);
+      this.CommonZedGraph.Size = new System.Drawing.Size(1189, 268);
       this.CommonZedGraph.TabIndex = 24;
-      // 
-      // togetherButton
-      // 
-      this.togetherButton.AutoSize = true;
-      this.togetherButton.Checked = true;
-      this.togetherButton.Location = new System.Drawing.Point(34, 219);
-      this.togetherButton.Name = "togetherButton";
-      this.togetherButton.Size = new System.Drawing.Size(63, 17);
-      this.togetherButton.TabIndex = 19;
-      this.togetherButton.TabStop = true;
-      this.togetherButton.Text = "Вместе";
-      this.togetherButton.UseVisualStyleBackColor = true;
-      this.togetherButton.CheckedChanged += new System.EventHandler(this.togetherButton_CheckedChanged);
-      // 
-      // separateButton
-      // 
-      this.separateButton.AutoSize = true;
-      this.separateButton.Location = new System.Drawing.Point(180, 219);
-      this.separateButton.Name = "separateButton";
-      this.separateButton.Size = new System.Drawing.Size(80, 17);
-      this.separateButton.TabIndex = 20;
-      this.separateButton.Text = "Раздельно";
-      this.separateButton.UseVisualStyleBackColor = true;
-      this.separateButton.CheckedChanged += new System.EventHandler(this.separateButton_CheckedChanged);
-      // 
-      // spikeViewTypeLabel
-      // 
-      this.spikeViewTypeLabel.AutoSize = true;
-      this.spikeViewTypeLabel.Location = new System.Drawing.Point(57, 189);
-      this.spikeViewTypeLabel.Name = "spikeViewTypeLabel";
-      this.spikeViewTypeLabel.Size = new System.Drawing.Size(162, 13);
-      this.spikeViewTypeLabel.TabIndex = 21;
-      this.spikeViewTypeLabel.Text = "Тип просмотра характеристик";
       // 
       // MainForm
       // 
@@ -509,9 +464,6 @@
       this.Controls.Add(this.StimZedGraph);
       this.Controls.Add(this.NoStimZedGraph);
       this.Controls.Add(this.controlGroupBox);
-      this.Controls.Add(this.StimCharacter);
-      this.Controls.Add(this.NoStimCharacter);
-      this.Controls.Add(this.SpikeGraph);
       this.Controls.Add(this.menuStrip1);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip1;
@@ -520,11 +472,8 @@
       this.Text = "Анализ спайковых характеристик";
       this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
-      ((System.ComponentModel.ISupportInitialize)(this.SpikeGraph)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.NoStimCharacter)).EndInit();
       this.contextMenuStrip1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.Threshold_Scroll)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.StimCharacter)).EndInit();
       this.controlGroupBox.ResumeLayout(false);
       this.controlGroupBox.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericAfterStim)).EndInit();
@@ -538,10 +487,7 @@
 
     #endregion
 
-    private System.Windows.Forms.PictureBox SpikeGraph;
-    private System.Windows.Forms.PictureBox NoStimCharacter;
     private System.Windows.Forms.TrackBar Threshold_Scroll;
-    private System.Windows.Forms.PictureBox StimCharacter;
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.Label colSpikeLabel;
     private System.Windows.Forms.GroupBox controlGroupBox;
