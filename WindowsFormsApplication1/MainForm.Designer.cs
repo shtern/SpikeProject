@@ -341,6 +341,7 @@
       this.обработкаСигналаToolStripMenuItem.Name = "обработкаСигналаToolStripMenuItem";
       this.обработкаСигналаToolStripMenuItem.Size = new System.Drawing.Size(126, 20);
       this.обработкаСигналаToolStripMenuItem.Text = "Обработка сигнала";
+      this.обработкаСигналаToolStripMenuItem.DropDownClosed += new System.EventHandler(this.обработкаСигналаToolStripMenuItem_DropDownClosed);
       // 
       // скользящееСреднееToolStripMenuItem
       // 
@@ -365,6 +366,8 @@
       this.MAParamTB.Name = "MAParamTB";
       this.MAParamTB.Size = new System.Drawing.Size(100, 23);
       this.MAParamTB.Text = "7";
+      this.MAParamTB.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MAParamTB_KeyDown);
+      this.MAParamTB.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MAParamTB_KeyPress);
       // 
       // нормированиеПоОсиYToolStripMenuItem
       // 
