@@ -193,6 +193,7 @@ namespace SpikeProject
 
     public void proceedData()
     {
+      if (GlobalDataOrig.Count == 0) return;
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
       StimSpikeListNoThresh = new List<SpikeDataPacket>();
