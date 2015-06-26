@@ -29,6 +29,7 @@
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCompareForm));
       this.compareLabel = new System.Windows.Forms.Label();
       this.moveNumeric = new System.Windows.Forms.NumericUpDown();
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -140,6 +141,7 @@
       this.Controls.Add(this.CorrValueText);
       this.Controls.Add(this.compareLabel);
       this.Controls.Add(this.menuStrip1);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MainMenuStrip = this.menuStrip1;
       this.MinimumSize = new System.Drawing.Size(783, 806);
       this.Name = "FCompareForm";

@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
       this.savebutton = new System.Windows.Forms.Button();
       this.cancelbutton = new System.Windows.Forms.Button();
       this.cellcolllbl = new System.Windows.Forms.Label();
@@ -187,6 +188,7 @@
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.cancelbutton);
       this.Controls.Add(this.savebutton);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximumSize = new System.Drawing.Size(450, 350);
       this.MinimumSize = new System.Drawing.Size(450, 350);
       this.Name = "SettingsForm";

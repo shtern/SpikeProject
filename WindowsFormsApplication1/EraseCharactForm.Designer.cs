@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EraseCharactForm));
       this.EraseButton = new System.Windows.Forms.Button();
       this.EraseCancelButton = new System.Windows.Forms.Button();
       this.NoStimCheckBox = new System.Windows.Forms.CheckBox();
@@ -121,6 +122,7 @@
       this.Controls.Add(this.NoStimCheckBox);
       this.Controls.Add(this.EraseCancelButton);
       this.Controls.Add(this.EraseButton);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximumSize = new System.Drawing.Size(620, 300);
       this.MinimumSize = new System.Drawing.Size(620, 300);
       this.Name = "EraseCharactForm";
