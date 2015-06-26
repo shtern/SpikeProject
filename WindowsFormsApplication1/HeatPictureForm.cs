@@ -82,6 +82,9 @@ namespace SpikeProject
           case 2:
             this.Text = "Кросс-корреляция";
             break;
+          case 3:
+            this.Text = "Площадь";
+            break;
         }
 
       

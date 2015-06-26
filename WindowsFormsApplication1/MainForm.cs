@@ -55,8 +55,6 @@ namespace SpikeProject
     private List<SpikeDataPacket> PreSpikeListNoThresh = new List<SpikeDataPacket>();
     private List<PointF> DrawPointsList;
     private List<PointF> PointsList;
-    private List<PointList> AverageDrawPointsStim = new List<PointList>();
-    private List<PointList> AverageDrawPointsNoStim = new List<PointList>();
     private List<PointList> AveragePointsStim = new List<PointList>();
     private List<PointList> AveragePointsNoStim = new List<PointList>();
     private List<int> WidthList = new List<int>();
@@ -199,8 +197,6 @@ namespace SpikeProject
       NoStimSpikeList = new List<SpikeDataPacket>();
       StimSpikeListNoThresh = new List<SpikeDataPacket>();
       NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
-      AverageDrawPointsStim = new List<PointList>();
-      AverageDrawPointsNoStim = new List<PointList>();
       AveragePointsStim = new List<PointList>();
       AveragePointsNoStim = new List<PointList>();
       GlobalMin = Double.MaxValue;
@@ -846,7 +842,7 @@ namespace SpikeProject
       }
 
       if (togetherButton.Checked)
-      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true && (int)numericNoStim.Value - 1 < AverageDrawPointsNoStim.Count)
+      if (AveragePointsNoStim.Count > 0 && numericNoStim.Value > 0 && AvgToolStripMenuItem.Checked == true && (int)numericNoStim.Value - 1 < AveragePointsNoStim.Count)
       {
         list = new PointPairList();
         for (int j = 0; j < AveragePointsNoStim[(int)numericNoStim.Value - 1].Count; j++)
@@ -1053,10 +1049,37 @@ namespace SpikeProject
         area1 += countArea(packet1[i - 1], packet1[i]);
       for (int i = 1; i < packet2.Count; i++)
         area2 += countArea(packet2[i - 1], packet2[i]);
-      if (area1 > area2)
-        return 2 * (area1 - area2) / (area1 + area2);
-      else return 2 * (area2 - area1) / (area1 + area2);
+      //if (area1 > area2)
+      //  return 2 * (area1 - area2) / (area1 + area2);
+      //else return 2 * (area2 - area1) / (area1 + area2);
+      return 1-Math.Abs(area1 - area2) / Math.Max(area1, area2);
+    }
 
+    public double countCorrArrMove(SpikeDataPacket packet1, SpikeDataPacket packet2)
+    {
+
+      if (packet1 == packet2) return 1;
+      packet2 = movePacket(packet1, packet2);
+
+      int minsize = Math.Min(packet1.Count, packet2.Count);
+      int size = (int)Math.Truncate(minsize * 0.8);
+      int diff = minsize - size;
+      int max_M = Math.Abs((int)Math.Truncate(diff * 0.7));
+      int center1 = findMax(packet1), left_bord1 = (center1 - LeftMedian > 0) ? center1 - LeftMedian : 0, right_bord1 = (center1 + RightMedian < packet1.Count) ? center1 + RightMedian : packet1.Count;
+      int center2 = findMax(packet2), left_bord2 = (center2 - LeftMedian > max_M) ? center2 - LeftMedian : max_M, right_bord2 = (center2 + RightMedian + max_M < packet2.Count) ? center2 + RightMedian : packet2.Count - max_M;
+      int left_bord = Math.Max(Math.Min(left_bord1, left_bord2), max_M), right_bord = Math.Min(right_bord1, right_bord2);
+
+      double bestCorr = double.MinValue;
+      double Corr = double.MinValue;
+      for (int m = -max_M; m <= max_M; m++)
+      {
+        Corr = double.MinValue;
+
+        Corr = countCorrArr(packet1, packet2);
+        if (Corr > bestCorr)
+          bestCorr = Corr;
+      }
+      return bestCorr;
     }
     #endregion
 
@@ -1124,7 +1147,6 @@ namespace SpikeProject
     public void buildNoStimAverage()
     {
       AveragePointsNoStim = new List<PointList>();
-      AverageDrawPointsNoStim = new List<PointList>();
       double maxLenght = 0;
       double minLength = 0;
       for (int z = 0; z < NoStimSpikeList.Count; z++)
@@ -1180,7 +1202,6 @@ namespace SpikeProject
           }
         }
         AveragePointsNoStim.Add(PointsList);
-        AverageDrawPointsNoStim.Add(DrawPointsList);
       }
 
     }
@@ -1188,7 +1209,6 @@ namespace SpikeProject
     public void buildStimAverage()
     {
       AveragePointsStim = new List<PointList>();
-      AverageDrawPointsStim = new List<PointList>();
       double maxLenght = 0;
       double minLength = 0;
 
@@ -1247,7 +1267,6 @@ namespace SpikeProject
           }
         }
         AveragePointsStim.Add(PointsList);
-        AverageDrawPointsStim.Add(DrawPointsList);
       }
 
     }
@@ -1363,8 +1382,6 @@ namespace SpikeProject
       NoStimSpikeListNoThresh = new List<SpikeDataPacket>();
       PreSpikeList = new List<SpikeDataPacket>();
       PreSpikeListNoThresh = new List<SpikeDataPacket>();
-      AverageDrawPointsStim = new List<PointList>();
-      AverageDrawPointsNoStim = new List<PointList>();
       AveragePointsStim = new List<PointList>();
       AveragePointsNoStim = new List<PointList>();
       PeakList = new SpikePeakList();
@@ -1388,7 +1405,7 @@ namespace SpikeProject
 
     private void AverageCompItem_Click(object sender, EventArgs e)
     {
-      if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
+      if (AveragePointsNoStim.Count > 0 && AveragePointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
       {
         SpikeDataPacket avglist1 = new SpikeDataPacket();
         SpikeDataPacket avglist2 = new SpikeDataPacket();
@@ -1528,6 +1545,11 @@ namespace SpikeProject
 
           switch (Properties.Settings.Default.methodtype)
           {
+            case 3:
+              row.Add(new SpikeData(0, countCorrArrMove(fullist[i], fullist[j])));
+              Properties.Settings.Default.moveforcorr = false;
+              break;
+
             case 2:
               row.Add(new SpikeData(0, countCorrv3(fullist[i], fullist[j])));
               Properties.Settings.Default.moveforcorr = false;

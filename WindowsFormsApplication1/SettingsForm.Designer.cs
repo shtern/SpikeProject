@@ -143,7 +143,8 @@
       this.corrMethodsBox.Items.AddRange(new object[] {
             "Коэффициент Пирсона",
             "Коэффициент Пирсона со сдвигами",
-            "Кросс-корреляция"});
+            "Кросс-корреляция",
+            "Через площадь"});
       this.corrMethodsBox.Location = new System.Drawing.Point(226, 159);
       this.corrMethodsBox.Name = "corrMethodsBox";
       this.corrMethodsBox.Size = new System.Drawing.Size(151, 21);
