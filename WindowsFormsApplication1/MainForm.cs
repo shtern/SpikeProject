@@ -946,9 +946,9 @@ namespace SpikeProject
 
 
 
-      double topsum = 0;
-      double sump1 = 0;
-      double sump2 = 0;
+      //double topsum = 0;
+      //double sump1 = 0;
+      //double sump2 = 0;
       double bestCorr = double.MinValue;
       double Corr = double.MinValue;
       for (int m = -max_M; m <= max_M; m++)
@@ -975,6 +975,19 @@ namespace SpikeProject
           bestCorr = Corr;
       }
       return bestCorr;
+    }
+
+    public SpikeDataPacket normalize(SpikeDataPacket inpacket)
+    {
+      double max = double.MinValue;
+      for (int i = 0; i < inpacket.Count; i++)
+        if (inpacket[i].Item2 > max) max = inpacket[i].Item2;
+      if (max == 0) max = eps;
+      SpikeDataPacket result = new SpikeDataPacket();
+      foreach (SpikeData data in inpacket)
+        result.Add(new SpikeData(data.Item1, data.Item2/max));
+      return result;
+
     }
 
     public double countCorrv3(SpikeDataPacket signal1, SpikeDataPacket signal2)
@@ -1059,6 +1072,8 @@ namespace SpikeProject
     {
 
       if (packet1 == packet2) return 1;
+      packet1 = normalize(packet1);
+      packet2 = normalize(packet2);
       packet2 = movePacket(packet1, packet2);
 
       int minsize = Math.Min(packet1.Count, packet2.Count);
