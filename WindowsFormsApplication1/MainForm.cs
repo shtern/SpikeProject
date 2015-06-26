@@ -193,7 +193,7 @@ namespace SpikeProject
 
     }
 
-    private void proceedData()
+    public void proceedData()
     {
       StimSpikeList = new List<SpikeDataPacket>();
       NoStimSpikeList = new List<SpikeDataPacket>();
@@ -205,6 +205,8 @@ namespace SpikeProject
       AveragePointsNoStim = new List<PointList>();
       GlobalMin = Double.MaxValue;
       GlobalMax = Double.MinValue;
+      GlobalData = new SpikeDataPacket();
+      GlobalData.AddRange(GlobalDataOrig);
       //numericNoStim.Value = 1;
       //numericAfterStim.Value = 1;
       foreach (SpikeData data in GlobalData)
@@ -243,12 +245,21 @@ namespace SpikeProject
         xapprox.Add(approx.Item1);
         yapprox.Add(approx.Item2);
       }
-      double[] xapproxarr = xapprox.ToArray();
-      double[] yapproxarr = yapprox.ToArray();
 
       for (int i = 0; i < GlobalData.Count; i++)
       {
-        double diff = NaturalCubicSpline(xapproxarr, yapproxarr, GlobalData[i].Item1);
+        double diff =0;
+        switch (Properties.Settings.Default.approxtype)
+        {
+          case 0:
+            diff = NaturalCubicSpline(xapprox.ToArray(), yapprox.ToArray(), GlobalData[i].Item1);
+            break;
+          case 1:
+            diff = LagrangeInterpolation(xapprox.ToArray(), yapprox.ToArray(), GlobalData[i].Item1);
+            break;
+
+        }
+         
         GlobalData[i] = new SpikeData(GlobalData[i].Item1, GlobalData[i].Item2 - diff);
       }
 
@@ -1484,7 +1495,7 @@ namespace SpikeProject
 
     private void CommonSettingsItem_Click(object sender, EventArgs e)
     {
-      new SettingsForm().Show();
+      new SettingsForm().Show(this);
     }
 
 
@@ -1552,12 +1563,9 @@ namespace SpikeProject
         new EraseCharactForm().Show(this);
     }
 
-    private void скользящееСреднееToolStripMenuItem_Click(object sender, EventArgs e)
+    private void MAItem_Click(object sender, EventArgs e)
     {
 
-
-      GlobalData = new SpikeDataPacket();
-      GlobalData.AddRange(GlobalDataOrig);
 
       if (MAItem.Checked == true)
       {
@@ -1582,8 +1590,6 @@ namespace SpikeProject
     private void ApproxItem_Click(object sender, EventArgs e)
     {
 
-      GlobalData = new SpikeDataPacket();
-      GlobalData.AddRange(GlobalDataOrig);
       if (ApproxItem.Checked == true)
       {
         ApproxItem.Checked = false;
@@ -1613,8 +1619,6 @@ namespace SpikeProject
     {
       if (e.KeyCode == Keys.Enter && MAItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
       {
-        GlobalData = new SpikeDataPacket();
-        GlobalData.AddRange(GlobalDataOrig);
         checkParam();
         proceedData();
         
@@ -1647,8 +1651,6 @@ namespace SpikeProject
     {
       if (e.KeyCode == Keys.Enter && MAItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
       {
-        GlobalData = new SpikeDataPacket();
-        GlobalData.AddRange(GlobalDataOrig);
         int param = Convert.ToInt32(ApproxParamText.Text);
         if (param < 4) ApproxParamText.Text = 4 + "";
         proceedData();

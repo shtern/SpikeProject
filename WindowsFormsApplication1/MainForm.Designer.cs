@@ -340,7 +340,7 @@
       this.MAItem.Name = "MAItem";
       this.MAItem.Size = new System.Drawing.Size(209, 22);
       this.MAItem.Text = "Скользящее среднее";
-      this.MAItem.Click += new System.EventHandler(this.скользящееСреднееToolStripMenuItem_Click);
+      this.MAItem.Click += new System.EventHandler(this.MAItem_Click);
       // 
       // MAParamItem
       // 

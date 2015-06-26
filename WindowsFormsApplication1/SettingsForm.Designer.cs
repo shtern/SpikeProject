@@ -37,6 +37,8 @@
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.corrMethodsBox = new System.Windows.Forms.ComboBox();
       this.moveCharactLabel = new System.Windows.Forms.Label();
+      this.ApproxMethodLabel = new System.Windows.Forms.Label();
+      this.ApproxMethodsBox = new System.Windows.Forms.ComboBox();
       ((System.ComponentModel.ISupportInitialize)(this.cellCount)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.charactCount)).BeginInit();
       this.groupBox1.SuspendLayout();
@@ -46,7 +48,7 @@
       // 
       this.savebutton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.savebutton.Location = new System.Drawing.Point(238, 248);
+      this.savebutton.Location = new System.Drawing.Point(238, 278);
       this.savebutton.Name = "savebutton";
       this.savebutton.Size = new System.Drawing.Size(75, 23);
       this.savebutton.TabIndex = 0;
@@ -58,7 +60,7 @@
       // 
       this.cancelbutton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelbutton.Location = new System.Drawing.Point(338, 248);
+      this.cancelbutton.Location = new System.Drawing.Point(338, 278);
       this.cancelbutton.Name = "cancelbutton";
       this.cancelbutton.Size = new System.Drawing.Size(75, 23);
       this.cancelbutton.TabIndex = 1;
@@ -120,6 +122,8 @@
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.ApproxMethodsBox);
+      this.groupBox1.Controls.Add(this.ApproxMethodLabel);
       this.groupBox1.Controls.Add(this.corrMethodsBox);
       this.groupBox1.Controls.Add(this.moveCharactLabel);
       this.groupBox1.Controls.Add(this.cellCount);
@@ -128,7 +132,7 @@
       this.groupBox1.Controls.Add(this.charactcountlbl);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(401, 214);
+      this.groupBox1.Size = new System.Drawing.Size(401, 250);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Параметры клеток";
@@ -154,16 +158,36 @@
       this.moveCharactLabel.TabIndex = 7;
       this.moveCharactLabel.Text = "Метод подсчета корелляции";
       // 
+      // ApproxMethodLabel
+      // 
+      this.ApproxMethodLabel.AutoSize = true;
+      this.ApproxMethodLabel.Location = new System.Drawing.Point(29, 217);
+      this.ApproxMethodLabel.Name = "ApproxMethodLabel";
+      this.ApproxMethodLabel.Size = new System.Drawing.Size(122, 13);
+      this.ApproxMethodLabel.TabIndex = 10;
+      this.ApproxMethodLabel.Text = "Метод аппроксимации";
+      // 
+      // ApproxMethodsBox
+      // 
+      this.ApproxMethodsBox.FormattingEnabled = true;
+      this.ApproxMethodsBox.Items.AddRange(new object[] {
+            "Натуральные куб. сплайны",
+            "Метод Лагранжа"});
+      this.ApproxMethodsBox.Location = new System.Drawing.Point(226, 209);
+      this.ApproxMethodsBox.Name = "ApproxMethodsBox";
+      this.ApproxMethodsBox.Size = new System.Drawing.Size(151, 21);
+      this.ApproxMethodsBox.TabIndex = 11;
+      // 
       // SettingsForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(434, 282);
+      this.ClientSize = new System.Drawing.Size(434, 312);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.cancelbutton);
       this.Controls.Add(this.savebutton);
-      this.MaximumSize = new System.Drawing.Size(450, 320);
-      this.MinimumSize = new System.Drawing.Size(450, 320);
+      this.MaximumSize = new System.Drawing.Size(450, 350);
+      this.MinimumSize = new System.Drawing.Size(450, 350);
       this.Name = "SettingsForm";
       this.Text = "Настройки";
       ((System.ComponentModel.ISupportInitialize)(this.cellCount)).EndInit();
@@ -185,5 +209,7 @@
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label moveCharactLabel;
     private System.Windows.Forms.ComboBox corrMethodsBox;
+    private System.Windows.Forms.ComboBox ApproxMethodsBox;
+    private System.Windows.Forms.Label ApproxMethodLabel;
   }
 }

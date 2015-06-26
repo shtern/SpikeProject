@@ -17,6 +17,7 @@ namespace SpikeProject
       cellCount.Value = Properties.Settings.Default.cellcount;
       charactCount.Value = Properties.Settings.Default.stimstart;
       corrMethodsBox.SelectedIndex = Properties.Settings.Default.methodtype;
+      ApproxMethodsBox.SelectedIndex = Properties.Settings.Default.approxtype;
     }
 
     private void cancelbutton_Click(object sender, EventArgs e)
@@ -31,9 +32,12 @@ namespace SpikeProject
       Properties.Settings.Default.stimstart = (int)charactCount.Value;
       MainForm.nostimcount = (int)charactCount.Value;
       Properties.Settings.Default.methodtype = corrMethodsBox.SelectedIndex;
-      Properties.Settings.Default.Save();
+      Properties.Settings.Default.approxtype = ApproxMethodsBox.SelectedIndex;
       if (corrMethodsBox.SelectedIndex == 1) Properties.Settings.Default.moveforcorr = true;
       else Properties.Settings.Default.moveforcorr = false;
+      Properties.Settings.Default.Save();
+      MainForm parent = (MainForm)this.Owner;
+      parent.proceedData();
       this.Close();
     }
 

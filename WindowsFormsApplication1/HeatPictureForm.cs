@@ -547,12 +547,12 @@ namespace SpikeProject
       baseColors.Add(Color.Red);
 
       Graphics graph = Graphics.FromImage(bmp);
-      List<Color> colors = interpolateColors(baseColors, 1000);
+      List<Color> colors = interpolateColors(baseColors, 10000);
       for (int i = 0; i < DrawList.Count; i++)
       {
         for (int j = 0; j < DrawList[i].Count && j < maxCol; j++)
         {
-          int br_num = (int)(Math.Abs((DrawList[i][j].Item2 - minVal) / (maxVal - minVal)) * factor);
+          int br_num = (int)(Math.Abs((DrawList[i][j].Item2 - minVal) *10/ (maxVal - minVal)) * factor);
           Brush brush = new SolidBrush(colors[br_num]);
           //Brush brush = new SolidBrush(colors[(System.Int32)(Math.Abs((DrawList[i][j].Item2 ) / (maxVal )) * factor)]);
           Pen pen = new Pen(brush, 5);
