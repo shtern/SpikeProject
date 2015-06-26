@@ -221,8 +221,8 @@ namespace SpikeProject
       prev_threshold = threshold;
       initthreshold = threshold;
 
-      if (скользящееСреднееToolStripMenuItem.Checked) doMA();
-      if (нормированиеПоОсиYToolStripMenuItem.Checked) doApprox();
+      if (MAItem.Checked) doMA();
+      if (ApproxItem.Checked) doApprox();
 
 
 
@@ -392,6 +392,56 @@ namespace SpikeProject
       return y;
     }
 
+    static double Correlation(double[] data1, double[] data2)
+    {
+      if (data1.Length != data2.Length)
+      {
+        throw new Exception("The two data sets being tested are of different sizes");
+      }
+      if (data1.Length == 0)
+      {
+        throw new Exception("Data in correlation method has zero length.");
+      }
+      if (data1.Length == 1)
+      {
+        throw new Exception("Single data point is insufficient for correlation.");
+      }
+      // Sum
+      double sum1 = 0.0d;
+      double sum2 = 0.0d;
+      for (int i = 0; i < data1.Length; i++)
+      {
+        sum1 += data1[i];
+        sum2 += data2[i];
+      }
+      // Mean
+      double mean1 = sum1 / data1.Length;
+      double mean2 = sum2 / data2.Length;
+      // Covariances
+      double total = 0.0d;
+      for (int i = 0; i < data1.Length; i++)
+      {
+        total += ((data1[i] - mean1) * (data2[i] - mean2));
+      }
+      double covariance = total / data1.Length;
+      // Standard deviation
+      sum1 = 0.0d;
+      sum2 = 0.0d;
+      for (int i = 0; i < data1.Length; i++)
+      {
+        sum1 += ((data1[i] - mean1) * (data1[i] - mean1));
+        sum2 += ((data2[i] - mean2) * (data2[i] - mean2));
+
+      }
+      double stdev1 = Math.Sqrt(sum1 / data1.Length);
+      double stdev2 = Math.Sqrt(sum2 / data2.Length);
+      if ((stdev1 * stdev2) == 0)
+      {
+        throw new Exception("One of the standard deviations is zero");
+      }
+      return (covariance / (stdev1 * stdev2));
+    }
+
     public SpikeDataPacket movePacket(SpikeDataPacket packet1, SpikeDataPacket packet2)
     {
       double max1 = double.MinValue;
@@ -540,12 +590,13 @@ namespace SpikeProject
     private SpikeDataPacket buildApproxList(SpikeDataPacket inlist)
     {
       SpikeDataPacket approxlist = new SpikeDataPacket();
-      approxlist.Add(findMin(inlist.GetRange(0, 100)));
-
-      int windowsize = (int)Math.Truncate((double)inlist.Count / 5);
+      approxlist.Add(findMin(inlist.GetRange(0, 80)));
+      int param = Convert.ToInt32(ApproxParamText.Text);
+      
+      int windowsize = (int)Math.Truncate((double)inlist.Count / param);
       for (int i = 0; i + windowsize < inlist.Count; i += windowsize)
         approxlist.Add(findMin(inlist.GetRange(i, windowsize)));
-      approxlist.Add(findMin(inlist.GetRange(inlist.Count - 101, 100)));
+      approxlist.Add(findMin(inlist.GetRange(inlist.Count - 81, 80)));
       return approxlist;
     }
 
@@ -845,21 +896,30 @@ namespace SpikeProject
     {
       //if (Properties.Settings.Default.movecharact)
       // packet2 = movePacket(packet1, packet2);
-      double avg1 = countAverage(packet1);
-      double avg2 = countAverage(packet2);
-      double topsum = 0;
-      for (int i = 0; i < packet1.Count; i++)
-        if (i < packet2.Count)
-          topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
-      double sump1 = 0;
-      double sump2 = 0;
-      for (int i = 0; i < packet1.Count; i++)
-        sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
-      for (int i = 0; i < packet2.Count; i++)
-        sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
-      if (Math.Sqrt(sump1 * sump2) > eps)
-        return topsum / Math.Sqrt(sump1 * sump2);
-      else return 0;
+      List<double> list1 = new List<double>();
+      List<double> list2 = new List<double>();
+      int size = Math.Min(packet1.Count, packet2.Count);
+      for (int i = 0; i < size; i++)
+      {
+        list1.Add(packet1[i].Item2);
+        list2.Add(packet2[i].Item2);
+      }
+      return Correlation(list1.ToArray(), list2.ToArray());
+      //double avg1 = countAverage(packet1);
+      //double avg2 = countAverage(packet2);
+      //double topsum = 0;
+      //for (int i = 0; i < packet1.Count; i++)
+      //  if (i < packet2.Count)
+      //    topsum += (packet1[i].Item2 - avg1) * (packet2[i].Item2 - avg2);
+      //double sump1 = 0;
+      //double sump2 = 0;
+      //for (int i = 0; i < packet1.Count; i++)
+      //  sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+      //for (int i = 0; i < packet2.Count; i++)
+      //  sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
+      //if (Math.Sqrt(sump1 * sump2) > eps)
+      //  return topsum / Math.Sqrt(sump1 * sump2);
+      //else return 0;
     }
 
     public double countCorrv2(SpikeDataPacket packet1, SpikeDataPacket packet2)
@@ -887,22 +947,23 @@ namespace SpikeProject
       for (int m = -max_M; m <= max_M; m++)
       {
         Corr = double.MinValue;
-        double avg1 = countAverage(packet1.GetRange(left_bord, right_bord - left_bord));
-        double avg2 = countAverage(packet2.GetRange(left_bord + m, right_bord - left_bord));
-        sump1 = 0;
-        sump2 = 0;
-        topsum = 0;
-        for (int i = left_bord; i < right_bord; i++)
-          // if (i < size)
-          topsum += (packet1[i].Item2 - avg1) * (packet2[i + m].Item2 - avg2);
+        //double avg1 = countAverage(packet1.GetRange(left_bord, right_bord - left_bord));
+        //double avg2 = countAverage(packet2.GetRange(left_bord + m, right_bord - left_bord));
+        //sump1 = 0;
+        //sump2 = 0;
+        //topsum = 0;
+        //for (int i = left_bord; i < right_bord; i++)
+        //  // if (i < size)
+        //  topsum += (packet1[i].Item2 - avg1) * (packet2[i + m].Item2 - avg2);
 
-        for (int i = left_bord; i < right_bord; i++)
-          sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
+        //for (int i = left_bord; i < right_bord; i++)
+        //  sump1 += Math.Pow(packet1[i].Item2 - avg1, 2);
 
-        for (int i = left_bord + m; i < right_bord + m; i++)
-          sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
+        //for (int i = left_bord + m; i < right_bord + m; i++)
+        //  sump2 += Math.Pow(packet2[i].Item2 - avg2, 2);
 
-        Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+        //Corr = (Math.Sqrt(sump1 * sump2) > eps) ? (topsum / Math.Sqrt(sump1 * sump2)) : 0;
+        Corr = countCorr(packet1, packet2);
         if (Corr > bestCorr)
           bestCorr = Corr;
       }
@@ -918,6 +979,7 @@ namespace SpikeProject
       //double max2 = double.MinValue;
       //for (int i = 0; i < n; i++)
       //  if (signal2[i].Item2 > max2) max2 = signal2[i].Item2;
+
 
 
       alglib.complex[] signal1comp = new alglib.complex[m];
@@ -1308,12 +1370,12 @@ namespace SpikeProject
       return resultList;
     }
 
-    private void загрузитьДанныеToolStripMenuItem_Click(object sender, EventArgs e)
+    private void LoadDataItem_Click(object sender, EventArgs e)
     {
       loadDialogOpen(0);
     }
 
-    private void сравнениеСреднихToolStripMenuItem_Click(object sender, EventArgs e)
+    private void AverageCompItem_Click(object sender, EventArgs e)
     {
       if (AverageDrawPointsNoStim.Count > 0 && AverageDrawPointsStim.Count > 0 && AvgToolStripMenuItem.Checked == true)
       {
@@ -1335,7 +1397,7 @@ namespace SpikeProject
       }
     }
 
-    private void тепловыеКартыToolStripMenuItem_Click(object sender, EventArgs e)
+    private void HeatMapItem_Click(object sender, EventArgs e)
     {
       if (NoStimSpikeList.Count > 0 && StimSpikeList.Count > 0)
       {
@@ -1363,24 +1425,6 @@ namespace SpikeProject
       Refresh_Graphs();
     }
 
-    private void экспортВBMPToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      //String savepath = "D:\\MAPS" + DateTime.Now.ToString("yyyy_MMdd_HHmm");
-      //if (!System.IO.Directory.Exists(savepath))
-      //  System.IO.Directory.CreateDirectory(savepath);
-      //if (openDirToolStripMenuItem.Checked == true)
-      //  System.Diagnostics.Process.Start(@savepath);
-      //Bitmap bmp = new Bitmap(NoStimCharacter.Width, NoStimCharacter.Height);
-      //NoStimCharacter.DrawToBitmap(bmp, NoStimCharacter.ClientRectangle);
-      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "NoStimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      //bmp = new Bitmap(StimCharacter.Width, StimCharacter.Height);
-      //StimCharacter.DrawToBitmap(bmp, StimCharacter.ClientRectangle);
-      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "StimGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-      //bmp = new Bitmap(SpikeGraph.Width, SpikeGraph.Height);
-      //SpikeGraph.DrawToBitmap(bmp, SpikeGraph.ClientRectangle);
-      //bmp.Save(savepath + "\\" + controlGroupBox.Text + "AllSpikesGraph.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-
-    }
 
     private void MainForm_KeyDown(object sender, KeyEventArgs e)
     {
@@ -1394,11 +1438,11 @@ namespace SpikeProject
       }
       if (e.KeyCode == Keys.B && e.Modifiers == Keys.Control)
       {
-        построитьToolStripMenuItem.ShowDropDown();
+        BuildItem.ShowDropDown();
       }
     }
 
-    private void загрузитьТеплокартуToolStripMenuItem_Click(object sender, EventArgs e)
+    private void LoadHeatmapItem_Click(object sender, EventArgs e)
     {
       using (OpenFileDialog dialog = new OpenFileDialog())
       {
@@ -1438,7 +1482,7 @@ namespace SpikeProject
     }
 
 
-    private void общиеНастройкиToolStripMenuItem_Click(object sender, EventArgs e)
+    private void CommonSettingsItem_Click(object sender, EventArgs e)
     {
       new SettingsForm().Show();
     }
@@ -1457,9 +1501,9 @@ namespace SpikeProject
       return resultList;
     }
 
-    private void матрицуКорToolStripMenuItem_Click(object sender, EventArgs e)
+    private void CorrMatrixItem_Click(object sender, EventArgs e)
     {
-
+      
 
       List<SpikeDataPacket> fullist = new List<SpikeDataPacket>();
       fullist.AddRange(NoStimSpikeList);
@@ -1499,7 +1543,7 @@ namespace SpikeProject
 
     }
 
-    private void убратьХарактеристикуToolStripMenuItem_Click(object sender, EventArgs e)
+    private void RemoveCharactItem_Click(object sender, EventArgs e)
     {
       if (NoStimSpikeList == null || NoStimSpikeList.Count <= 0)
         MessageBox.Show("Не загружены данные", "Редактирование данных о характеристиках",
@@ -1515,18 +1559,18 @@ namespace SpikeProject
       GlobalData = new SpikeDataPacket();
       GlobalData.AddRange(GlobalDataOrig);
 
-      if (скользящееСреднееToolStripMenuItem.Checked == true)
+      if (MAItem.Checked == true)
       {
-        параметрToolStripMenuItem.Enabled = false;
+        MAParamItem.Enabled = false;
         MAParamTB.Enabled = false;
-        скользящееСреднееToolStripMenuItem.Checked = false;
+        MAItem.Checked = false;
       }
 
       else
       {
-        параметрToolStripMenuItem.Enabled = true;
+        MAParamItem.Enabled = true;
         MAParamTB.Enabled = true;
-        скользящееСреднееToolStripMenuItem.Checked = true;
+        MAItem.Checked = true;
       }
 
       if (GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
@@ -1535,17 +1579,24 @@ namespace SpikeProject
 
     }
 
-    private void нормированиеПоОсиYToolStripMenuItem_Click(object sender, EventArgs e)
+    private void ApproxItem_Click(object sender, EventArgs e)
     {
 
       GlobalData = new SpikeDataPacket();
       GlobalData.AddRange(GlobalDataOrig);
-      if (нормированиеПоОсиYToolStripMenuItem.Checked == true)
-        нормированиеПоОсиYToolStripMenuItem.Checked = false;
-
+      if (ApproxItem.Checked == true)
+      {
+        ApproxItem.Checked = false;
+        ApproxParamItem.Enabled = false;
+        ApproxParamText.Enabled = false;
+      }
       else
-        нормированиеПоОсиYToolStripMenuItem.Checked = true;
-      if (GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
+      {
+        ApproxItem.Checked = true;
+        ApproxParamItem.Enabled = true;
+        ApproxParamText.Enabled = true;
+      }
+        if (GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
         proceedData();
 
     }
@@ -1560,7 +1611,7 @@ namespace SpikeProject
 
     private void MAParamTB_KeyDown(object sender, KeyEventArgs e)
     {
-      if (e.KeyCode == Keys.Enter && скользящееСреднееToolStripMenuItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
+      if (e.KeyCode == Keys.Enter && MAItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
       {
         GlobalData = new SpikeDataPacket();
         GlobalData.AddRange(GlobalDataOrig);
@@ -1590,6 +1641,24 @@ namespace SpikeProject
     private void separateButton_CheckedChanged(object sender, EventArgs e)
     {
       Refresh_Graphs();
+    }
+
+    private void paramText_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter && MAItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
+      {
+        GlobalData = new SpikeDataPacket();
+        GlobalData.AddRange(GlobalDataOrig);
+        proceedData();
+
+      }
+    }
+
+    private void paramText_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      int isNum = 0;
+      if (!int.TryParse(e.KeyChar.ToString(), out isNum) && !char.IsControl(e.KeyChar))
+        e.Handled = true;
     }
 
     #region Старое рисование
