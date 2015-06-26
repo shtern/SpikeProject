@@ -135,7 +135,7 @@ namespace SpikeProject
           int rectcol = (ScaleBox.Height / rectheight) ;
           double step = Math.Abs(Maximum - Minimum) / (rectcol-1);
           List<SpikeDataPacket> ScaleList = new List<SpikeDataPacket>();
-          double buildvvalue = OldMinimum;
+          double buildvalue = OldMinimum;
           Point location = NoStimPanel.Location;
           location.X += notStimSpikes.Width + 100;
           ScaleBox.Location = location;
@@ -143,18 +143,18 @@ namespace SpikeProject
           for (int i = 0; i < rectcol; i++)
           {
             SpikeDataPacket row = new SpikeDataPacket();
-            row.Add(new SpikeData(0, buildvvalue));
+            row.Add(new SpikeData(0, buildvalue));
             ScaleList.Add(row);
             
             Label valuelbl = new Label();
-            valuelbl.Text = (double)(buildvvalue) + "";
+            valuelbl.Text = (Math.Round(buildvalue, 2)).ToString();
             Point lbllocation = ScaleBox.Location;
             lbllocation.X += ScaleBox.Width + 4;
             lbllocation.Y += (rectcol - 1 - i) * rectheight + 1;
             valuelbl.Location = lbllocation;
             ValueLabelWidth = valuelbl.Width;
             this.Controls.Add(valuelbl);
-            buildvvalue += step;
+            buildvalue += step;
           }
           ScaleList.Reverse();
           ScaleBox.Image = DrawTask(ScaleList);

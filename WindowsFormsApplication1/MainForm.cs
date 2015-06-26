@@ -1643,18 +1643,20 @@ namespace SpikeProject
       Refresh_Graphs();
     }
 
-    private void paramText_KeyDown(object sender, KeyEventArgs e)
+    private void ApproxParamText_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter && MAItem.Checked && GlobalData != null && GlobalData.Count > 0 && GlobalDataOrig != null && GlobalDataOrig.Count > 0)
       {
         GlobalData = new SpikeDataPacket();
         GlobalData.AddRange(GlobalDataOrig);
+        int param = Convert.ToInt32(ApproxParamText.Text);
+        if (param < 4) ApproxParamText.Text = 4 + "";
         proceedData();
 
       }
     }
 
-    private void paramText_KeyPress(object sender, KeyPressEventArgs e)
+    private void ApproxParamText_KeyPress(object sender, KeyPressEventArgs e)
     {
       int isNum = 0;
       if (!int.TryParse(e.KeyChar.ToString(), out isNum) && !char.IsControl(e.KeyChar))

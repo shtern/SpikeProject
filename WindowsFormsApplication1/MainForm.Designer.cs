@@ -462,8 +462,8 @@
       this.ApproxParamText.Name = "ApproxParamText";
       this.ApproxParamText.Size = new System.Drawing.Size(100, 23);
       this.ApproxParamText.Text = "5";
-      this.ApproxParamText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.paramText_KeyDown);
-      this.ApproxParamText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.paramText_KeyPress);
+      this.ApproxParamText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ApproxParamText_KeyDown);
+      this.ApproxParamText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ApproxParamText_KeyPress);
       // 
       // MainForm
       // 
