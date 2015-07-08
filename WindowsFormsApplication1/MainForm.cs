@@ -569,7 +569,6 @@ namespace SpikeProject
 
         else
         {
-          //Z
           PeakList.RemoveAt(i - RemoveCount);
           WidthList.RemoveAt(i - RemoveCount);
           RemoveCount++;
